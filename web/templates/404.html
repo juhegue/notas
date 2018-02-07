@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load i18n %}
+
+{% block titlehead %}{% trans 'Página no encontrada' %}{% endblock titlehead %}
+
+{% block styles %}
+
+{{ block.super }}
+
+<style>
+
+body, html {
+  height: 100%;
+}
+
+body {
+     margin: 0;
+     background-image: url("{% static 'images/pantalla-de-error-404-cepsagps.png' %}");
+     background-repeat: no-repeat;
+     background-size: 100%;
+     background-color: #c1d14b;
+     background-position:center;
+}
+
+</style>
+
+{% endblock styles %}
+
+{% block header %}
+{% endblock header %}
+
+{% block nucleocentral %}
+<br>
+<br>
+<br>
+<div class="row fixedheight">
+    <div class="col-md-12">
+        <div class="row text-center">
+            <a href="{% url 'menu' %}">
+                <img src="{% static 'images/regresar-404.png' %}">
+            </a>
+        </div>
+    </div>
+</div>
+
+{% endblock nucleocentral %}
+
+{% block contentlogin %}
+
+{% endblock contentlogin %}
+
+{% block scripts %}
+<script type="text/javascript">
+/*
+    $(document).ready(function(){
+        $('body').bind('click', function (evt) {
+            if(evt.target == $('body')[0]) {
+                window.location.href="/";
+            }
+        });
+    });
+*/
+</script>
+{% endblock scripts %}

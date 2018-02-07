@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block titlehead %}
+    {% trans 'En construcción' %}
+{% endblock titlehead %}
+
+{% block extrahead %}
+    {{ form.media.css }}
+    <style>
+        div.bootbox.modal.fade.in {
+            z-index:9999;
+        }
+    </style>
+{% endblock extrahead %}
+
+{% block title %}
+    {% trans 'En construcción' %}
+{% endblock title %}
+
+{% block subheading %}{% endblock subheading %}
+
+{% block breadcrumb %}
+    <div class="breadcrumb-menu">
+        <a href="{% url 'menu' %}">{% trans 'Menú' %}</a>
+    </div>
+{% endblock breadcrumb %}
+
+{% block breadcrumb_active %}
+    <li>
+        {% trans 'En construcción' %}
+    </li>
+{% endblock breadcrumb_active %}
+
+{% block content %}
+<div class="row">
+	<div class="row">
+		<div class="col-md-12">
+			<div class="row">
+				<div class="col-md-10 col-md-offset-2">
+                    <div class="row">
+                        <div class="col-md-10">
+                            <div class="panel panel-primary">
+                                <div class="panel-heading">
+                                  <h3 class="panel-title">{% trans 'En construcción' %}</h3>
+                                </div>
+                                <div class="panel-body">
+                                    <div class="row text-center">
+                                        <div class="col-md-12">
+                                            <div class="jumbotron">
+                                                 <img src="{% static 'images/enconstrucion.png' %}" height="400" width="400">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block scripts %}
+    {{ form.media.js }}
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('#id_form' ).submit(function( event ) {
+                $('#id_cargando').modal('show');
+            });
+        });
+    </script>
+{% endblock scripts %}

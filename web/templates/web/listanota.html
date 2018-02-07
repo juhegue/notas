@@ -1,0 +1,173 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load staticfiles %}
+{% block titlehead %}{% trans 'Notas' %}{% endblock titlehead %}
+{% block title %}{% trans 'Notas' %}{% endblock title %}
+
+{% block styles %}
+    {{ form.media.css }}
+    <link href="{% static 'css/bootstrap-table.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/bootstrap.fd.css' %}" rel="stylesheet">
+    <style>
+        .form-control {
+            max-width: 200px;   // limita el ancho para corregir el select2
+        }
+        .wrappable {            // limita el ancho td
+            min-width: 170px; max-width: 170px; word-wrap: break-word;
+        }
+    </style>
+{% endblock styles %}
+
+{% block breadcrumb_active %}
+    {% trans 'Notas' %}
+{% endblock breadcrumb_active %}
+
+{% block content %}
+    <div id="toolbar">
+        <form action="" method="post" role="form" id="id_formulario">
+            {% csrf_token %}
+            <a href="{% url 'libro_nuevo' %}" title="{% trans 'Nuevo' %}" class="btn btn-sm btn-default" role="button"><span class="glyphicon glyphicon-plus-sign"></span></a>
+            {{ form.libro }}
+        </form>
+    </div>
+    <div class="container-fluid">
+        <div class="dataTable_wrapper">
+            <table width="100%" style="display:none;"
+                data-toolbar="#toolbar"
+                id="id_notas"
+                class="table table-striped table-bordered table-hover"
+                data-toggle="table"
+                data-search="true"
+                data-pagination="true"
+                data-locale="es-ES"
+                data-cookie="true"
+                data-cookie-id-table="Notas"
+                data-cookie-expire="12m"
+                data-detail-view="true"
+                data-detail-formatter="detailFormatter"
+                data-id-field="id"
+                >
+                <thead>
+                    <tr>
+                        <th data-visible="false" data-field="id">id</th>
+                        <th class="col-xs-10" data-sortable="true">{% trans 'Título' %}</th>
+                        <th class="col-xs-1" data-sortable="true">{% trans 'Modificación' %}</th>
+                        <th class="col-xs-1 text-center">{% trans 'Acciones' %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for nota in nota_list %}
+                    <tr>
+                        <td>{{ nota.id }}</td>
+                        <td>{{ nota.nombre }}</td>
+                        <td><span class="hidden">nota.modificado</span>{{ nota.modificado|date:"d/m/Y" }}</td>
+                        <td class="text-center">
+                            <a href="{% url 'nota_eliminar' nota.id %}" class="text-danger" role="button"><span class="glyphicon glyphicon-trash"></span></a>                            &nbsp;&nbsp;
+                            <a href="{% url 'nota_editar' nota.id %}" class="text-primary" role="button"><span class="glyphicon glyphicon-pencil"></span></a>
+                        </td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock content%}
+
+{% block scripts %}
+    {{ form.media.js }}
+    <script src="{% static 'js/bootstrap-table.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap-table-locale-all.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap-table-cookie.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.fd.js' %}"></script>
+    <script type="text/javascript">
+        $(document).ready(function(){
+            var disabled = 'disabled';
+            if ( $('#id_libro').val().length>0 ){ disabled = ''; }
+
+            setTimeout(function(){
+                var btn = `<button style="margin-top:-22px;border:0;" id="id_nota_nueva" type="button" class="btn btn-default btn-sm" title="`+'{% trans 'Nuevo' %}'+`"` + disabled +`>
+                           <span class="glyphicon glyphicon-plus-sign"></span>
+                           </button> `;
+                $( '.fht-cell' ).remove();
+                $( btn ).appendTo( '.detail' );
+            }, 100);
+
+            $('#id_notas').show();
+        });
+
+        $(document).on('change','#id_libro',function(){
+            var id_libro = $('#id_libro').val();
+            if (id_libro) {
+                $.cookie('libro', id_libro, {expires: 7});
+                $('#id_formulario').submit();
+            }
+        });
+
+        $(document).on('click','#id_nota_nueva',function(){
+            var libro = $('#id_libro').val();
+
+            /*  en lugar de ir a nueva nota
+            var href = '{% url "nota_nuevo" %}' + libro + '/';
+            window.location.assign(href);
+               se crea y se edita
+            */
+            var url = '/getdatos_ajax/nueva_nota';
+            var param = {libro_id: libro};
+            funcionAjax(url, param, function(data){
+                var href = '/nota/editar/' + data + '/';
+                window.location.assign(href);
+            });
+        });
+
+        function detailFormatter(index, row) {
+            var key = zeroFill(row.id, 6);
+
+            var url = '/getdatos_ajax/adjunto_html';
+            var param = {nota_id: key};
+            funcionAjax(url, param, function(data){
+                $elemento = $('#id_lista_adjuntos'+key);
+                $elemento.html(data);
+                if (data) { var estado = true; } else { var estado = false; }
+                MuestraAdjuntos(key, estado);
+            });
+
+            return `
+                <div class='row'>
+                    <div id='id_editor` + key + `' class='col-md-9' style='padding-right:4px;padding-left:8px;'>
+                        <iframe id='id_frame' src='/iframe/?` + key + `' height='300px'  width='100%' scrolling='no' frameborder='0'></iframe>
+                    </div>
+                    <div id='id_adjuntos` + key + `' class='col-md-3' style='padding-left:0px;display:none;'>
+                        <div class='text-center'>
+                            <button type='button' style='width:100%' id='id_btnadjuntos` + key + `' class='btn btn-primary adjuntos'>`+ '{% trans 'Adjuntos' %}' +`</button>
+                        </div>
+                        <div id='id_lista_adjuntos` + key + `'>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        $(document).on('click', '.adjuntos',function(e){
+            var key = $(e.target).attr('id');
+            key = key.substr(key.length-6, 6);
+
+            $.FileDialog({
+                title: '{% trans 'Subir archivos' %}',
+                ok_button: '{% trans 'Aceptar' %}',
+                cancel_button: '{% trans 'Cerrar' %}',
+                drag_message: '{% trans 'Arrastre los archivos aquí' %}',
+                error_message: '{% trans 'Se ha producido un error al leer el archivo' %}',
+                remove_message: '{% trans 'Eliminar fichero' %}',
+                accept: '*',
+                dropheight: 100,
+                multiple: true,
+             }).on('files.bs.filedialog', function(ev) {
+                uploadFiles(key, ev.files, '{{ csrf_token }}');
+            }).on('cancel.bs.filedialog', function(ev) {
+            });
+        });
+
+
+    </script>
+{% endblock scripts %}
+

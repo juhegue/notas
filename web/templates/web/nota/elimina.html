@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load staticfiles %}
+{% block titlehead %}{% trans 'Eliminar Nota' %}{% endblock titlehead %}
+{% block title %}{% trans 'Eliminar Nota' %}: {{ centro.nombre }}{% endblock title %}
+
+{% block breadcrumb %}
+<i class="fa fa-server"></i>  <li><a href="{% url 'listanota' %}">Notas</a></li>
+{% endblock breadcrumb %}
+
+{% block breadcrumb_active %}
+    {% trans 'Nota' %}
+{% endblock breadcrumb_active %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-6 col-lg-offset-3">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h3 class="panel-title">{% trans 'Borrar Nota' %}</h3>
+            </div>
+            <div class="panel-body">
+                <div class="alert alert-warning">
+                    <strong>{% trans 'Atención!' %}</strong> {% trans 'Va a proceder a borrar una Nota' %}.
+                </div>
+
+                <p>{% trans '¿Seguro que desea eliminar la nota' %}?: {{ nota }}</p>
+                <br>
+                <form action="" method="POST">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">{% trans 'Si, eliminar' %}</button>
+                    <a href="{% url 'listanota' %}" class="btn btn-default">{% trans 'No, cancelar' %}</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

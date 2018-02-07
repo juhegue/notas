@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+    {% load i18n %}
+    {% load staticfiles %}
+    {% load funciones %}
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="Notas">
+        <meta name="author" content="Juhegue">
+        <link rel="icon" href="{% static 'images/favicon.png' %}">
+
+        <title>
+            {% block titlehead %}
+            {% endblock titlehead %}
+        </title>
+
+        {% block styles_base %}
+        <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+        <link href="{% static 'css/font-awesome.min.css' %}" rel="stylesheet">
+        <link href="{% static 'css/notas.css' %}" rel="stylesheet">
+        {% endblock styles_base %}
+
+        {% block styles %}
+        {% endblock styles %}
+    </head>
+
+    <body>
+        {% block header %}
+        <nav class="navbar navbar-default">
+            <div class="container-fluid">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                            data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="/">
+                        <img src="{% static 'images/favicon.png' %}" width="22" height="22" class="d-inline-block align-top" alt="Notas">
+                    </a>
+                </div>
+
+                <!-- Collect the nav links, forms, and other content for toggling -->
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <ul class="nav navbar-nav">
+                        <li><a href="/admin/">Admin</a></li>
+                        <li class="dropdown active">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ user.email }}<span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="/logout/"><i class="fa fa-sign-out"></i>Salir</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+
+                    <form class="navbar-form navbar-right">
+                        <div class="form-group">
+                            <input type="text" class="form-control" placeholder="Buscar">
+                        </div>
+                    </form>
+
+                </div><!-- /.navbar-collapse -->
+            </div><!-- /.container-fluid -->
+        </nav>
+        {% endblock header %}
+
+        {% block nucleocentral %}
+        <main role="main" class="container-fluid">
+<!--
+            <div style="margin-top:-35px;">
+                <h3>
+                {% block title %}
+                {% endblock title %}
+                </h3>
+            </div>
+-->
+            <ol class="breadcrumb">
+                {% block breadcrumb %}
+                {% endblock breadcrumb %}
+                <li class="active">
+                {% block breadcrumb_active %}
+                {% endblock breadcrumb_active %}
+                </li>
+            </ol>
+
+            {% if form.errors or form.non_field_errors %}
+                <a id="id_btn_error" class="btn" href="#" data-toggle="tooltip" title="" data-placement="top" data-original-title="Errores" style="padding-bottom: 0px;border-bottom-width: 0px;padding-top: 0px;border-top-width: 0px;">
+                    <span class="glyphicon glyphicon glyphicon-exclamation-sign" style="color:#ba2121;"></span>
+                </a>
+            {% endif %}
+
+            {% block messages %}
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}">
+                        <a class="close" data-dismiss="alert">×</a>
+                        {{ message|safe }}
+                    </div>
+                    {% endfor %}
+                {% endif %}
+            {% endblock messages%}
+
+            <div class="modal fade" id="id_cargando" tabindex="-1" role="dialog"  style="z-index:99999;">
+              <div class="modal-dialog text-center">
+                  <div class="modal-header" style="border-bottom: 0px solid #e5e5e5;">
+                      <i class="fa fa-gear fa-spin" style="font-size:85px;color:black"></i>
+                  </div>
+                  <div class="modal-body">
+                      <span id="id_cargando_msg" style="font-size:16px; color:#DDDDDD;">Un momento por favor...</span>
+                  </div>
+              </div>
+            </div>
+
+            {% block content %}
+            {% endblock content %}
+        </main>
+        {% endblock nucleocentral %}
+
+       {% block footer %}
+        <footer class="footer">
+            <div class="container text-right">
+                <span>Desarrollado por </span>
+                <a href="juhegue.duckdns.org:8100">Juhegue</a><img src="{% static 'images/logo-ds-blanco.png' %}" alt="Logo juhegue" width="35" height="35">
+            </div>
+        </footer>
+        {% endblock footer %}
+
+        {% block scripts_base %}
+        <script src="{% static 'js/jquery.min.js' %}"></script>
+        <script src="{% static 'js/bootstrap.min.js' %}"></script>
+        <script src="{% static 'js/bootbox.min.js' %}"></script>
+        <script src="{% static 'js/jquery.cookie.js' %}"></script>
+        <script src="{% static 'js/ajax.js' %}"></script>
+        <script src="{% static 'js/notas.js' %}"></script>
+        <script type="text/javascript">
+            $('#id_btn_error').click(function(e) {
+                var errores = `
+                        {% for field in form %}
+                            {% for error in field.errors %}
+                                <div class="alert alert-danger">
+                                    <strong>{{ field.label_tag }} </strong>{{ error|escape }}
+                                </div>
+                            {% endfor %}
+                        {% endfor %}
+
+                        {% for error in form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                <strong>{{ error|escape }}</strong>
+                            </div>
+                        {% endfor %}
+                `;
+                bootbox.dialog({
+                    title: 'Errores',
+                    message: errores,
+                    onEscape: true,
+                    buttons: {
+                        success: {
+                            label: "OK",
+                            className: "btn-primary",
+                        }
+                    }
+                });
+            });
+        </script>
+        {% endblock scripts_base %}
+
+        {% block scripts %}
+        {% endblock scripts %}
+  </body>
+</html>

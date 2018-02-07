@@ -1,0 +1,189 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block titlehead %}
+    {% trans 'Nota' %}
+{% endblock titlehead %}
+
+{% block styles %}
+    {{ form.media.css }}
+    <link href="{% static 'css/bootstrap.fd.css' %}" rel="stylesheet">
+    <style>
+        .wrappable {            // limita el ancho td
+            min-width: 170px; max-width: 170px; word-wrap: break-word;
+        }
+    </style>
+{% endblock styles %}
+
+{% block breadcrumb %}
+    <li><a href="{% url 'listanota' %}">Notas</a></li>
+{% endblock breadcrumb %}
+
+{% block breadcrumb_active %}
+    {% trans 'Nota' %}
+{% endblock breadcrumb_active %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-md-12">
+        <form action="" method="post" enctype="multipart/form-data" role="form" id="id_formulario">
+            {% csrf_token %}
+            {{ form.texto }}
+            {{ form.uuid }}
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    {% if create_view %}
+                        <h3 class="panel-title">{% trans 'Nueva Nota' %}</h3>
+                    {% else %}
+                        <h3 class="panel-title">{% trans 'Modificar Nota' %}</h3>
+                    {% endif %}
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                {{ form.libro.errors }}
+                                <label for={{form.libro.auto_id}} class="control-label">
+                                {{ form.libro.label }}
+                                {% if form.libro.field.required %}<span class="required_fields">*</span>{% endif %}
+                                </label>
+                                {{ form.libro }}
+                                {% if form.libro.help_text %}
+                                <p class="help-block">{{ form.libro.help_text|safe }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                {{ form.nombre.errors }}
+                                <label for={{form.nombre.auto_id}} class="control-label">
+                                {{ form.nombre.label }}
+                                {% if form.nombre.field.required %}<span class="required_fields">*</span>{% endif %}
+                                </label>
+                                {{ form.nombre }}
+                                {% if form.nombre.help_text %}
+                                <p class="help-block">{{ form.nombre.help_text|safe }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class='row'>
+                        <div id='id_editor{{ nota_id }}' class='col-md-12' style='padding-right:4px;padding-left:8px;'>
+                            <iframe id='id_frame' src='/iframe/?{{ nota_id }}no_btn_grabar' height='250px'  width='100%' scrolling='no' frameborder='0'></iframe>
+                        </div>
+                        <div id='id_adjuntos{{ nota_id }}' class='col-md-3' style='padding-left:0px;display:none;'>
+                            <div class='text-center'>
+                                <button type='button' style='width:100%' id='id_btnadjuntos{{ nota_id }}'
+                                        class='btn btn-primary adjuntos' {% if create_view %}disabled{% endif %}>{% trans 'Adjuntos' %}
+                                </button>
+                            </div>
+                            <div id='id_lista_adjuntos{{ nota_id }}'>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel-footer">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fa fw fa-floppy-o"></i> {% trans 'Guardar' %}
+                        </button>
+                        <a class="btn btn-default" href="{% url 'listanota' %}">{% trans 'Cancelar' %}</a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock content %}
+
+{% block scripts %}
+    {{ form.media.js }}
+    <script src="{% static 'js/bootstrap.fd.js' %}"></script>
+    <script type="text/javascript">
+        var editorGetContent = 0;
+
+        $(function(){
+            key = '{{ nota_id }}';
+
+            {% if create_view %}
+                MuestraAdjuntos(key, false);
+            {% else %}
+                MuestraAdjuntos(key, true);
+            {% endif %}
+
+            var url = '/getdatos_ajax/adjunto_html';
+            var param = {nota_id: key};
+            funcionAjax(url, param, function(data){
+                $elemento = $('#id_lista_adjuntos'+key);
+                $elemento.html(data);
+                if (data) { var estado = true; } else { var estado = false; }
+                //MuestraAdjuntos(key, estado);
+            });
+        });
+
+        $(document).ready(function(e){
+
+            $('#id_formulario').submit(function(e) {
+                var valor = editorGetContent();
+                $('#id_texto').val(valor);
+
+                $( '#id_libro' ).prop( 'disabled', false );
+
+/*
+                e.preventDefault();
+                var $form = $('#id_formulario');
+                var action = $form.attr('action');
+                var method = $form.attr('method');
+
+                var formElement = document.getElementById('id_formulario');
+                var formData = new FormData(formElement);
+                for (var key in files){
+                    var f = files[key];
+                    formData.append('files', f, key);
+                }
+                formData.append('upload', true);
+                var request = new XMLHttpRequest();
+                request.onload = function(e) {
+                    if (request.status != 200) {
+                        alert('ERROR:' + request.status);
+                    }
+                };
+                request.onreadystatechange = function () {
+                    if(request.readyState === XMLHttpRequest.DONE && request.status === 200) {
+                        if request.responseText == 'ok'){
+                            $('#id_formulario').submit();
+                        }
+                    }
+                };
+                request.open(method, action);
+                request.send(formData);
+*/
+            });
+
+            $('.adjuntos').on('click',function(e){
+                var key = $(e.target).attr('id');
+                key = key.substr(key.length-6, 6);
+
+                $.FileDialog({
+                    title: '{% trans 'Subir archivos' %}',
+                    ok_button: '{% trans 'Aceptar' %}',
+                    cancel_button: '{% trans 'Cerrar' %}',
+                    drag_message: '{% trans 'Arrastre los archivos aquí' %}',
+                    error_message: '{% trans 'Se ha producido un error al leer el archivo' %}',
+                    remove_message: '{% trans 'Eliminar fichero' %}',
+                    accept: '*',
+                    dropheight: 100,
+                    multiple: true,
+                 }).on('files.bs.filedialog', function(ev) {
+                    uploadFiles(key, ev.files, '{{ csrf_token }}');
+                }).on('cancel.bs.filedialog', function(ev) {
+                });
+            });
+        });
+
+    </script>
+{% endblock scripts %}

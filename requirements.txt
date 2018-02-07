@@ -1,0 +1,8 @@
+Django==2.0.2
+django-autocomplete-light==3.2.10
+django-extensions==1.9.9
+django-post-office==3.0.4
+jsonfield==2.0.2
+pytz==2017.3
+six==1.11.0
+typing==3.6.4

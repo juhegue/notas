@@ -1,0 +1,40 @@
+body {
+/*    background-color: #C1D14B;
+    color: #414141; */
+}
+
+.footer {
+    padding-top: 6px;
+    background-color: #3F3F3F;
+    width: 100%;
+    bottom: 0;
+    position: fixed;
+    height: 40px;
+	z-index: 9999;
+	font-size: 80%;
+}
+
+.footer span {
+    color:white;
+}
+
+.footer a {
+    color:white;
+}
+
+/* botones */
+@font-face {
+    font-family: 'sk-modernistbold';
+    src: url('sk-modernist-bold-webfont.woff2') format('woff2'),
+         url('sk-modernist-bold-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+.btn {
+    border-radius: 8px;
+    font-family: 'sk-modernistbold';
+    font-size: 16px;
+    border: 0;
+}

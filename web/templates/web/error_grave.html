@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block title %}Error{% endblock %}
+
+{% block styles %}
+    {{ block.super }}
+    {% include '_style_css_login.html' %}
+{% endblock styles %}
+
+{% block header %}
+    <div class="container">
+        <div class="row">
+            <img src="{% static 'images/logo-notas.png' %}" alt="logo" width="175" height="175">
+        </div>
+    </div>
+{% endblock header %}
+
+{% block nucleocentral %}
+    <div class="container">
+        <div class="row">
+            <div class="card" style="width: 22rem;">
+                <h3>{{error}}</h3>
+                <p>{{ msg }}</p>
+            </div>
+        </div>
+    </div>
+{% endblock nucleocentral %}
+
+{% block contentlogin %}
+{% endblock contentlogin %}
+

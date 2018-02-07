@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load i18n %}
+{% block titlehead %}{% trans 'Bienvenido' %}{% endblock titlehead %}
+{% block title %}{% trans 'Bienvenido' %}{% endblock title %}
+
+{% block content %}
+<div class="jumbotron">
+    <div class="container">
+        <h1 class="display-4">Notas</h1>
+        <p class="lead">Una forma facil de organizar notas.</p>
+    </div>
+
+    <textarea>Next, start a free trial!</textarea>
+    <textarea>XXX</textarea>
+</div>
+{% endblock content%}
+
+
+{% block scripts %}
+    <script src="{% static 'js/tinymce/js/tinymce/tinymce.min.js' %}"></script>
+    <script>tinymce.init({ selector:'textarea' });</script>
+{% endblock scripts%}

@@ -1,0 +1,20 @@
+{% load i18n %}{% autoescape off %}
+{% blocktrans %}Bienvenido a SIIBase, Suministro de información inmediata{% endblocktrans %}
+
+
+{% trans 'Necesita completar su registro para poder utilizar SIIBASE' %}
+
+{% trans "Por favor, pulse en esta página e introduzca una contraseña de su elección:" %}
+{% block reset_link %}
+{{ protocol }}://{{ domain }}{% url 'pw_reset_confirm' uidb64=uid token=token %}
+
+{% endblock %}
+
+{% trans "Le recordamos la dirección de correo con la que esta registrado:" %} {{ user.get_username }}
+
+{% trans 'Atentamente' %}
+
+
+SIIBase
+
+{% endautoescape %}
