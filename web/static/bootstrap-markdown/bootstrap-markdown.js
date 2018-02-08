@@ -606,7 +606,7 @@
         this.disableButtons('all');
       }
       // juhegue, para que muestre correctamente las tablas
-      $("table").addClass("table table-condensed table-bordered table-hover");
+      $("table").addClass("table table-striped table-bordered table-hover");
       return this;
     },
     hidePreview: function() {

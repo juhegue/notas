@@ -7,7 +7,6 @@ from django.urls import re_path
 
 from .views.inicio import Index
 from .views.listanota import ListaNotaView
-from .views.iframe import IframeView
 from .views.libro import LibroCreateView
 from .views.nota import NotaCreateView
 from .views.nota import NotaUpdateView
@@ -27,8 +26,6 @@ urlpatterns = [
     re_path(r'^$', Index.as_view(), name="index"),
 
     re_path(r'^listanota(?:/(?P<libro>\d+))?/$', ListaNotaView.as_view(), name="listanota"),
-
-    re_path(r'^iframe(?:/(?P<id>\d+))?/$', IframeView.as_view(), name="iframe"),
 
     re_path(r'^libro/nuevo/$', LibroCreateView.as_view(), name="libro_nuevo"),
 

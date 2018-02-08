@@ -28,8 +28,8 @@
                 <br>
                 <form action="" method="POST">
                     {% csrf_token %}
-                    <button type="submit" class="btn btn-danger">{% trans 'Si, eliminar' %}</button>
-                    <a href="{% url 'listanota' %}" class="btn btn-default">{% trans 'No, cancelar' %}</a>
+                    <button type="submit" class="btn btn-danger btn-normal">{% trans 'Si, eliminar' %}</button>
+                    <a href="{% url 'listanota' %}" class="btn btn-default btn-normal">{% trans 'No, cancelar' %}</a>
                 </form>
             </div>
         </div>

@@ -8,13 +8,18 @@
     {{ form.media.css }}
     <link href="{% static 'css/bootstrap-table.min.css' %}" rel="stylesheet">
     <link href="{% static 'css/bootstrap.fd.css' %}" rel="stylesheet">
+    <link href="{% static 'bootstrap-markdown/bootstrap-markdown.min.css' %}" rel="stylesheet">
     <style>
         .form-control {
-            max-width: 200px;   // limita el ancho para corregir el select2
+            max-width: 200px;   /* limita el ancho para corregir el select2 */
         }
-        .wrappable {            // limita el ancho td
+        .wrappable {            /*  limita el ancho td */
             min-width: 170px; max-width: 170px; word-wrap: break-word;
         }
+
+    .md-preview thead th {
+      padding: 7px !important;  /* alto th */
+    }
     </style>
 {% endblock styles %}
 
@@ -26,7 +31,7 @@
     <div id="toolbar">
         <form action="" method="post" role="form" id="id_formulario">
             {% csrf_token %}
-            <a href="{% url 'libro_nuevo' %}" title="{% trans 'Nuevo' %}" class="btn btn-sm btn-default" role="button"><span class="glyphicon glyphicon-plus-sign"></span></a>
+            <a href="{% url 'libro_nuevo' %}" title="{% trans 'Nuevo' %}" class="btn btn-sm btn-default btn-plus" role="button"><span class="glyphicon glyphicon-plus-sign"></span></a>
             {{ form.libro }}
         </form>
     </div>
@@ -79,13 +84,20 @@
     <script src="{% static 'js/bootstrap-table-locale-all.min.js' %}"></script>
     <script src="{% static 'js/bootstrap-table-cookie.min.js' %}"></script>
     <script src="{% static 'js/bootstrap.fd.js' %}"></script>
+    <!--editor-->
+    <script src="{% static 'bootstrap-markdown/to-markdown.js' %}"></script>
+    <script src="{% static 'bootstrap-markdown/bootstrap-markdown.js' %}"></script>
+    <script src="{% static 'bootstrap-markdown/bootstrap-markdown.es.js' %}"></script>
+    <script src="{% static 'bootstrap-markdown/marked.min.js' %}"></script>
+    <script src="{% static 'js/jspdf.debug.js' %}"></script>
+    <script src="{% static 'js/editor.js' %}"></script>
     <script type="text/javascript">
         $(document).ready(function(){
             var disabled = 'disabled';
             if ( $('#id_libro').val().length>0 ){ disabled = ''; }
 
             setTimeout(function(){
-                var btn = `<button style="margin-top:-22px;border:0;" id="id_nota_nueva" type="button" class="btn btn-default btn-sm" title="`+'{% trans 'Nuevo' %}'+`"` + disabled +`>
+                var btn = `<button style="margin-top:-22px;border:0;" id="id_nota_nueva" type="button" class="btn btn-default btn-sm btn-plus" title="`+'{% trans 'Nuevo' %}'+`"` + disabled +`>
                            <span class="glyphicon glyphicon-plus-sign"></span>
                            </button> `;
                 $( '.fht-cell' ).remove();
@@ -93,7 +105,50 @@
             }, 100);
 
             $('#id_notas').show();
+
+            $('#id_notas').on('click-row.bs.table',function(e,row,$tr){
+                if (!$(e.target).hasClass('detail-icon')) {
+                    $tr.find('>td>.detail-icon').trigger('click');
+                }
+            });
         });
+
+        function detailFormatter(index, row) {
+            var key = zeroFill(row.id, 6);
+
+            var url = '/getdatos_ajax/adjunto_html';
+            var param = {nota_id: key};
+            funcionAjax(url, param, function(data){
+                var $elemento = $('#id_lista_adjuntos'+key);
+                $elemento.html(data);
+                if (data) { var estado = true; } else { var estado = false; }
+                MuestraAdjuntos(key, estado);
+            });
+
+
+            var url = '/getdatos_ajax/lee_nota';
+            var param = {nota_id: key};
+            funcionAjax(url, param, function(data){
+                var $elemento = $('#id_teditor'+key);
+                $elemento.val(data.texto);
+                showEditor(key, true, 'preview')
+            });
+
+            return `
+                <div class='row'>
+                    <div id='id_editor` + key + `' class='col-md-9' style='padding-right:4px;padding-left:8px;'>
+                        <textarea id='id_teditor` + key + `' rows='14' style='display:none;'></textarea>
+                    </div>
+                    <div id='id_adjuntos` + key + `' class='col-md-3' style='padding-left:0px;display:none;'>
+                        <div class='text-center'>
+                            <button type='button' style='width:100%' id='id_btnadjuntos` + key + `' class='btn btn-primary adjuntos'>`+ '{% trans 'Adjuntos' %}' +`</button>
+                        </div>
+                        <div id='id_lista_adjuntos` + key + `'>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
 
         $(document).on('change','#id_libro',function(){
             var id_libro = $('#id_libro').val();
@@ -109,6 +164,7 @@
             /*  en lugar de ir a nueva nota
             var href = '{% url "nota_nuevo" %}' + libro + '/';
             window.location.assign(href);
+
                se crea y se edita
             */
             var url = '/getdatos_ajax/nueva_nota';
@@ -118,34 +174,6 @@
                 window.location.assign(href);
             });
         });
-
-        function detailFormatter(index, row) {
-            var key = zeroFill(row.id, 6);
-
-            var url = '/getdatos_ajax/adjunto_html';
-            var param = {nota_id: key};
-            funcionAjax(url, param, function(data){
-                $elemento = $('#id_lista_adjuntos'+key);
-                $elemento.html(data);
-                if (data) { var estado = true; } else { var estado = false; }
-                MuestraAdjuntos(key, estado);
-            });
-
-            return `
-                <div class='row'>
-                    <div id='id_editor` + key + `' class='col-md-9' style='padding-right:4px;padding-left:8px;'>
-                        <iframe id='id_frame' src='/iframe/?` + key + `' height='300px'  width='100%' scrolling='no' frameborder='0'></iframe>
-                    </div>
-                    <div id='id_adjuntos` + key + `' class='col-md-3' style='padding-left:0px;display:none;'>
-                        <div class='text-center'>
-                            <button type='button' style='width:100%' id='id_btnadjuntos` + key + `' class='btn btn-primary adjuntos'>`+ '{% trans 'Adjuntos' %}' +`</button>
-                        </div>
-                        <div id='id_lista_adjuntos` + key + `'>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
 
         $(document).on('click', '.adjuntos',function(e){
             var key = $(e.target).attr('id');
@@ -166,8 +194,6 @@
             }).on('cancel.bs.filedialog', function(ev) {
             });
         });
-
-
     </script>
 {% endblock scripts %}
 
