@@ -51,13 +51,17 @@ class Datos(object):
             </div>                
             """ % html
 
-    def lee_nota_texto(self, nota_id):
+    def lee_nota(self, nota_id):
         nota = Nota.objects.filter(id=nota_id).first()
-        return nota.texto if nota else ""
+        resul = dict()
+        resul["texto"] = nota.texto if nota else ""
+        resul["html"] = nota.html if nota else ""
+        return resul
 
-    def graba_nota_texto(self, nota_id, texto):
+    def graba_nota_texto(self, nota_id, texto, html):
         nota = Nota.objects.get(id=nota_id)
         nota.texto = texto
+        nota.html = html
         nota.save()
 
     def nueva_nota(self, libro_id):

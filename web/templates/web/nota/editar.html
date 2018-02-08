@@ -8,11 +8,10 @@
 
 {% block styles %}
     {{ form.media.css }}
+<link href="{% static 'css/bootstrap-table.min.css' %}" rel="stylesheet">
     <link href="{% static 'css/bootstrap.fd.css' %}" rel="stylesheet">
+    <link href="{% static 'bootstrap-markdown/bootstrap-markdown.min.css' %}" rel="stylesheet">
     <style>
-        .wrappable {            // limita el ancho td
-            min-width: 170px; max-width: 170px; word-wrap: break-word;
-        }
     </style>
 {% endblock styles %}
 
@@ -31,7 +30,7 @@
         <form action="" method="post" enctype="multipart/form-data" role="form" id="id_formulario">
             {% csrf_token %}
             {{ form.texto }}
-            {{ form.uuid }}
+            {{ form.html }}
             <div class="panel panel-primary">
                 <div class="panel-heading">
                     {% if create_view %}
@@ -74,12 +73,11 @@
 
                     <div class='row'>
                         <div id='id_editor{{ nota_id }}' class='col-md-12' style='padding-right:4px;padding-left:8px;'>
-                            <iframe id='id_frame' src='/iframe/?{{ nota_id }}no_btn_grabar' height='250px'  width='100%' scrolling='no' frameborder='0'></iframe>
+                            <textarea id='id_teditor{{ nota_id }}' style='display:none;' rows='12'>{{ nota.texto }}</textarea>
                         </div>
                         <div id='id_adjuntos{{ nota_id }}' class='col-md-3' style='padding-left:0px;display:none;'>
                             <div class='text-center'>
-                                <button type='button' style='width:100%' id='id_btnadjuntos{{ nota_id }}'
-                                        class='btn btn-primary adjuntos' {% if create_view %}disabled{% endif %}>{% trans 'Adjuntos' %}
+                                <button type='button' style='width:100%' id='id_btnadjuntos{{ nota_id }}' class='btn btn-primary adjuntos' {% if create_view %}disabled{% endif %}>{% trans 'Adjuntos' %}
                                 </button>
                             </div>
                             <div id='id_lista_adjuntos{{ nota_id }}'>
@@ -88,10 +86,10 @@
                     </div>
 
                     <div class="panel-footer">
-                        <button type="submit" class="btn btn-primary">
+                        <button type="submit" class="btn btn-primary btn-normal">
                             <i class="fa fw fa-floppy-o"></i> {% trans 'Guardar' %}
                         </button>
-                        <a class="btn btn-default" href="{% url 'listanota' %}">{% trans 'Cancelar' %}</a>
+                        <a class="btn btn-default btn-normal" href="{% url 'listanota' %}">{% trans 'Cancelar' %}</a>
                     </div>
                 </div>
             </div>
@@ -103,6 +101,13 @@
 {% block scripts %}
     {{ form.media.js }}
     <script src="{% static 'js/bootstrap.fd.js' %}"></script>
+    <!--editor-->
+    <script src="{% static 'bootstrap-markdown/to-markdown.js' %}"></script>
+    <script src="{% static 'bootstrap-markdown/bootstrap-markdown.js' %}"></script>
+    <script src="{% static 'bootstrap-markdown/bootstrap-markdown.es.js' %}"></script>
+    <script src="{% static 'bootstrap-markdown/marked.min.js' %}"></script>
+    <script src="{% static 'js/jspdf.debug.js' %}"></script>
+    <script src="{% static 'js/editor.js' %}"></script>
     <script type="text/javascript">
         var editorGetContent = 0;
 
@@ -126,14 +131,17 @@
         });
 
         $(document).ready(function(e){
+            showEditor('{{ nota_id }}', false, 'editor');
+            $('#id_teditor{{ nota_id }}').show();
 
             $('#id_formulario').submit(function(e) {
-                var valor = editorGetContent();
-                $('#id_texto').val(valor);
+                $editor = $('#id_teditor{{ nota_id }}').data('markdown');
+                $('#id_texto').val($editor.getContent());
+                $('#id_html').val($editor.parseContent());
 
                 $( '#id_libro' ).prop( 'disabled', false );
 
-/*
+/* Prueba envio adjuntos
                 e.preventDefault();
                 var $form = $('#id_formulario');
                 var action = $form.attr('action');
