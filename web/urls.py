@@ -14,6 +14,7 @@ from .views.nota import NotaDeleteView
 from .views.ajax import AjaxView
 from .views.adjunto import AdjuntoSubir
 from .views.adjunto import AdjuntoBajar
+from .views.guia_markdawn import GuiaMarkdownView
 
 # https://simpleisbetterthancomplex.com/references/2016/10/10/url-patterns.html
 
@@ -40,6 +41,7 @@ urlpatterns = [
     # Ajax
     re_path(r'^getdatos_ajax/([^/]+)', AjaxView.as_view()),
 
+    re_path(r'^guia_markdawn/$', GuiaMarkdownView.as_view()),
 ]
 
 if settings.DEBUG:
