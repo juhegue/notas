@@ -6,6 +6,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import CreateView
 from django.views.generic import UpdateView
 from django.views.generic import DeleteView
+from django.http.response import HttpResponseForbidden
+
 
 from web.models import Nota
 from web.forms.notaform import NotaForm
@@ -66,7 +68,7 @@ class NotaUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     def form_valid(self, form):
         if form.is_valid():
             f = form.save(commit=False)
-            f.user = self.request.user
+            # f.user = self.request.user
             f.activa = True
             f.save()
         return super(NotaUpdateView, self).form_valid(form)
@@ -83,3 +85,10 @@ class NotaDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
     def get_success_url(self):
         return reverse('listanota', kwargs={'libro': self.object.libro.id})
 
+    def delete(self, *args, **kwargs):
+        object = self.get_object()
+        if not self.request.user.is_staff:
+            if object.user.email != self.request.user.email:
+                return HttpResponseForbidden("Esta nota pertenece al usuario '%s'" % self.object.user.email)
+
+        return super(NotaDeleteView, self).delete(*args, **kwargs)

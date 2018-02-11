@@ -52,7 +52,6 @@ class UserAdminExtended(UserAdmin):
         return obj
 
     def save_model(self, request, obj, form, change):
-        obj.borra_crop()
         obj.save()
 
 

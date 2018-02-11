@@ -8,9 +8,14 @@ https://docs.djangoproject.com/en/2.0/howto/deployment/wsgi/
 """
 
 import os
-
+import sys
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "idal.settings")
+sys.path.append("/var/www/notas/")
+sys.path.append("/home/juan/.virtualenvs/notas3/lib/python3.5/site-packages/")
+
+os.environ.setdefault("LANG", "en_US.UTF-8")
+os.environ.setdefault("LC_ALL", "en_US.UTF-8")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "notas.settings_pro")
 
 application = get_wsgi_application()
