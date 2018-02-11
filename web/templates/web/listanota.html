@@ -25,7 +25,9 @@
         td {
             padding: 3px !important;
         }
-
+        .fixed-table-container tbody td .th-inner, .fixed-table-container thead th .th-inner {
+            padding: 2px !important;
+        }
     </style>
 {% endblock styles %}
 
@@ -104,7 +106,7 @@
             if ( $('#id_libro').val().length>0 ){ disabled = ''; }
 
             setTimeout(function(){
-                var btn = `<button style="margin-top:-22px;border:0;" id="id_nota_nueva" type="button" class="btn btn-default btn-sm btn-plus" title="`+'{% trans 'Nuevo' %}'+`"` + disabled +`>
+                var btn = `<button style="margin-top:-10px;border:0;" id="id_nota_nueva" type="button" class="btn btn-default btn-sm btn-plus" title="`+'{% trans 'Nuevo' %}'+`"` + disabled +`>
                            <span class="glyphicon glyphicon-plus-sign"></span>
                            </button> `;
                 $( '.fht-cell' ).remove();
