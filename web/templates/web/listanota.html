@@ -17,9 +17,13 @@
             min-width: 170px; max-width: 170px; word-wrap: break-word;
         }
 
-    .md-preview thead th {
-      padding: 7px !important;  /* alto th */
-    }
+        .md-preview thead th {
+          padding: 7px !important;  /* alto th */
+        }
+        .pointer {
+            cursor: pointer;
+        }
+
     </style>
 {% endblock styles %}
 
@@ -64,7 +68,7 @@
                     {% for nota in nota_list %}
                     <tr>
                         <td>{{ nota.id }}</td>
-                        <td>{{ nota.nombre }}</td>
+                        <td class="pointer">{{ nota.nombre }}</td>
                         <td><span class="hidden">nota.modificado</span>{{ nota.modificado|date:"d/m/Y" }}</td>
                         <td class="text-center">
                             <a href="{% url 'nota_eliminar' nota.id %}" class="text-danger" role="button"><span class="glyphicon glyphicon-trash"></span></a>                            &nbsp;&nbsp;
