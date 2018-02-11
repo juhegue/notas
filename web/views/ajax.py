@@ -20,9 +20,15 @@ logger = logging.getLogger(__name__)
 class Datos(object):
     def __init__(self, **kargs):
         self.request = kargs.get("request", None)
+        self.error = False
 
     def adjunto_borra(self, adj_id):
         adj = Adjunto.objects.get(id=adj_id)
+        if not self.request.user.is_staff:
+            if adj.user.email != self.request.user.email:
+                self.error = "Esta nota pertenece al usuario '%s'" % adj.user.email
+                return
+
         adj.delete()
         return {"data": self.adjunto_html(adj.nota.id), "nota_id": adj.nota.id}
 
@@ -72,16 +78,16 @@ class Datos(object):
         return nota.id
 
 
-class AjaxView(View, Datos):
+class AjaxView(View):
     def dispatch(self, request, *args, **kwargs):
-        self.request = request
+        datos = Datos(request=request)
 
         try:
             if self.request.GET:
                 param = self.request.GET
                 funcion = args[0]
 
-                r = getattr(self, funcion)(**param)
+                r = getattr(datos, funcion)(**param)
                 return HttpResponse("false") if r else HttpResponse("true")
 
             if self.request.POST:
@@ -89,8 +95,8 @@ class AjaxView(View, Datos):
                 param = json.loads(param)
                 funcion = args[0]
 
-                r = getattr(self, funcion)(**param)
-                resul = {"err": False, "param": r}
+                r = getattr(datos, funcion)(**param)
+                resul = {"err": datos.error, "param": r}
                 return JsonResponse(resul)
 
         except Exception as e:
