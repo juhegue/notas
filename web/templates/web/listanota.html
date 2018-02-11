@@ -16,14 +16,18 @@
         .wrappable {            /*  limita el ancho td */
             min-width: 170px; max-width: 170px; word-wrap: break-word;
         }
-
         .md-preview thead th {
-          padding: 7px !important;  /* alto th */
+            padding: 4px !important;  /* alto th */
         }
         .pointer {
             cursor: pointer;
         }
-
+        td {
+            padding: 3px !important;
+        }
+        .fixed-table-container tbody td .th-inner, .fixed-table-container thead th .th-inner {
+            padding: 2px !important;
+        }
     </style>
 {% endblock styles %}
 
@@ -87,6 +91,7 @@
     <script src="{% static 'js/bootstrap-table.min.js' %}"></script>
     <script src="{% static 'js/bootstrap-table-locale-all.min.js' %}"></script>
     <script src="{% static 'js/bootstrap-table-cookie.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap-table-multiple-search.js' %}"></script>
     <script src="{% static 'js/bootstrap.fd.js' %}"></script>
     <!--editor-->
     <script src="{% static 'bootstrap-markdown/to-markdown.js' %}"></script>
@@ -101,7 +106,7 @@
             if ( $('#id_libro').val().length>0 ){ disabled = ''; }
 
             setTimeout(function(){
-                var btn = `<button style="margin-top:-22px;border:0;" id="id_nota_nueva" type="button" class="btn btn-default btn-sm btn-plus" title="`+'{% trans 'Nuevo' %}'+`"` + disabled +`>
+                var btn = `<button style="margin-top:-10px;border:0;" id="id_nota_nueva" type="button" class="btn btn-default btn-sm btn-plus" title="`+'{% trans 'Nuevo' %}'+`"` + disabled +`>
                            <span class="glyphicon glyphicon-plus-sign"></span>
                            </button> `;
                 $( '.fht-cell' ).remove();

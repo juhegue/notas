@@ -534,6 +534,8 @@
       // parse with supported markdown parser
       val = val || this.$textarea.val();
 
+      val =  val.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
       if (this.$options.parser) {
         content = this.$options.parser(val);
       } else if (typeof markdown == 'object') {
