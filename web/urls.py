@@ -11,6 +11,7 @@ from .views.libro import LibroCreateView
 from .views.nota import NotaCreateView
 from .views.nota import NotaUpdateView
 from .views.nota import NotaDeleteView
+from .views.nota import NotaDownloadZip
 from .views.ajax import AjaxView
 from .views.adjunto import AdjuntoSubir
 from .views.adjunto import AdjuntoBajar
@@ -33,6 +34,7 @@ urlpatterns = [
     re_path(r'^nota/nuevo(?:/(?P<libro>\d+))?/$', NotaCreateView.as_view(), name="nota_nuevo"),
     re_path(r'^nota/editar/(?P<pk>\d+)/$', NotaUpdateView.as_view(), name='nota_editar'),
     re_path(r'^nota/eliminar/(?P<pk>\d+)/$', NotaDeleteView.as_view(), name='nota_eliminar'),
+    re_path(r'^nota/download_zip/(?P<pk>\d+)/$', NotaDownloadZip.as_view(), name='nota_download_zip'),
 
     # Adjuntos
     re_path(r'^adjunto_subir/$', AdjuntoSubir.as_view()),
