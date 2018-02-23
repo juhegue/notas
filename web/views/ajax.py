@@ -5,6 +5,9 @@ import traceback
 import os
 import logging
 import json
+from markdown import markdown
+from lxml.html.clean import Cleaner
+
 from django.http import JsonResponse
 from django.http import HttpResponse
 from django.views.generic.edit import View
@@ -32,10 +35,13 @@ class Datos(object):
         adj.delete()
         return {"data": self.adjunto_html(adj.nota.id), "nota_id": adj.nota.id}
 
-    def adjunto_html(self, nota_id):
+    def adjunto_html(self, nota_id, sin_borrar=None):
         html = ""
         for adj in Adjunto.objects.filter(nota=nota_id).order_by("nombre"):
             link_download = "<a href='/adjunto_bajar/%s/'>%s</a>" % (adj.id, adj.nombre)
+            if sin_borrar:
+                html += '<tr><td class="wrappable">%s</td></tr>' % link_download
+                continue
             href_baja = "javascript:borraAdjunto(%s);" % adj.id
             html += """
                 <tr>
@@ -59,15 +65,24 @@ class Datos(object):
 
     def lee_nota(self, nota_id):
         nota = Nota.objects.filter(id=nota_id).first()
-        resul = dict()
-        resul["texto"] = nota.texto if nota else ""
-        resul["html"] = nota.html if nota else ""
+        resul = {"texto": "", "htnl": ""}
+        if nota:
+            resul["texto"] = nota.texto if nota else ""
+            html = markdown(nota.texto, extensions=["markdown.extensions.tables",       # tables
+                                                    "markdown.extensions.fenced_code"]  # cambia <p><code> por <pre><code>
+                            )
+            if html:
+                # elimina javascript y estilos
+                cleaner = Cleaner()
+                cleaner.javascript = True  # This is True because we want to activate the javascript filter
+                cleaner.style = True  # This is True because we want to activate the styles & stylesheet filter
+                html_sin = cleaner.clean_html(html)
+                resul["html"] = html_sin
         return resul
 
     def graba_nota_texto(self, nota_id, texto, html):
         nota = Nota.objects.get(id=nota_id)
         nota.texto = texto
-        nota.html = html
         nota.save()
 
     def nueva_nota(self, libro_id):

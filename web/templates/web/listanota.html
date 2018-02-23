@@ -54,7 +54,7 @@
                 class="table table-striped table-bordered table-hover"
                 data-toggle="table"
                 data-search="true"
-                data-pagination="true"
+                data-pagination="false"
                 data-locale="es-ES"
                 data-cookie="true"
                 data-cookie-id-table="Notas"
@@ -132,7 +132,7 @@
             var key = zeroFill(row.id, 6);
 
             var url = '/getdatos_ajax/adjunto_html';
-            var param = {nota_id: key};
+            var param = {nota_id: key, sin_borrar: true};
             funcionAjax(url, param, function(data){
                 var $elemento = $('#id_lista_adjuntos'+key);
                 $elemento.html(data);
@@ -145,8 +145,11 @@
             var param = {nota_id: key};
             funcionAjax(url, param, function(data){
                 var $elemento = $('#id_teditor'+key);
+                $elemento.replaceWith(data.html);
+/*
                 $elemento.val(data.texto);
                 showEditor(key, true, 'preview')
+*/
             });
 
             return `
@@ -189,8 +192,11 @@
                 window.location.assign(href);
             });
         });
-
         $(document).on('click', '.adjuntos',function(e){
+            var key = $(e.target).attr('id');
+            key = key.substr(key.length-6, 6);
+            MuestraAdjuntos(key, false);
+/*
             var key = $(e.target).attr('id');
             key = key.substr(key.length-6, 6);
 
@@ -208,6 +214,7 @@
                 uploadFiles(key, ev.files, '{{ csrf_token }}');
             }).on('cancel.bs.filedialog', function(ev) {
             });
+*/
         });
     </script>
 {% endblock scripts %}
