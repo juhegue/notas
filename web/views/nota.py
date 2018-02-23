@@ -1,7 +1,10 @@
 # coding=utf-8
 
+from io import BytesIO
 import tempfile
 import zipfile
+from markdown import markdown
+from xhtml2pdf import pisa
 
 from django.urls import reverse
 from django.contrib.messages.views import SuccessMessageMixin
@@ -113,6 +116,17 @@ class NotaDownloadZip(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
                 texto = "# %s.- %s\n\n%s" % (nota.libro, nota.nombre, nota.texto)
                 nombre = "nota_%s.txt" % nota.id
                 archive.writestr(nombre, texto)
+
+                html = markdown(texto, extensions=["markdown.extensions.tables"])
+                nombre = "nota_%s.html" % nota.id
+                archive.writestr(nombre, html)
+
+                result = BytesIO()
+                pdf = pisa.pisaDocument(BytesIO(html.encode("ISO-8859-1")), result)
+                if not pdf.err:
+                    nombre = "nota_%s.pdf" % nota.id
+                    archive.writestr(nombre, result.getvalue())
+
                 for a in adj:
                     archive.write(a.fichero.file.name, a.nombre)
                 archive.close()
@@ -122,8 +136,8 @@ class NotaDownloadZip(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
             tmp.seek(0)
 
             wrapper = FileWrapper(tmp)
-            response = HttpResponse(wrapper, content_type='application/zip')
-            response['Content-Disposition'] = 'attachment; filename=test.zip'
-            response['Content-Length'] = length
+            response = HttpResponse(wrapper, content_type="application/zip")
+            response["Content-Disposition"] = "attachment; filename=nota_%s.zip" % nota.id
+            response["Content-Length"] = length
             return response
 
