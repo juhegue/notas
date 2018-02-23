@@ -1,5 +1,8 @@
 # coding=utf-8
 
+import tempfile
+import zipfile
+
 from django.urls import reverse
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -7,8 +10,10 @@ from django.views.generic import CreateView
 from django.views.generic import UpdateView
 from django.views.generic import DeleteView
 from django.http.response import HttpResponseForbidden
+from django.http import HttpResponse
+from wsgiref.util import FileWrapper
 
-
+from web.models import Adjunto
 from web.models import Nota
 from web.forms.notaform import NotaForm
 
@@ -92,3 +97,33 @@ class NotaDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
                 return HttpResponseForbidden("Esta nota pertenece al usuario '%s'" % self.object.user.email)
 
         return super(NotaDeleteView, self).delete(*args, **kwargs)
+
+
+class NotaDownloadZip(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
+    def dispatch(self, request, *args, **kwargs):
+        pk = kwargs.get("pk")
+        nota = Nota.objects.get(pk=pk)
+        adj = Adjunto.objects.filter(nota=nota)
+        return self.get_zip(nota, adj)
+
+    @staticmethod
+    def get_zip(nota, adj):
+        with tempfile.SpooledTemporaryFile() as tmp:
+            with zipfile.ZipFile(tmp, 'w', zipfile.ZIP_DEFLATED) as archive:
+                texto = "# %s.- %s\n\n%s" % (nota.libro, nota.nombre, nota.texto)
+                nombre = "nota_%s.txt" % nota.id
+                archive.writestr(nombre, texto)
+                for a in adj:
+                    archive.write(a.fichero.file.name, a.nombre)
+                archive.close()
+
+            length = tmp.tell()
+            # Reset file pointer
+            tmp.seek(0)
+
+            wrapper = FileWrapper(tmp)
+            response = HttpResponse(wrapper, content_type='application/zip')
+            response['Content-Disposition'] = 'attachment; filename=test.zip'
+            response['Content-Length'] = length
+            return response
+

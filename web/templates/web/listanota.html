@@ -22,12 +22,15 @@
         .pointer {
             cursor: pointer;
         }
+
         td {
-            padding: 3px !important;
+            padding: 3px 0px 0px 5px !important;
         }
+
         .fixed-table-container tbody td .th-inner, .fixed-table-container thead th .th-inner {
             padding: 2px !important;
         }
+
     </style>
 {% endblock styles %}
 
@@ -63,20 +66,21 @@
                 <thead>
                     <tr>
                         <th data-visible="false" data-field="id">id</th>
-                        <th class="col-xs-10" data-sortable="true">{% trans 'Título' %}</th>
+                        <th class="col-xs-10" data-field="titulo" data-sortable="true">{% trans 'Título' %}</th>
                         <th class="col-xs-1" data-sortable="true">{% trans 'Modificación' %}</th>
                         <th class="col-xs-1 text-center">{% trans 'Acciones' %}</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for nota in nota_list %}
-                    <tr>
+                    <tr id="tr_{{ nota.id }}">
                         <td>{{ nota.id }}</td>
                         <td class="pointer">{{ nota.nombre }}</td>
                         <td><span class="hidden">nota.modificado</span>{{ nota.modificado|date:"d/m/Y" }}</td>
                         <td class="text-center">
-                            <a href="{% url 'nota_eliminar' nota.id %}" class="text-danger" role="button"><span class="glyphicon glyphicon-trash"></span></a>                            &nbsp;&nbsp;
-                            <a href="{% url 'nota_editar' nota.id %}" class="text-primary" role="button"><span class="glyphicon glyphicon-pencil"></span></a>
+                            <a href="{% url 'nota_eliminar' nota.id %}" class="text-danger" role="button"><span class="glyphicon glyphicon-trash"></span></a>&nbsp;&nbsp;
+                            <a href="{% url 'nota_editar' nota.id %}" class="text-primary" role="button"><span class="glyphicon glyphicon-pencil"></span></a>&nbsp;&nbsp;
+                            <a href="{% url 'nota_download_zip' nota.id %}" class="text-primary" role="button"><span class="fa fa-file-zip-o"></span></a>&nbsp;&nbsp;
                         </td>
                     </tr>
                   {% endfor %}
@@ -94,6 +98,7 @@
     <script src="{% static 'js/bootstrap-table-multiple-search.js' %}"></script>
     <script src="{% static 'js/bootstrap.fd.js' %}"></script>
     <!--editor-->
+    <script src="{% static 'js/html-css-sanitizer-minified.js' %}"></script> <!-- ver html_sanitize() --->
     <script src="{% static 'bootstrap-markdown/to-markdown.js' %}"></script>
     <script src="{% static 'bootstrap-markdown/bootstrap-markdown.js' %}"></script>
     <script src="{% static 'bootstrap-markdown/bootstrap-markdown.es.js' %}"></script>
@@ -115,11 +120,12 @@
 
             $('#id_notas').show();
 
-            $('#id_notas').on('click-row.bs.table',function(e,row,$tr){
-                if (!$(e.target).hasClass('detail-icon')) {
-                    $tr.find('>td>.detail-icon').trigger('click');
+            $("#id_notas").on('click-cell.bs.table', function (e, value, row, $el) {
+                if (value == 'titulo'){
+                    $('#tr_' + $el.id).find('>td>.detail-icon').trigger('click');
                 }
             });
+
         });
 
         function detailFormatter(index, row) {
