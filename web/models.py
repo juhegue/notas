@@ -72,7 +72,6 @@ class Nota(ActualizaMixin, UserMixin):
     libro = models.ForeignKey(Libro, on_delete=models.CASCADE)
     nombre = models.CharField(max_length=200, default='', null=True, blank=True)
     texto = models.TextField(default='', null=True, blank=True)
-    html = models.TextField(default='', null=True, blank=True)
     activa = models.BooleanField(default=False)
 
     def __str__(self):
