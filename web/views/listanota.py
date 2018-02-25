@@ -1,20 +1,41 @@
 # -*- coding: utf-8 -*-
 
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.urls import reverse
 from django.views.generic import FormView
+from django.db.models import Sum
 
 from ..forms.listanotaform import ListaNotaForm
 from ..models import Nota
+from ..models import Adjunto
 
 
-class ListaNotaView(LoginRequiredMixin, FormView):
+class Busca(object):
+    busca = None
+    libro_id = None
+
+    def get_queryset_notas(self):
+        notas = Nota.objects.filter(libro=self.libro_id, activa=True)
+        if self.busca:
+            nota_ids = notas.values_list("id", flat=True)
+
+            nota_adj_ids = Adjunto.objects.filter(nombre__icontains=self.busca, nota__id__in=nota_ids).\
+                values_list("nota__id", flat=True)
+
+            notas = Nota.objects.filter(id__in=nota_ids, nombre__icontains=self.busca) | \
+                    Nota.objects.filter(id__in=nota_ids, texto__icontains=self.busca) | \
+                    Nota.objects.filter(id__in=nota_adj_ids)
+
+        notas = notas.order_by("-modificado")
+        return notas
+
+
+class ListaNotaView(LoginRequiredMixin, FormView, Busca):
     template_name = "web/listanota.html"
     form_class = ListaNotaForm
-    libro_id = None
 
     def dispatch(self, request, *args, **kwargs):
         self.libro_id = int(kwargs.get("libro", 0) or request.COOKIES.get('libro', 0))
+        self.busca = kwargs.get("busca")
         return super(ListaNotaView, self).dispatch(request, *args, **kwargs)
 
     def get_initial(self):
@@ -29,15 +50,7 @@ class ListaNotaView(LoginRequiredMixin, FormView):
 
     def get_context_data(self, **kwargs):
         context = super(ListaNotaView, self).get_context_data(**kwargs)
-        queryset = Nota.objects.filter(libro=self.libro_id, activa=True).order_by("-modificado")
-        context["nota_list"] = queryset
+        context["nota_list"] = self.get_queryset_notas()
+        context["busca"] = self.busca
         return context
 
-    def form_valid(self, form):
-        if form.is_valid():
-            data = form.cleaned_data
-            self.libro_id = data.get("libro", None)
-        return super(ListaNotaView, self).form_valid(form)
-
-    def get_success_url(self):
-        return reverse('listanota', kwargs={"libro": self.libro_id})

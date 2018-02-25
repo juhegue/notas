@@ -65,7 +65,6 @@
                 this.data = dataFiltered;
             }
         } else {
-alert("..");
             _initSearch.apply(this, Array.prototype.slice.apply(arguments));
         }
     };

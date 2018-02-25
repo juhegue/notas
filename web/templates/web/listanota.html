@@ -172,7 +172,7 @@
             var id_libro = $('#id_libro').val();
             if (id_libro) {
                 $.cookie('libro', id_libro, {expires: 7});
-                $('#id_formulario').submit();
+                submit();
             }
         });
 
@@ -216,6 +216,36 @@
             });
 */
         });
+
+
+        function htmlDecode(value) {
+          return $("<textarea/>").html(value).text();
+        }
+
+        function htmlEncode(value) {
+          return $('<textarea/>').text(value).html();
+        }
+
+        var mitimer;
+        var busca_ant = htmlDecode('{{ busca|default_if_none:"" }}');
+        $('#id_buscar').val(busca_ant);
+        $(document).on('keyup','#id_buscar',function(){
+            if (mitimer) clearTimeout(mitimer);
+            mitimer = setTimeout(function(){ busqueda(); }, 1000);
+        });
+        function busqueda() {
+            var busca = $('#id_buscar').val();
+            if (busca_ant != busca && (busca.length > 2 || busca.length ==0)) submit();
+        }
+        function submit(){
+            $('#id_cargando').modal('show');
+            var libro = $('#id_libro').val() || 0;
+            var busca = $('#id_buscar').val();
+            var url = '/listanota/'+ libro + '/' + encodeURIComponent(busca);
+            location.href = url;
+        }
+
     </script>
 {% endblock scripts %}
+
 

@@ -11,7 +11,7 @@ class ListaNotaForm(forms.Form):
                                   attrs={"class": "form-control",
                                          "data-placeholder": "Seleccione ...",
                                          }),
-                              )
+                              required=False)
 
     def __init__(self, *args, **kwargs):
         request = kwargs.pop("request", None)
