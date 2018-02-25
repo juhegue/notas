@@ -13,6 +13,7 @@ from django.http import HttpResponse
 from django.views.generic.edit import View
 from django.conf import settings
 
+from ..util.util import marca_texto
 from ..models import Adjunto
 from ..models import Nota
 from ..models import Libro
@@ -35,10 +36,11 @@ class Datos(object):
         adj.delete()
         return {"data": self.adjunto_html(adj.nota.id), "nota_id": adj.nota.id}
 
-    def adjunto_html(self, nota_id, sin_borrar=None):
+    def adjunto_html(self, nota_id, sin_borrar=None, busca=None):
         html = ""
         for adj in Adjunto.objects.filter(nota=nota_id).order_by("nombre"):
-            link_download = "<a href='/adjunto_bajar/%s/'>%s</a>" % (adj.id, adj.nombre)
+            nombre = marca_texto(busca, adj.nombre)
+            link_download = "<a href='/adjunto_bajar/%s/'>%s</a>" % (adj.id, nombre)
             if sin_borrar:
                 html += '<tr><td class="wrappable">%s</td></tr>' % link_download
                 continue
@@ -63,7 +65,7 @@ class Datos(object):
             </div>                
             """ % html
 
-    def lee_nota(self, nota_id):
+    def lee_nota(self, nota_id, busca):
         nota = Nota.objects.filter(id=nota_id).first()
         resul = {"texto": "", "htnl": ""}
         if nota:
@@ -77,6 +79,7 @@ class Datos(object):
                 cleaner.javascript = True  # This is True because we want to activate the javascript filter
                 cleaner.style = True  # This is True because we want to activate the styles & stylesheet filter
                 html_sin = cleaner.clean_html(html)
+                html_sin = marca_texto(busca, html_sin)
                 resul["html"] = html_sin
         return resul
 

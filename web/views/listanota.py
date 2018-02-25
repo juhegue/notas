@@ -17,6 +17,7 @@ class Busca(object):
         notas = Nota.objects.filter(libro=self.libro_id, activa=True)
         if self.busca:
             for busca in self.busca.split(","):
+                busca = busca.strip()
                 nota_ids = notas.values_list("id", flat=True)
 
                 nota_adj_ids = Adjunto.objects.filter(nombre__icontains=busca, nota__id__in=nota_ids).\
