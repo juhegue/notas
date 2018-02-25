@@ -241,16 +241,18 @@
         }
 
         function submit(busca){
-            if (busca === undefined) busca = busca_ant;
-
-            $('#id_cargando').modal('show');
+            if (busca === undefined) busca = busca_ant || '';
 
             var libro = $('#id_libro').val() || 0;
+
+            if (libro == 0) return;
+
             var url = '/listanota/'+ libro + '/' + encodeURIComponent(busca);
 
             localStorage.busca = busca;
             localStorage.libro = libro;
 
+            $('#id_cargando').modal('show');
             location.href = url;
         }
 
