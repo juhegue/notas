@@ -94,8 +94,7 @@
     {{ form.media.js }}
     <script src="{% static 'js/bootstrap-table.min.js' %}"></script>
     <script src="{% static 'js/bootstrap-table-locale-all.min.js' %}"></script>
-    <script src="{% static 'js/bootstrap-table-cookie.min.js' %}"></script>
-    <script src="{% static 'js/bootstrap-table-multiple-search.js' %}"></script>
+    <!--script src="{% static 'js/bootstrap-table-cookie.min.js' %}"></script-->
     <script src="{% static 'js/bootstrap.fd.js' %}"></script>
     <!--editor-->
     <script src="{% static 'js/html-css-sanitizer-minified.js' %}"></script> <!-- ver html_sanitize() --->
@@ -226,24 +225,37 @@
           return $('<textarea/>').text(value).html();
         }
 
-        var mitimer;
+
         var busca_ant = htmlDecode('{{ busca|default_if_none:"" }}');
-        $('#id_buscar').val(busca_ant);
-        $(document).on('keyup','#id_buscar',function(){
-            if (mitimer) clearTimeout(mitimer);
-            mitimer = setTimeout(function(){ busqueda(); }, 1000);
-        });
-        function busqueda() {
-            var busca = $('#id_buscar').val();
-            if (busca_ant != busca && (busca.length > 2 || busca.length ==0)) submit();
-        }
-        function submit(){
+
+        function submit(busca){
             $('#id_cargando').modal('show');
             var libro = $('#id_libro').val() || 0;
-            var busca = $('#id_buscar').val();
-            var url = '/listanota/'+ libro + '/' + encodeURIComponent(busca);
+            var url = '/listanota/'+ libro + '/' + encodeURIComponent(busca || busca_ant);
             location.href = url;
         }
+
+        !function ($) {
+            'use strict';
+
+            $.extend($.fn.bootstrapTable.defaults, {
+                searchText: busca_ant,
+            });
+
+            var BootstrapTable = $.fn.bootstrapTable.Constructor,
+                _initSearch = BootstrapTable.prototype.initSearch;
+
+            BootstrapTable.prototype.initSearch = function () {
+                if (this.searchText === undefined) {
+                    return;
+                }
+                if (this.searchText == busca_ant) {
+                    return;
+                }
+                submit(this.searchText);
+            };
+        }(jQuery);
+
 
     </script>
 {% endblock scripts %}
