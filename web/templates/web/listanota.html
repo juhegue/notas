@@ -128,6 +128,7 @@
                $(this).attr('placeholder', "Buscar (múltiple separar por comas)");
                $(this).css('max-width', '260px');
                $(this).css('width', '260px');
+               $(this).select().focus();
             });
         });
 
@@ -173,10 +174,7 @@
 
         $(document).on('change','#id_libro',function(){
             var id_libro = $('#id_libro').val();
-            if (id_libro) {
-                $.cookie('libro', id_libro, {expires: 7});
-                submit();
-            }
+            if (id_libro) submit();
         });
 
         $(document).on('click','#id_nota_nueva',function(){
