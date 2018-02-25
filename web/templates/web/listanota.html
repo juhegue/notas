@@ -66,7 +66,7 @@
                 <thead>
                     <tr>
                         <th data-visible="false" data-field="id">id</th>
-                        <th class="col-xs-10" data-field="titulo" data-sortable="true">{% trans 'Título' %}</th>
+                        <th class="col-xs-10" data-field="titulo" data-sortable="true">{% trans 'Título' %} ({{ nota_list|length }})</th>
                         <th class="col-xs-1" data-sortable="true">{% trans 'Modificación' %}</th>
                         <th class="col-xs-1 text-center">{% trans 'Acciones' %}</th>
                     </tr>
@@ -94,7 +94,6 @@
     {{ form.media.js }}
     <script src="{% static 'js/bootstrap-table.min.js' %}"></script>
     <script src="{% static 'js/bootstrap-table-locale-all.min.js' %}"></script>
-    <!--script src="{% static 'js/bootstrap-table-cookie.min.js' %}"></script-->
     <script src="{% static 'js/bootstrap.fd.js' %}"></script>
     <!--editor-->
     <script src="{% static 'js/html-css-sanitizer-minified.js' %}"></script> <!-- ver html_sanitize() --->
@@ -230,14 +229,26 @@
           return $('<textarea/>').text(value).html();
         }
 
-
-        var busca_ant = htmlDecode('{{ busca|default_if_none:"" }}');
+        var busca_ant = htmlDecode('{{ busca }}');
+        if (busca_ant == 'None'){
+            busca_ant = localStorage.busca;
+            var libro = localStorage.libro;
+            var libro_ant = $('#id_libro').val();
+            if (libro) $('#id_libro').val(libro);
+            if (busca_ant || !libro_ant) submit();
+        }
 
         function submit(busca){
             if (busca === undefined) busca = busca_ant;
+
             $('#id_cargando').modal('show');
+
             var libro = $('#id_libro').val() || 0;
             var url = '/listanota/'+ libro + '/' + encodeURIComponent(busca);
+
+            localStorage.busca = busca;
+            localStorage.libro = libro;
+
             location.href = url;
         }
 
