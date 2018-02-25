@@ -78,7 +78,7 @@
                     {% for nota in nota_list %}
                     <tr id="tr_{{ nota.id }}">
                         <td>{{ nota.id }}</td>
-                        <td class="pointer"> {{ nota.nombre|colorea_busca:busca }}  -  {{ nota.nombre }}</td>
+                        <td class="pointer"> {{ nota.nombre|colorea_busca:busca }}</td>
                         <td><span class="hidden">nota.modificado</span>{{ nota.modificado|date:"d/m/Y" }}</td>
                         <td class="text-center">
                             <a href="{% url 'nota_eliminar' nota.id %}" class="text-danger" role="button"><span class="glyphicon glyphicon-trash"></span></a>&nbsp;&nbsp;
