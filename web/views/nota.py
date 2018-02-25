@@ -114,7 +114,7 @@ class NotaDownloadZip(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
         with tempfile.SpooledTemporaryFile() as tmp:
             with zipfile.ZipFile(tmp, 'w', zipfile.ZIP_DEFLATED) as archive:
                 texto = "# %s.- %s\n\n%s" % (nota.libro, nota.nombre, nota.texto)
-                nombre = "nota_%s.txt" % nota.id
+                nombre = "nota_%s.md" % nota.id
                 archive.writestr(nombre, texto)
 
                 html = markdown(texto, extensions=["markdown.extensions.tables"])
