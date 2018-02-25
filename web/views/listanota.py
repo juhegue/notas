@@ -16,14 +16,15 @@ class Busca(object):
     def get_queryset_notas(self):
         notas = Nota.objects.filter(libro=self.libro_id, activa=True)
         if self.busca:
-            nota_ids = notas.values_list("id", flat=True)
+            for busca in self.busca.split(","):
+                nota_ids = notas.values_list("id", flat=True)
 
-            nota_adj_ids = Adjunto.objects.filter(nombre__icontains=self.busca, nota__id__in=nota_ids).\
-                values_list("nota__id", flat=True)
+                nota_adj_ids = Adjunto.objects.filter(nombre__icontains=busca, nota__id__in=nota_ids).\
+                    values_list("nota__id", flat=True)
 
-            notas = Nota.objects.filter(id__in=nota_ids, nombre__icontains=self.busca) | \
-                    Nota.objects.filter(id__in=nota_ids, texto__icontains=self.busca) | \
-                    Nota.objects.filter(id__in=nota_adj_ids)
+                notas = Nota.objects.filter(id__in=nota_ids, nombre__icontains=busca) | \
+                        Nota.objects.filter(id__in=nota_ids, texto__icontains=busca) | \
+                        Nota.objects.filter(id__in=nota_adj_ids)
 
         notas = notas.order_by("-modificado")
         return notas
