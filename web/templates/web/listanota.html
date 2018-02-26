@@ -57,8 +57,10 @@
                 data-search="true"
                 data-search-on-enter-key="false"
                 data-search-time-out="1000"
-                data-pagination="false"
-                data-locale="es-ES"
+                data-pagination="true"
+                data-page-size="Todo"
+                data-page-list="[Todo]"
+                data-locale="es-SP"
                 data-cookie="true"
                 data-cookie-id-table="Notas"
                 data-cookie-expire="12m"
@@ -69,7 +71,7 @@
                 <thead>
                     <tr>
                         <th data-visible="false" data-field="id">id</th>
-                        <th class="col-xs-10" data-field="titulo" data-sortable="true">{% trans 'Título' %} ({{ nota_list|length }})</th>
+                        <th class="col-xs-10" data-field="titulo" data-sortable="true">{% trans 'Título' %}</th>
                         <th class="col-xs-1" data-sortable="true">{% trans 'Modificación' %}</th>
                         <th class="col-xs-1 text-center">{% trans 'Acciones' %}</th>
                     </tr>
@@ -135,6 +137,7 @@
                $(this).css('width', '260px');
                $(this).parent().prepend('<a style="padding-top:6px;" class="close clear_search" data-dismiss="alert"> ×</a>');
             });
+
         });
 
         function detailFormatter(index, row) {
@@ -276,6 +279,7 @@
                 submit(this.searchText);
             };
         }(jQuery);
+
 
         $(document).on('click','.clear_search',function(){
             $('#id_notas').bootstrapTable('resetSearch');
