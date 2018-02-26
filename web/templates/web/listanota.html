@@ -136,6 +136,7 @@
                $(this).css('max-width', '260px');
                $(this).css('width', '260px');
                $(this).parent().prepend('<a style="padding-top:6px;" class="close clear_search" data-dismiss="alert"> ×</a>');
+               if (busca_ant) $(this).select().focus();
             });
 
         });
