@@ -110,8 +110,6 @@
     <script src="{% static 'js/jspdf.debug.js' %}"></script>
     <script src="{% static 'js/editor.js' %}"></script>
     <script type="text/javascript">
-        var editorGetContent = 0;
-
         $(function(){
             key = '{{ nota_id }}';
 
@@ -127,7 +125,6 @@
                 $elemento = $('#id_lista_adjuntos'+key);
                 $elemento.html(data);
                 if (data) { var estado = true; } else { var estado = false; }
-                //MuestraAdjuntos(key, estado);
             });
         });
 
@@ -142,36 +139,6 @@
                 $('#id_html').val($editor.parseContent());
 
                 $( '#id_libro' ).prop( 'disabled', false );
-
-/* Prueba envio adjuntos
-                e.preventDefault();
-                var $form = $('#id_formulario');
-                var action = $form.attr('action');
-                var method = $form.attr('method');
-
-                var formElement = document.getElementById('id_formulario');
-                var formData = new FormData(formElement);
-                for (var key in files){
-                    var f = files[key];
-                    formData.append('files', f, key);
-                }
-                formData.append('upload', true);
-                var request = new XMLHttpRequest();
-                request.onload = function(e) {
-                    if (request.status != 200) {
-                        alert('ERROR:' + request.status);
-                    }
-                };
-                request.onreadystatechange = function () {
-                    if(request.readyState === XMLHttpRequest.DONE && request.status === 200) {
-                        if request.responseText == 'ok'){
-                            $('#id_formulario').submit();
-                        }
-                    }
-                };
-                request.open(method, action);
-                request.send(formData);
-*/
             });
 
             $('.adjuntos').on('click',function(e){
