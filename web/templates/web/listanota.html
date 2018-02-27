@@ -99,15 +99,6 @@
     {{ form.media.js }}
     <script src="{% static 'js/bootstrap-table.min.js' %}"></script>
     <script src="{% static 'js/bootstrap-table-locale-all.min.js' %}"></script>
-    <script src="{% static 'js/bootstrap.fd.js' %}"></script>
-    <!--editor-->
-    <script src="{% static 'js/html-css-sanitizer-minified.js' %}"></script> <!-- ver html_sanitize() --->
-    <script src="{% static 'bootstrap-markdown/to-markdown.js' %}"></script>
-    <script src="{% static 'bootstrap-markdown/bootstrap-markdown.js' %}"></script>
-    <script src="{% static 'bootstrap-markdown/bootstrap-markdown.es.js' %}"></script>
-    <script src="{% static 'bootstrap-markdown/marked.min.js' %}"></script>
-    <script src="{% static 'js/jspdf.debug.js' %}"></script>
-    <script src="{% static 'js/editor.js' %}"></script>
     <script type="text/javascript">
         var busca_ant = htmlDecode('{{ busca }}');
 
@@ -159,10 +150,6 @@
             funcionAjax(url, param, function(data){
                 var $elemento = $('#id_teditor'+key);
                 $elemento.replaceWith(data.html);
-/*
-                $elemento.val(data.texto);
-                showEditor(key, true, 'preview')
-*/
             });
 
             return `
@@ -206,25 +193,6 @@
             var key = $(e.target).attr('id');
             key = key.substr(key.length-6, 6);
             MuestraAdjuntos(key, false);
-/*
-            var key = $(e.target).attr('id');
-            key = key.substr(key.length-6, 6);
-
-            $.FileDialog({
-                title: '{% trans 'Subir archivos' %}',
-                ok_button: '{% trans 'Aceptar' %}',
-                cancel_button: '{% trans 'Cerrar' %}',
-                drag_message: '{% trans 'Arrastre los archivos aquí' %}',
-                error_message: '{% trans 'Se ha producido un error al leer el archivo' %}',
-                remove_message: '{% trans 'Eliminar fichero' %}',
-                accept: '*',
-                dropheight: 100,
-                multiple: true,
-             }).on('files.bs.filedialog', function(ev) {
-                uploadFiles(key, ev.files, '{{ csrf_token }}');
-            }).on('cancel.bs.filedialog', function(ev) {
-            });
-*/
         });
 
 
