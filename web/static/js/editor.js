@@ -1,11 +1,8 @@
 //http://www.codingdrama.com/bootstrap-markdown/
 
-function showEditor(nota_id, btn_grabar, initialstate, refreshAdj){
+function showEditor(nota_id, btn_grabar, initialstate){
     var hiddenButtons = [];
     if (!btn_grabar) hiddenButtons.push('cmdGrabar');
-
-    Dropzone.autoDiscover = false;
-    var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
 
     $('#id_teditor' + nota_id).markdown({
         window: null,
@@ -15,19 +12,6 @@ function showEditor(nota_id, btn_grabar, initialstate, refreshAdj){
         language:'es',
         autofocus:false,
         savable:false,
-        dropZoneOptions: {
-            url: '/adjunto_subir/',
-            headers: {
-                'X-CSRFToken': csrftoken
-            },
-            method: 'post',
-            paramName: 'files',
-            params: {'nota_id': nota_id},
-            success: function(file, response){
-                if (refreshAdj) refreshAdj(response);
-            },
-            dictDefaultMessage: "Arrastra los ficheros aquí para subirlos.",
-        },
         hiddenButtons: hiddenButtons,
         additionalButtons: [
             [{

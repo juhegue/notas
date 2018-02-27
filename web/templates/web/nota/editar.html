@@ -102,7 +102,6 @@
     {{ form.media.js }}
     <script src="{% static 'js/bootstrap.fd.js' %}"></script>
     <!--editor-->
-    <script src="{% static 'js/dropzone.js' %}"></script>
     <script src="{% static 'js/html-css-sanitizer-minified.js' %}"></script> <!-- ver html_sanitize() --->
     <script src="{% static 'bootstrap-markdown/to-markdown.js' %}"></script>
     <script src="{% static 'bootstrap-markdown/bootstrap-markdown.js' %}"></script>
@@ -133,10 +132,7 @@
         });
 
         $(document).ready(function(e){
-            showEditor('{{ nota_id }}', false, 'editor', function(data){
-                $elemento = $('#id_lista_adjuntos{{ nota_id }}');
-                $elemento.html(data);
-            });
+            showEditor('{{ nota_id }}', false, 'editor');
 
             $('#id_teditor{{ nota_id }}').show();
 
