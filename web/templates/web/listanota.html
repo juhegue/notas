@@ -72,7 +72,7 @@
                     <tr>
                         <th data-visible="false" data-field="id">id</th>
                         <th class="col-xs-10" data-field="titulo" data-sortable="true">{% trans 'Título' %}</th>
-                        <th class="col-xs-1" data-sortable="true">{% trans 'Modificación' %}</th>
+                        <th class="col-xs-1 text-center" data-sortable="true">{% trans 'Modificado' %}</th>
                         <th class="col-xs-1 text-center">{% trans 'Acciones' %}</th>
                     </tr>
                 </thead>
@@ -81,7 +81,7 @@
                     <tr id="tr_{{ nota.id }}">
                         <td>{{ nota.id }}</td>
                         <td class="pointer"> {{ nota.nombre|colorea_busca:busca }}</td>
-                        <td><span class="hidden">nota.modificado</span>{{ nota.modificado|date:"d/m/Y" }}</td>
+                        <td class="text-center"><span class="hidden">nota.modificado</span>{{ nota.modificado|date:"d/m/Y" }}</td>
                         <td class="text-center">
                             <a href="{% url 'nota_eliminar' nota.id %}" class="text-danger" role="button"><span class="glyphicon glyphicon-trash"></span></a>&nbsp;&nbsp;
                             <a href="{% url 'nota_editar' nota.id %}" class="text-primary" role="button"><span class="glyphicon glyphicon-pencil"></span></a>&nbsp;&nbsp;
@@ -99,15 +99,6 @@
     {{ form.media.js }}
     <script src="{% static 'js/bootstrap-table.min.js' %}"></script>
     <script src="{% static 'js/bootstrap-table-locale-all.min.js' %}"></script>
-    <script src="{% static 'js/bootstrap.fd.js' %}"></script>
-    <!--editor-->
-    <script src="{% static 'js/html-css-sanitizer-minified.js' %}"></script> <!-- ver html_sanitize() --->
-    <script src="{% static 'bootstrap-markdown/to-markdown.js' %}"></script>
-    <script src="{% static 'bootstrap-markdown/bootstrap-markdown.js' %}"></script>
-    <script src="{% static 'bootstrap-markdown/bootstrap-markdown.es.js' %}"></script>
-    <script src="{% static 'bootstrap-markdown/marked.min.js' %}"></script>
-    <script src="{% static 'js/jspdf.debug.js' %}"></script>
-    <script src="{% static 'js/editor.js' %}"></script>
     <script type="text/javascript">
         var busca_ant = htmlDecode('{{ busca }}');
 
@@ -136,6 +127,7 @@
                $(this).css('max-width', '260px');
                $(this).css('width', '260px');
                $(this).parent().prepend('<a style="padding-top:6px;" class="close clear_search" data-dismiss="alert"> ×</a>');
+               if (busca_ant) $(this).select().focus();
             });
 
         });
@@ -158,10 +150,6 @@
             funcionAjax(url, param, function(data){
                 var $elemento = $('#id_teditor'+key);
                 $elemento.replaceWith(data.html);
-/*
-                $elemento.val(data.texto);
-                showEditor(key, true, 'preview')
-*/
             });
 
             return `
@@ -205,25 +193,6 @@
             var key = $(e.target).attr('id');
             key = key.substr(key.length-6, 6);
             MuestraAdjuntos(key, false);
-/*
-            var key = $(e.target).attr('id');
-            key = key.substr(key.length-6, 6);
-
-            $.FileDialog({
-                title: '{% trans 'Subir archivos' %}',
-                ok_button: '{% trans 'Aceptar' %}',
-                cancel_button: '{% trans 'Cerrar' %}',
-                drag_message: '{% trans 'Arrastre los archivos aquí' %}',
-                error_message: '{% trans 'Se ha producido un error al leer el archivo' %}',
-                remove_message: '{% trans 'Eliminar fichero' %}',
-                accept: '*',
-                dropheight: 100,
-                multiple: true,
-             }).on('files.bs.filedialog', function(ev) {
-                uploadFiles(key, ev.files, '{{ csrf_token }}');
-            }).on('cancel.bs.filedialog', function(ev) {
-            });
-*/
         });
 
 

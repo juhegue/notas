@@ -12,18 +12,6 @@ function showEditor(nota_id, btn_grabar, initialstate){
         language:'es',
         autofocus:false,
         savable:false,
-        onShow: function(e){
-//            if (this.initialstate === 'preview') $('.btn-toolbar').hide();
-        },
-        onFocus: function(e){
-/*
-            if (this.initialstate === 'preview') {
-                this.initialstate = 'editor';
-                $('.btn-toolbar').show();
-                e.hidePreview();
-            }
-*/
-        },
         hiddenButtons: hiddenButtons,
         additionalButtons: [
             [{
