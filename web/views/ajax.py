@@ -14,6 +14,7 @@ from django.views.generic.edit import View
 from django.conf import settings
 
 from ..util.util import marca_texto
+from ..util.mk_delextension import DelExtension
 from ..models import Adjunto
 from ..models import Nota
 from ..models import Libro
@@ -71,7 +72,8 @@ class Datos(object):
         if nota:
             resul["texto"] = nota.texto if nota else ""
             html = markdown(nota.texto, extensions=["markdown.extensions.tables",       # tables
-                                                    "markdown.extensions.fenced_code"]  # cambia <p><code> por <pre><code>
+                                                    "markdown.extensions.fenced_code",  # cambia <p><code> por <pre><code>
+                                                    DelExtension()]
                             )
             if html:
                 # elimina javascript y estilos

@@ -38,7 +38,7 @@ class CsvExporta(object):
     def _get_foreinkey(model_rel, model, id):
         for field in model._meta.fields:
             if field.get_internal_type() == "ForeignKey":
-                if field.rel.to == model_rel:
+                if field.related_model == model_rel:
                     name = field.name
                     return {name: id}
 
@@ -71,18 +71,18 @@ class CsvExporta(object):
         return obj
 
     def _exporta(self, csvfile):
-        def carga(lista, valores, ncampo):
+        def carga(dic, valores, titles):
             for n, v in enumerate(valores):
-                lista[ncampo+n] = v
+                dic[titles[n]] = v
 
         def get_row(valores, titles):
-            resul = list()
+            resul = dict()
             longi = len(valores) - 1
             for n, title in enumerate(titles):
                 if n > longi:
-                    resul.append("")
+                    resul[title] = ""
                 else:
-                    resul.append(valores[n])
+                    resul[title] = valores[n]
             return resul
 
         titles = list()
@@ -109,22 +109,22 @@ class CsvExporta(object):
             ncampo = len(valores)
             for inline in self.modeladmin.inlines:
                 foreinkey = self._get_foreinkey(self.modeladmin.model, inline.model, query.id)
-                for n, iquery in enumerate(inline.model.objects.filter(**foreinkey)):
-                    ivalores = list()
-                    for name, title in self._get_fields(inline):
-                        valor = self._getitem(iquery, name)
-                        ivalores.append(valor or "")
+                if foreinkey:
+                    for n, iquery in enumerate(inline.model.objects.filter(**foreinkey)):
+                        ivalores = list()
+                        for name, title in self._get_fields(inline):
+                            valor = self._getitem(iquery, name)
+                            ivalores.append(valor or "")
 
-                    if n >= len(vinlines):
-                        vinlines.append(row)
+                        if n >= len(vinlines):
+                            vinlines.append(row)
 
-                    carga(vinlines[n], ivalores, ncampo)
+                        carga(vinlines[n], ivalores, titles)
 
                 ncampo += len(self._get_fields(inline))
 
             if vinlines:
-                for row in vinlines:
-                    writer.writerow(row)
+                writer.writerows(vinlines)
             else:
                 writer.writerow(row)
 
