@@ -106,6 +106,8 @@ class CsvExporta(object):
             valores = list()
             for name, title in self._get_fields(self.modeladmin):
                 valor = self._getitem(query, name)
+                if isinstance(valor, models.fields.files.FieldFile):
+                    valor = base64.b64encode(valor.file.read()).decode()
                 valores.append(valor or "")
 
             row = get_row(valores, titles)

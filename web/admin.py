@@ -66,11 +66,6 @@ class LibroAdmin(admin.ModelAdmin):
         'modificado'
     )
     actions = [exportar_csv]
-    fields_csv = [('nombre', 'Nombre'),
-                  ('user', 'Usuario'),
-                  ('creado', 'Creado'),
-                  ('modificado', 'Modificado'),
-                  ]
 
 
 @admin.register(Nota)
@@ -85,12 +80,6 @@ class NotaAdmin(admin.ModelAdmin):
         'modificado'
     )
     actions = [exportar_csv]
-    fields_csv = [('libro', 'Libro'),
-                  ('nombre', 'Nombre'),
-                  ('user', 'Usuario'),
-                  ('creado', 'Creado'),
-                  ('modificado', 'Modificado'),
-                  ]
 
 
 @admin.register(Adjunto)
@@ -103,6 +92,7 @@ class AdjuntoAdmin(admin.ModelAdmin):
         'user',
         'creado',
     )
+    actions = [exportar_csv]
 
 
 class LibroNotaAdjunto(Libro):
