@@ -4,8 +4,8 @@ from __future__ import unicode_literals
 
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
+import nested_admin
 
 from .models import User
 from .models import Libro
@@ -103,3 +103,35 @@ class AdjuntoAdmin(admin.ModelAdmin):
         'user',
         'creado',
     )
+
+
+class LibroNotaAdjunto(Libro):
+    class Meta:
+        proxy = True
+
+
+class AdjuntoInline(nested_admin.NestedStackedInline):
+    model = Adjunto
+    readonly_fields = ("creado", "modificado")
+
+
+class NotaInline(nested_admin.NestedStackedInline):
+    model = Nota
+    readonly_fields = ("creado", "modificado")
+    inlines = [AdjuntoInline]
+
+
+class LibroAdmin(nested_admin.NestedModelAdmin):
+    readonly_fields = ("creado", "modificado")
+    search_fields = (
+        "nombre",
+    )
+    list_display = (
+        "nombre",
+    )
+    inlines = [
+        NotaInline,
+    ]
+    actions = [exportar_csv]
+
+admin.site.register(LibroNotaAdjunto, LibroAdmin)
