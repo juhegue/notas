@@ -69,13 +69,7 @@
 
         {% block nucleocentral %}
         <main role="main" class="container-fluid">
-<!-- para dejar más sitio
-            <div style="margin-top:-35px;">
-                <h3>
-                {% block title %}
-                {% endblock title %}
-                </h3>
-            </div>
+
             <ol class="breadcrumb">
                 {% block breadcrumb %}
                 {% endblock breadcrumb %}
@@ -84,7 +78,14 @@
                 {% endblock breadcrumb_active %}
                 </li>
             </ol>
--->
+
+            <div>
+                <h3>
+                {% block title %}
+                {% endblock title %}
+                </h3>
+            </div>
+
             {% if form.errors or form.non_field_errors %}
                 <a id="id_btn_error" class="btn" href="#" data-toggle="tooltip" title="" data-placement="top" data-original-title="Errores" style="padding-bottom: 0px;border-bottom-width: 0px;padding-top: 0px;border-top-width: 0px;">
                     <span class="glyphicon glyphicon glyphicon-exclamation-sign" style="color:#ba2121;"></span>
