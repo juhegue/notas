@@ -44,6 +44,11 @@ body {
     border: 0;
 }
 
-.xxxnavbar {
+.navbar {
     margin-bottom: 0px;
+}
+
+.breadcrumb {
+    margin-bottom: 0px;
+    margin-top: 0px;
 }
