@@ -19,9 +19,10 @@ def marca_texto(busca, cadena):
         =[\s]?      # busca '=' seguido de algún o ningún blanco
         ["]?        # busca '"' puede o no existir
         [a-z]+://)  # busca uno o más caracteres seguidos de '://' y Final del 1º bloque
-        (<font\scolor=\'red\'\sstyle=\'background-color:yellow;\'>)   # Bloque 2, busca valor constante (los '\s' es porque con VERBOSE no puede contener espacios
-        ([a-z]+)    # Bloque 3, busca cualquier caracter
-        (</font>) #   # Bloque 4
+        ([a-z]+)    # Bloque 2, busca cualquier caracter
+        (<font\scolor=\'red\'\sstyle=\'background-color:yellow;\'>)   # Bloque 3, busca valor constante (los '\s' es porque con VERBOSE no puede contener espacios
+        ([a-z]+)    # Bloque 4, busca cualquier caracter
+        (</font>)   # Bloque 5, busca valor constante
         """, re.VERBOSE)
 
-    return re.sub(patron, r'\1\3', nueva)  # El resultado es el bloque 1 y el 3
+    return re.sub(patron, r'\1\2\4', nueva)  # El resultado son los bloques 1+2+4

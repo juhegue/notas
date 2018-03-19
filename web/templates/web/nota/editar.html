@@ -2,9 +2,8 @@
 {% load static %}
 {% load i18n %}
 
-{% block titlehead %}
-    {% trans 'Nota' %}
-{% endblock titlehead %}
+{% block titlehead %}{% trans 'Notas' %}{% endblock titlehead %}
+{% block title %}{% endblock title %}
 
 {% block styles %}
     {{ form.media.css }}

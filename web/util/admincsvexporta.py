@@ -2,9 +2,11 @@
 
 from __future__ import unicode_literals
 import csv
+import base64
 
 from django.http import HttpResponse
 from django.db.models.fields.reverse_related import ManyToOneRel
+from django.db import models
 
 
 class CsvExporta(object):
@@ -38,7 +40,8 @@ class CsvExporta(object):
     def _get_foreinkey(model_rel, model, id):
         for field in model._meta.fields:
             if field.get_internal_type() == "ForeignKey":
-                if field.rel.to == model_rel:
+                if field.related_model == model_rel or \
+                        field.related_model == model_rel._meta.proxy_for_model:
                     name = field.name
                     return {name: id}
 
@@ -71,27 +74,29 @@ class CsvExporta(object):
         return obj
 
     def _exporta(self, csvfile):
-        def carga(lista, valores, ncampo):
-            for n, v in enumerate(valores):
-                lista[ncampo+n] = v
 
         def get_row(valores, titles):
-            resul = list()
+            resul = dict()
             longi = len(valores) - 1
             for n, title in enumerate(titles):
                 if n > longi:
-                    resul.append("")
+                    resul[title] = ""
                 else:
-                    resul.append(valores[n])
+                    resul[title] = valores[n]
             return resul
 
         titles = list()
-        for name, title in self._get_fields(self.modeladmin):
+        for name, title in self._get_fields(self.modeladmin, self.modeladmin.model._meta.object_name):
             titles.append(title)
 
-        for inline in self.modeladmin.inlines:
-            for name, title in self._get_fields(inline, inline.model._meta.object_name):
-                titles.append(title)
+        def title_inline(modeladmin_inlines):
+            for inline in modeladmin_inlines:
+                for name, title in self._get_fields(inline, inline.model._meta.object_name):
+                    titles.append(title)
+
+                title_inline(inline.inlines)
+
+        title_inline(self.modeladmin.inlines)
 
         writer = csv.DictWriter(csvfile, fieldnames=titles)
 
@@ -101,30 +106,39 @@ class CsvExporta(object):
             valores = list()
             for name, title in self._get_fields(self.modeladmin):
                 valor = self._getitem(query, name)
+                if isinstance(valor, models.fields.files.FieldFile):
+                    valor = base64.b64encode(valor.file.read()).decode()
                 valores.append(valor or "")
 
             row = get_row(valores, titles)
 
-            vinlines = list()
-            ncampo = len(valores)
-            for inline in self.modeladmin.inlines:
-                foreinkey = self._get_foreinkey(self.modeladmin.model, inline.model, query.id)
-                for n, iquery in enumerate(inline.model.objects.filter(**foreinkey)):
-                    ivalores = list()
-                    for name, title in self._get_fields(inline):
-                        valor = self._getitem(iquery, name)
-                        ivalores.append(valor or "")
+            def valor_inline(row, modeladmin, query_id):
+                con_inline = False
+                for inline in modeladmin.inlines:
+                    foreinkey = self._get_foreinkey(modeladmin.model, inline.model, query_id)
+                    if foreinkey:
+                        for iquery in inline.model.objects.filter(**foreinkey):
+                            con_inline = True
+                            for name, title in self._get_fields(inline, inline.model._meta.object_name):
+                                valor = self._getitem(iquery, name)
+                                if isinstance(valor, models.fields.files.FieldFile):
+                                    row[title] = base64.b64encode(valor.file.read()).decode()
+                                else:
+                                    row[title] = valor
 
-                    if n >= len(vinlines):
-                        vinlines.append(row)
+                            valor_inline(row.copy(), inline, iquery.id)
 
-                    carga(vinlines[n], ivalores, ncampo)
-
-                ncampo += len(self._get_fields(inline))
-
-            if vinlines:
-                for row in vinlines:
+                if not con_inline:
                     writer.writerow(row)
-            else:
-                writer.writerow(row)
+
+            valor_inline(row, self.modeladmin, query.id)
+
+
+
+
+
+
+
+
+
 

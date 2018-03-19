@@ -4,8 +4,8 @@ from __future__ import unicode_literals
 
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
+import nested_admin
 
 from .models import User
 from .models import Libro
@@ -66,11 +66,6 @@ class LibroAdmin(admin.ModelAdmin):
         'modificado'
     )
     actions = [exportar_csv]
-    fields_csv = [('nombre', 'Nombre'),
-                  ('user', 'Usuario'),
-                  ('creado', 'Creado'),
-                  ('modificado', 'Modificado'),
-                  ]
 
 
 @admin.register(Nota)
@@ -85,12 +80,6 @@ class NotaAdmin(admin.ModelAdmin):
         'modificado'
     )
     actions = [exportar_csv]
-    fields_csv = [('libro', 'Libro'),
-                  ('nombre', 'Nombre'),
-                  ('user', 'Usuario'),
-                  ('creado', 'Creado'),
-                  ('modificado', 'Modificado'),
-                  ]
 
 
 @admin.register(Adjunto)
@@ -103,3 +92,36 @@ class AdjuntoAdmin(admin.ModelAdmin):
         'user',
         'creado',
     )
+    actions = [exportar_csv]
+
+
+class LibroNotaAdjunto(Libro):
+    class Meta:
+        proxy = True
+
+
+class AdjuntoInline(nested_admin.NestedStackedInline):
+    model = Adjunto
+    readonly_fields = ("creado", "modificado")
+
+
+class NotaInline(nested_admin.NestedStackedInline):
+    model = Nota
+    readonly_fields = ("creado", "modificado")
+    inlines = [AdjuntoInline]
+
+
+class LibroAdmin(nested_admin.NestedModelAdmin):
+    readonly_fields = ("creado", "modificado")
+    search_fields = (
+        "nombre",
+    )
+    list_display = (
+        "nombre",
+    )
+    inlines = [
+        NotaInline,
+    ]
+    actions = [exportar_csv]
+
+admin.site.register(LibroNotaAdjunto, LibroAdmin)
