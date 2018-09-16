@@ -72,7 +72,7 @@ class Libro(ActualizaMixin, UserMixin):
 class Nota(ActualizaMixin, UserMixin):
     libro = models.ForeignKey(Libro, on_delete=models.CASCADE)
     nombre = models.CharField(max_length=200, default='', null=True, blank=True)
-    texto_html = models.TextField(default='', null=True, blank=True)
+    texto = models.TextField(default='', null=True, blank=True)
     activa = models.BooleanField(default=False)
 
     def __str__(self):
@@ -115,7 +115,7 @@ class Nota(ActualizaMixin, UserMixin):
             """ % html
 
     def save(self, *args, **kwargs):
-        self.texto_html = clean_html(self.texto_html)
+        self.texto = clean_html(self.texto)
         return super(Nota, self).save(*args, **kwargs)
 
 

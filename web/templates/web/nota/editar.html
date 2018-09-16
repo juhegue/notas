@@ -28,7 +28,7 @@
     <div class="col-md-12">
         <form action="" method="post" enctype="multipart/form-data" role="form" id="id_formulario">
             {% csrf_token %}
-            {{ form.texto_html }}
+            {{ form.texto }}
             <div class="panel panel-primary">
                 <div class="panel-heading">
                     {% if create_view %}
@@ -75,7 +75,7 @@
                                 <div id='id_editor' class='col-md-9'>
                                     <div class="document-editor__editable-container">
                                         <div class="document-editor__editable">
-                                            {{ nota.texto_html|default:'<p>Nuevo texto.</p>'|safe }}
+                                            {{ nota.texto|default:'<p>Nuevo texto.</p>'|safe }}
                                         </div>
                                     </div>
                                 </div>
@@ -130,7 +130,7 @@
 
             $('#id_formulario').submit(function(e) {
                 var editorData = editor.getData();
-                $('#id_texto_html').val(editorData);
+                $('#id_texto').val(editorData);
                 $( '#id_libro' ).prop( 'disabled', false );
             });
 

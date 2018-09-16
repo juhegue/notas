@@ -114,7 +114,7 @@ class NotaDownloadZip(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
     def get_zip(nota, adj):
         with tempfile.SpooledTemporaryFile() as tmp:
             with zipfile.ZipFile(tmp, 'w', zipfile.ZIP_DEFLATED) as archive:
-                html = nota.texto_html
+                html = nota.texto
                 nombre = "nota_%s.html" % nota.id
                 archive.writestr(nombre, html)
 

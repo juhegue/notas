@@ -38,6 +38,6 @@ class NotaForm(forms.ModelForm):
         widgets = {
             'libro': Select2Es(attrs={'class': 'form-control', 'required': 'true'}),
             'nombre': forms.TextInput(attrs={'class': 'form-control', 'required': 'true'}),
-            'texto_html': forms.Textarea(attrs={'class': 'form-control', "style": "display:none;"}),
+            'texto': forms.Textarea(attrs={'class': 'form-control', "style": "display:none;"}),
         }
 

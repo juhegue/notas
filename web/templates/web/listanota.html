@@ -56,7 +56,7 @@
                         <th class="col-xs-10" data-field="titulo" data-sortable="true">{% trans 'Título' %}</th>
                         <th class="col-xs-1 text-center" data-sortable="true">{% trans 'Modificado' %}</th>
                         <th class="col-xs-1 text-center">{% trans 'Acciones' %}</th>
-                        <th data-visible="false" data-field="texto_html">id</th>
+                        <th data-visible="false" data-field="texto">id</th>
                         <th data-visible="false" data-field="adjunto_html_sin_borrar">id</th>
                     </tr>
                 </thead>
@@ -71,7 +71,7 @@
                             <a href="{% url 'nota_editar' nota.id %}" class="text-primary" role="button"><span class="glyphicon glyphicon-pencil"></span></a>&nbsp;&nbsp;
                             <a href="{% url 'nota_download_zip' nota.id %}" class="text-primary" role="button"><span class="fa fa-file-zip-o"></span></a>&nbsp;&nbsp;
                         </td>
-                        <td>{{ nota.texto_html|safe }}</td>
+                        <td>{{ nota.texto|safe }}</td>
                         <td>{{ nota.adjunto_html_sin_borrar|safe }}</td>
                     </tr>
                   {% endfor %}
@@ -129,7 +129,7 @@
                                 <div id='id_editor' class='col-md-9'>
                                     <div class="document-editor__editable-container">
                                         <div class="document-editor__editable">
-                                            ` + row.texto_html + `
+                                            ` + row.texto + `
                                         </div>
                                     </div>
                                 </div>
@@ -154,7 +154,7 @@
                                 <div id='id_editor' class='col-md-12'>
                                     <div class="document-editor__editable-container">
                                         <div class="document-editor__editable">
-                                            ` + row.texto_html + `
+                                            ` + row.texto + `
                                         </div>
                                     </div>
                                 </div>
