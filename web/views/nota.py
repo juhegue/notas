@@ -3,7 +3,6 @@
 from io import BytesIO
 import tempfile
 import zipfile
-from markdown import markdown
 from xhtml2pdf import pisa
 
 from django.urls import reverse
@@ -71,10 +70,12 @@ class NotaUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     def get_context_data(self, **kwargs):
         context = super(NotaUpdateView, self).get_context_data(**kwargs)
         context["nota_id"] = "%06d" % self.object.id
+        context["adjunto_html"] = self.object.adjunto_html()
         return context
 
     def form_valid(self, form):
         if form.is_valid():
+            data = form.cleaned_data
             f = form.save(commit=False)
             # f.user = self.request.user
             f.activa = True
@@ -113,11 +114,7 @@ class NotaDownloadZip(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
     def get_zip(nota, adj):
         with tempfile.SpooledTemporaryFile() as tmp:
             with zipfile.ZipFile(tmp, 'w', zipfile.ZIP_DEFLATED) as archive:
-                texto = "# %s.- %s\n\n%s" % (nota.libro, nota.nombre, nota.texto)
-                nombre = "nota_%s.md" % nota.id
-                archive.writestr(nombre, texto)
-
-                html = markdown(texto, extensions=["markdown.extensions.tables"])
+                html = nota.texto_html
                 nombre = "nota_%s.html" % nota.id
                 archive.writestr(nombre, html)
 

@@ -9,7 +9,6 @@
     {{ form.media.css }}
 <link href="{% static 'css/bootstrap-table.min.css' %}" rel="stylesheet">
     <link href="{% static 'css/bootstrap.fd.css' %}" rel="stylesheet">
-    <link href="{% static 'bootstrap-markdown/bootstrap-markdown.min.css' %}" rel="stylesheet">
     <style>
     </style>
 {% endblock styles %}
@@ -24,12 +23,11 @@
 
 {% block content %}
 
-<div class="row">
+<div class="row hidden-on-load">
     <div class="col-md-12">
         <form action="" method="post" enctype="multipart/form-data" role="form" id="id_formulario">
             {% csrf_token %}
-            {{ form.texto }}
-            {{ form.html }}
+            {{ form.texto_html }}
             <div class="panel panel-primary">
                 <div class="panel-heading">
                     {% if create_view %}
@@ -71,15 +69,19 @@
                     </div>
 
                     <div class='row'>
-                        <div id='id_editor{{ nota_id }}' class='col-md-12' style='padding-right:4px;padding-left:8px;'>
-                            <textarea id='id_teditor{{ nota_id }}' style='display:none;' rows='16'>{{ nota.texto }}</textarea>
+                        <div id='id_toolbar-container' class='col-md-12'> </div>
+                    </div>
+                    <div class='row'>
+                        <div id='id_editor' class='col-md-9'>
+                            <div id='id_teditor'>{{ nota.texto_html|default:'<p>Nuevo texto.</p>'|safe }}</div>
                         </div>
-                        <div id='id_adjuntos{{ nota_id }}' class='col-md-3' style='padding-left:0px;display:none;'>
+                        <div id='id_adjuntos' class='col-md-3'>
                             <div class='text-center'>
-                                <button type='button' style='width:100%' id='id_btnadjuntos{{ nota_id }}' class='btn btn-primary adjuntos' {% if create_view %}disabled{% endif %}>{% trans 'Adjuntos' %}
+                                <button type='button' style='width:100%' id='id_btnadjuntos' class='btn btn-primary adjuntos' {% if create_view %}disabled{% endif %}>{% trans 'Adjuntos' %}
                                 </button>
                             </div>
-                            <div id='id_lista_adjuntos{{ nota_id }}'>
+                            <div id='id_lista_adjuntos'>
+                                {{ adjunto_html|safe }}
                             </div>
                         </div>
                     </div>
@@ -100,43 +102,28 @@
 {% block scripts %}
     {{ form.media.js }}
     <script src="{% static 'js/bootstrap.fd.js' %}"></script>
-    <!--editor-->
-    <script src="{% static 'js/html-css-sanitizer-minified.js' %}"></script> <!-- ver html_sanitize() --->
-    <script src="{% static 'bootstrap-markdown/to-markdown.js' %}"></script>
-    <script src="{% static 'bootstrap-markdown/bootstrap-markdown.js' %}"></script>
-    <script src="{% static 'bootstrap-markdown/bootstrap-markdown.es.js' %}"></script>
-    <script src="{% static 'bootstrap-markdown/marked.min.js' %}"></script>
-    <script src="{% static 'js/jspdf.debug.js' %}"></script>
-    <script src="{% static 'js/editor.js' %}"></script>
+    <script src="{% static 'js/ckeditor5-build-decoupled-document-11.0.1/ckeditor.js' %}"></script>
+    <script src="{% static 'js/ckeditor5-build-decoupled-document-11.0.1/translations/es.js' %}"></script>
     <script type="text/javascript">
+        let editor;
+        DecoupledEditor
+            .create( document.querySelector( '#id_teditor' ), {
+                    language: 'es'
+             } )
+            .then( editorNew => {
+                editor = editorNew;
+                const toolbarContainer = document.querySelector( '#id_toolbar-container' );
+
+                toolbarContainer.appendChild( editor.ui.view.toolbar.element );
+            } )
+            .catch( error => {
+                console.error( error );
+            } );
+
         $(function(){
-            key = '{{ nota_id }}';
-
-            {% if create_view %}
-                MuestraAdjuntos(key, false);
-            {% else %}
-                MuestraAdjuntos(key, true);
-            {% endif %}
-
-            var url = '/getdatos_ajax/adjunto_html';
-            var param = {nota_id: key};
-            funcionAjax(url, param, function(data){
-                $elemento = $('#id_lista_adjuntos'+key);
-                $elemento.html(data);
-                if (data) { var estado = true; } else { var estado = false; }
-            });
-        });
-
-        $(document).ready(function(e){
-            showEditor('{{ nota_id }}', false, 'editor');
-
-            $('#id_teditor{{ nota_id }}').show();
-
             $('#id_formulario').submit(function(e) {
-                $editor = $('#id_teditor{{ nota_id }}').data('markdown');
-                $('#id_texto').val($editor.getContent());
-                $('#id_html').val($editor.parseContent());
-
+                var editorData = editor.getData();
+                $('#id_texto_html').val(editorData);
                 $( '#id_libro' ).prop( 'disabled', false );
             });
 
@@ -155,7 +142,7 @@
                     dropheight: 100,
                     multiple: true,
                  }).on('files.bs.filedialog', function(ev) {
-                    uploadFiles(key, ev.files, '{{ csrf_token }}');
+                    uploadFiles({{ nota.id }}, ev.files, '{{ csrf_token }}');
                 }).on('cancel.bs.filedialog', function(ev) {
                 });
             });

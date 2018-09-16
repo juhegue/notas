@@ -84,6 +84,6 @@ class AdjuntoSubir(LoginRequiredMixin, View):
             except Exception as e:
                 print(e)
 
-        html = Datos().adjunto_html(nota_id)
+        html = nota.adjunto_html()
         return HttpResponse(html)
 

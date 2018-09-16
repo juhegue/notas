@@ -9,29 +9,10 @@
     {{ form.media.css }}
     <link href="{% static 'css/bootstrap-table.min.css' %}" rel="stylesheet">
     <link href="{% static 'css/bootstrap.fd.css' %}" rel="stylesheet">
-    <link href="{% static 'bootstrap-markdown/bootstrap-markdown.min.css' %}" rel="stylesheet">
     <style>
         .form-control {
             max-width: 200px;   /* limita el ancho para corregir el select2 */
         }
-        .wrappable {            /*  limita el ancho td */
-            min-width: 170px; max-width: 170px; word-wrap: break-word;
-        }
-        .md-preview thead th {
-            padding: 4px !important;  /* alto th */
-        }
-        .pointer {
-            cursor: pointer;
-        }
-
-        td {
-            padding: 3px 0px 0px 5px !important;
-        }
-
-        .fixed-table-container tbody td .th-inner, .fixed-table-container thead th .th-inner {
-            padding: 2px !important;
-        }
-
     </style>
 {% endblock styles %}
 
@@ -74,6 +55,8 @@
                         <th class="col-xs-10" data-field="titulo" data-sortable="true">{% trans 'Título' %}</th>
                         <th class="col-xs-1 text-center" data-sortable="true">{% trans 'Modificado' %}</th>
                         <th class="col-xs-1 text-center">{% trans 'Acciones' %}</th>
+                        <th data-visible="false" data-field="texto_html">id</th>
+                        <th data-visible="false" data-field="adjunto_html_sin_borrar">id</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -87,6 +70,8 @@
                             <a href="{% url 'nota_editar' nota.id %}" class="text-primary" role="button"><span class="glyphicon glyphicon-pencil"></span></a>&nbsp;&nbsp;
                             <a href="{% url 'nota_download_zip' nota.id %}" class="text-primary" role="button"><span class="fa fa-file-zip-o"></span></a>&nbsp;&nbsp;
                         </td>
+                        <td>{{ nota.texto_html|safe }}</td>
+                        <td>{{ nota.adjunto_html_sin_borrar|safe }}</td>
                     </tr>
                   {% endfor %}
                 </tbody>
@@ -99,10 +84,11 @@
     {{ form.media.js }}
     <script src="{% static 'js/bootstrap-table.min.js' %}"></script>
     <script src="{% static 'js/bootstrap-table-locale-all.min.js' %}"></script>
+    <script src="{% static 'js/ckeditor5-build-decoupled-document-11.0.1/ckeditor.js' %}"></script>
     <script type="text/javascript">
         var busca_ant = htmlDecode('{{ busca }}');
 
-        $(document).ready(function(){
+        $(function(){
             var disabled = 'disabled';
             if ( $('#id_libro').val().length>0 ){ disabled = ''; }
 
@@ -135,37 +121,31 @@
         function detailFormatter(index, row) {
             var key = zeroFill(row.id, 6);
 
-            var url = '/getdatos_ajax/adjunto_html';
-            var param = {nota_id: key, sin_borrar: true, busca: busca_ant};
-            funcionAjax(url, param, function(data){
-                var $elemento = $('#id_lista_adjuntos'+key);
-                $elemento.html(data);
-                if (data) { var estado = true; } else { var estado = false; }
-                MuestraAdjuntos(key, estado);
-            });
-
-
-            var url = '/getdatos_ajax/lee_nota';
-            var param = {nota_id: key, busca: busca_ant};
-            funcionAjax(url, param, function(data){
-                var $elemento = $('#id_teditor'+key);
-                $elemento.replaceWith(data.html);
-            });
-
-            return `
-                <div class='row'>
-                    <div id='id_editor` + key + `' class='col-md-9' style='padding-right:18px;padding-left:14px;'>
-                        <textarea id='id_teditor` + key + `' rows='14' style='display:none;'></textarea>
-                    </div>
-                    <div id='id_adjuntos` + key + `' class='col-md-3' style='padding-left:0px;display:none;'>
-                        <div class='text-center'>
-                            <button type='button' style='width:100%' id='id_btnadjuntos` + key + `' class='btn btn-primary adjuntos'>`+ '{% trans 'Adjuntos' %}' +`</button>
+            if (row.adjunto_html_sin_borrar) {
+                return `
+                    <div class='row'>
+                        <div id='id_editor` + key + `' class='col-md-9' style='padding-right:18px;padding-left:14px;'>
+                            ` + row.texto_html + `
                         </div>
-                        <div id='id_lista_adjuntos` + key + `'>
+                        <div id='id_adjuntos` + key + `' class='col-md-3' style='padding-left:0px;'>
+                            <div class='text-center'>
+                                <button type='button' style='width:100%' id='id_btnadjuntos` + key + `' class='btn btn-primary adjuntos'>`+ '{% trans 'Adjuntos' %}' +`</button>
+                            </div>
+                            <div id='id_lista_adjuntos` + key + `'>
+                                ` + row.adjunto_html_sin_borrar + `
+                            </div>
                         </div>
                     </div>
-                </div>
-            `;
+                `;
+            } else {
+                return `
+                    <div class='row'>
+                        <div id='id_editor` + key + `' class='col-md-12''>
+                            ` + row.texto_html + `
+                        </div>
+                    </div>
+                `;
+            }
         }
 
         $(document).on('change','#id_libro',function(){

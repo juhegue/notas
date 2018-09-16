@@ -12,6 +12,7 @@ from django.dispatch import receiver
 
 from .managers import MyUserManager
 from .modelsmixin import ActualizaMixin
+from .util.util import clean_html
 
 
 class User(AbstractBaseUser, PermissionsMixin):
@@ -71,11 +72,51 @@ class Libro(ActualizaMixin, UserMixin):
 class Nota(ActualizaMixin, UserMixin):
     libro = models.ForeignKey(Libro, on_delete=models.CASCADE)
     nombre = models.CharField(max_length=200, default='', null=True, blank=True)
-    texto = models.TextField(default='', null=True, blank=True)
+    texto_html = models.TextField(default='', null=True, blank=True)
     activa = models.BooleanField(default=False)
 
     def __str__(self):
         return self.nombre
+
+    def adjunto_html(self):
+        html = ""
+        for adj in self.adjunto_set.all():
+            link_download = "<a href='/adjunto_bajar/%s/'>%s</a>" % (adj.id, adj.nombre)
+            href_baja = "javascript:borraAdjunto(%s);" % adj.id
+            html += """
+                <tr>
+                    <td class="wrappable">%s</td>
+                    <td class="text-center">
+                        <a href="%s" class="text-danger" role="button"><span class="glyphicon glyphicon-trash"></span></a>
+                    </td>                
+                </tr>            
+        """ % (link_download, href_baja)
+
+        return "" if not html else """
+            <div class="panel panel-default">
+            <table class='table' style='width:100%%'>
+              %s
+            </table>
+            </div>                
+            """ % html
+
+    def adjunto_html_sin_borrar(self):
+        html = ""
+        for adj in self.adjunto_set.all():
+            link_download = "<a href='/adjunto_bajar/%s/'>%s</a>" % (adj.id, adj.nombre)
+            html += '<tr><td class="wrappable">%s</td></tr>' % link_download
+
+        return "" if not html else """
+            <div class="panel panel-default">
+            <table class='table' style='width:100%%'>
+              %s
+            </table>
+            </div>                
+            """ % html
+
+    def save(self, *args, **kwargs):
+        self.texto_html = clean_html(self.texto_html)
+        return super(Nota, self).save(*args, **kwargs)
 
 
 def adjunto_upload_to(instance, filename):

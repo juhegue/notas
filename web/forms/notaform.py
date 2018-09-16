@@ -27,7 +27,7 @@ class NotaForm(forms.ModelForm):
         nombre = cleaned_data.get("nombre")
 
         if not nombre:
-            raise forms.ValidationError(_("¡El camop es obligatorio!"))
+            raise forms.ValidationError(_("¡El campo es obligatorio!"))
 
         return nombre
 
@@ -38,7 +38,6 @@ class NotaForm(forms.ModelForm):
         widgets = {
             'libro': Select2Es(attrs={'class': 'form-control', 'required': 'true'}),
             'nombre': forms.TextInput(attrs={'class': 'form-control', 'required': 'true'}),
-            'texto': forms.Textarea(attrs={'class': 'form-control', "style": "display:none;"}),
-            'html': forms.Textarea(attrs={'class': 'form-control', "style": "display:none;"}),
+            'texto_html': forms.Textarea(attrs={'class': 'form-control', "style": "display:none;"}),
         }
 
