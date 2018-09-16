@@ -9,7 +9,7 @@
     {{ form.media.css }}
     <link href="{% static 'css/bootstrap-table.min.css' %}" rel="stylesheet">
     <link href="{% static 'css/bootstrap.fd.css' %}" rel="stylesheet">
-    <link href="{% static 'css/ceditor.css' %}" rel="stylesheet">
+    <link href="{% static 'summernote-0.8.9/dist/summernote.css' %}" rel="stylesheet">
     <style>
     </style>
 {% endblock styles %}
@@ -72,21 +72,14 @@
                     <div class="document-editor">
                         <div class="document-editor__toolbar"></div>
                             <div class='row'>
-                                <div id='id_editor' class='col-md-9'>
-                                    <div class="document-editor__editable-container">
-                                        <div class="document-editor__editable">
-                                            {{ nota.texto|default:'<p>Nuevo texto.</p>'|safe }}
-                                        </div>
-                                    </div>
+                                <div class='col-md-9'>
+                                    <div id='id_editor'>{{ nota.texto|default:'<p>Nuevo texto.</p>'|safe }}</div>
                                 </div>
                                 <div id='id_adjuntos' class='col-md-3'>
                                     <div class='text-center'>
-                                        <button type='button' style='width:100%' id='id_btnadjuntos' class='btn btn-primary adjuntos' {% if create_view %}disabled{% endif %}>{% trans 'Adjuntos' %}
-                                        </button>
+                                        <button type='button' style='width:100%' id='id_btnadjuntos' class='btn btn-primary adjuntos' {% if create_view %}disabled{% endif %}>{% trans 'Adjuntos' %}</button>
                                     </div>
-                                    <div id='id_lista_adjuntos'>
-                                        {{ adjunto_html|safe }}
-                                    </div>
+                                    <div id='id_lista_adjuntos'>{{ adjunto_html|safe }}</div>
                                 </div>
                             </div>
                         </div>
@@ -108,28 +101,16 @@
 {% block scripts %}
     {{ form.media.js }}
     <script src="{% static 'js/bootstrap.fd.js' %}"></script>
-    <script src="{% static 'js/ckeditor5-build-decoupled-document-11.0.1/ckeditor.js' %}"></script>
-    <script src="{% static 'js/ckeditor5-build-decoupled-document-11.0.1/translations/es.js' %}"></script>
+    <script src="{% static 'summernote-0.8.9/dist/summernote.js' %}"></script>
+    <script src="{% static 'summernote-0.8.9/dist/lang/summernote-es-ES.js"></script>
     <script type="text/javascript">
         $(function(){
-            let editor;
-            DecoupledEditor
-                .create( document.querySelector( '.document-editor__editable' ), {
-                        language: 'es'
-                 } )
-                .then( editorNew => {
-                    editor = editorNew;
-                    const toolbarContainer = document.querySelector( '.document-editor__toolbar' );
-
-                    toolbarContainer.appendChild( editor.ui.view.toolbar.element );
-                } )
-                .catch( error => {
-                    console.error( error );
-                } );
-
+            $('#id_editor').summernote({
+                focus: true,
+            });
 
             $('#id_formulario').submit(function(e) {
-                var editorData = editor.getData();
+                var editorData = $('#id_editor').summernote('code');
                 $('#id_texto').val(editorData);
                 $( '#id_libro' ).prop( 'disabled', false );
             });

@@ -114,12 +114,23 @@ class NotaDownloadZip(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
     def get_zip(nota, adj):
         with tempfile.SpooledTemporaryFile() as tmp:
             with zipfile.ZipFile(tmp, 'w', zipfile.ZIP_DEFLATED) as archive:
-                html = nota.texto
+                html = """
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <title>%s</title>
+</head>
+<body>
+    %s
+</body>
+</html>                        
+                """ % (nota.nombre, nota.texto)
                 nombre = "nota_%s.html" % nota.id
                 archive.writestr(nombre, html)
 
                 result = BytesIO()
-                pdf = pisa.pisaDocument(BytesIO(html.encode("ISO-8859-1")), result)
+                pdf = pisa.pisaDocument(BytesIO(html.encode("utf-8")), result)
                 if not pdf.err:
                     nombre = "nota_%s.pdf" % nota.id
                     archive.writestr(nombre, result.getvalue())

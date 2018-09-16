@@ -9,7 +9,6 @@
     {{ form.media.css }}
     <link href="{% static 'css/bootstrap-table.min.css' %}" rel="stylesheet">
     <link href="{% static 'css/bootstrap.fd.css' %}" rel="stylesheet">
-    <link href="{% static 'css/ceditor.css' %}" rel="stylesheet">
     <style>
         .form-control {
             max-width: 200px;   /* limita el ancho para corregir el select2 */
@@ -85,8 +84,6 @@
     {{ form.media.js }}
     <script src="{% static 'js/bootstrap-table.min.js' %}"></script>
     <script src="{% static 'js/bootstrap-table-locale-all.min.js' %}"></script>
-    <script src="{% static 'js/ckeditor5-build-decoupled-document-11.0.1/ckeditor.js' %}"></script>
-    <script src="{% static 'js/ckeditor5-build-decoupled-document-11.0.1/translations/es.js' %}"></script>
     <script type="text/javascript">
         var busca_ant = htmlDecode('{{ busca }}');
 
@@ -201,14 +198,6 @@
           return $('<textarea/>').text(value).html();
         }
 
-        if (busca_ant == 'None'){
-            busca_ant = localStorage.busca;
-            var libro = localStorage.libro;
-            var libro_ant = $('#id_libro').val();
-            if (libro) $('#id_libro').val(libro);
-            if (busca_ant || !libro_ant) submit();
-        }
-
         function submit(busca){
             if (busca === undefined) busca = busca_ant || '';
 
@@ -216,10 +205,9 @@
 
             if (libro == 0) return;
 
-            var url = '/listanota/'+ libro + '/' + encodeURIComponent(busca);
+            if (busca == '') { busca = '__NULL__'; }
 
-            localStorage.busca = busca;
-            localStorage.libro = libro;
+            var url = '/listanota/'+ libro + '/' + encodeURIComponent(busca);
 
             $('#id_cargando').modal('show');
             location.href = url;

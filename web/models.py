@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import json
 import os
 import uuid
 
@@ -23,6 +24,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     date_joined = models.DateTimeField(_('date joined'), auto_now_add=True)
     is_active = models.BooleanField(_('active'), default=True)
     is_staff = models.BooleanField(_('staff'), default=False)
+    propiedades = models.TextField(_('propiedades'), blank=True, null=True)
 
     objects = MyUserManager()
 
@@ -48,6 +50,16 @@ class User(AbstractBaseUser, PermissionsMixin):
         Returns the short name for the user.
         """
         return self.first_name
+
+    def set_propiedad(self, nombre, valor):
+        p = json.loads(self.propiedades or "{}")
+        p[nombre] = valor
+        self.propiedades = json.dumps(p)
+        self.save()
+
+    def get_propiedad(self, nombre):
+        p = json.loads(self.propiedades or "{}")
+        return p.get(nombre)
 
 
 class UserMixin(models.Model):

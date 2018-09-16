@@ -30,6 +30,7 @@ def marca_texto(busca, cadena):
 
 
 def clean_html(texto_html):
+    return texto_html
     if texto_html:
         cleaner = Cleaner()
         cleaner.javascript = True  # This is True because we want to activate the javascript filter
