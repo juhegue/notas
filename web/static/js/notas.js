@@ -47,7 +47,23 @@ function borraAdjunto(adj_id) {
     });
 }
 
-$(document).ready(function(){
+function temporizador_descarga() {
+    if ($.cookie('fileDownload') == 'true') {
+        $.removeCookie('fileDownload', { path: '/' });
+        $('#id_cargando').modal('hide');
+    }  else {
+        setTimeout("temporizador_descarga()", 500);
+    }
+}
+
+function mensajeLoading(message) {
+    $('#id_cargando').modal('show');
+    if (message) $('#id_cargando_msg').text(message);
+    $.removeCookie('fileDownload', { path: '/' });
+    setTimeout('temporizador_descarga()', 1000);
+}
+
+$(function () {
     $('.hidden-on-load').show();
 
     // los link con 'onclick' activar con espacio o enter
@@ -59,5 +75,12 @@ $(document).ready(function(){
             }
         }
     });
+
+    /* muestra el mensaje 'data-mensaje' de la clase '.mensaje' en el click*/
+    $(document).on('click', '.mensaje', function (e) {
+        var msg = $(this).attr('data-mensaje') || "Cargando...";
+        mensajeLoading(msg);
+    });
+
 });
 

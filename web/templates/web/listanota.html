@@ -68,7 +68,7 @@
                         <td class="text-center">
                             <a href="{% url 'nota_eliminar' nota.id %}" class="text-danger" role="button"><span class="glyphicon glyphicon-trash"></span></a>&nbsp;&nbsp;
                             <a href="{% url 'nota_editar' nota.id %}" class="text-primary" role="button"><span class="glyphicon glyphicon-pencil"></span></a>&nbsp;&nbsp;
-                            <a href="{% url 'nota_download_zip' nota.id %}" class="text-primary" role="button"><span class="fa fa-file-zip-o"></span></a>&nbsp;
+                            <a href="{% url 'nota_download_zip' nota.id %}" class="text-primary mensaje" data-mensaje="Creando zip..." role="button"><span class="fa fa-file-zip-o"></span></a>&nbsp;
                             <a href="{% url 'nota_enviar' nota.id %}" class="text-primary" role="button"><span class="glyphicon glyphicon-send"></span></a>
                         </td>
                         <td>{{ nota.texto|colorea_busca:busca|safe }}</td>
@@ -87,6 +87,13 @@
     <script src="{% static 'js/bootstrap-table-locale-all.min.js' %}"></script>
     <script type="text/javascript">
         var busca_ant = htmlDecode('{{ busca }}');
+
+        var path = window.location.pathname.split('/');
+        var pag = path[1];
+        if (typeof(Storage) !== 'undefined') {
+            var pos = localStorage.getItem(pag);
+            if (pos) $('html, body').animate({'scrollTop': pos}, 100);
+        }
 
         $(function(){
             var disabled = 'disabled';
@@ -115,7 +122,6 @@
                $(this).parent().prepend('<a style="padding-top:6px;" class="close clear_search" data-dismiss="alert">&nbsp; × &nbsp;</a>');
                if (busca_ant) $(this).select().focus();
             });
-
         });
 
         function detailFormatter(index, row) {
@@ -206,7 +212,10 @@
 
             if (libro == 0) return;
 
-            if (busca == '') { busca = '__NULL__'; }
+            if (busca == '') {
+                busca = '__NULL__';
+                localStorage.setItem(pag, 0);
+            }
 
             var url = '/listanota/'+ libro + '/' + encodeURIComponent(busca);
 
@@ -238,6 +247,13 @@
 
         $(document).on('click','.clear_search',function(){
             $('#id_notas').bootstrapTable('resetSearch');
+        });
+
+        $(document).on('click', '.btn, a', function(){
+            if (typeof(Storage) !== 'undefined') {
+                var pos =  $(window).scrollTop();
+                localStorage.setItem(pag, pos);
+            }
         });
 
     </script>

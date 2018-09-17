@@ -2,6 +2,7 @@
 
 import os
 from io import BytesIO
+import logging
 import tempfile
 import zipfile
 from xhtml2pdf import pisa
@@ -25,36 +26,42 @@ TEMPLATE_HTML = """
 </html>                        
 """ 
 
+logger = logging.getLogger(__name__)
+
 
 class NotaZip(object):
     def __init__(self, nota_id):
         self.nota = Nota.objects.get(pk=nota_id)
         
     def _crea(self, tmp):
-            with zipfile.ZipFile(tmp, 'w', zipfile.ZIP_DEFLATED) as archive:
-                html = TEMPLATE_HTML % (self.nota.nombre, self.nota.texto)
-    
-                nombre = "nota_%s.html" % self.nota.id
-                archive.writestr(nombre, html)
-    
-                result = BytesIO()
-                pdf = pisa.pisaDocument(BytesIO(html.encode("utf-8")), result)
-                if not pdf.err:
-                    nombre = "nota_%s.pdf" % self.nota.id
-                    archive.writestr(nombre, result.getvalue())
-    
-                md = Tomd(html).markdown
-                nombre = "nota_%s.md" % self.nota.id
-                archive.writestr(nombre, md)
-    
-                for a in self.nota.adjunto_set.all():
+        with zipfile.ZipFile(tmp, 'w', zipfile.ZIP_DEFLATED) as archive:
+            html = TEMPLATE_HTML % (self.nota.nombre, self.nota.texto)
+
+            nombre = "nota_%s.html" % self.nota.id
+            archive.writestr(nombre, html)
+
+            result = BytesIO()
+            pdf = pisa.pisaDocument(BytesIO(html.encode("utf-8")), result)
+            if not pdf.err:
+                nombre = "nota_%s.pdf" % self.nota.id
+                archive.writestr(nombre, result.getvalue())
+
+            md = Tomd(html).markdown
+            nombre = "nota_%s.md" % self.nota.id
+            archive.writestr(nombre, md)
+
+            for a in self.nota.adjunto_set.all():
+                try:
                     archive.write(a.fichero.file.name, a.nombre)
-                archive.close()
-    
-            length = tmp.tell()
-            # Reset file pointer
-            tmp.seek(0)
-            return length
+                except Exception as e:
+                    logger.debug(str(e))
+
+            archive.close()
+
+        length = tmp.tell()
+        # Reset file pointer
+        tmp.seek(0)
+        return length
 
     def response(self):
         with tempfile.SpooledTemporaryFile() as tmp:
@@ -63,6 +70,7 @@ class NotaZip(object):
             response = HttpResponse(wrapper, content_type="application/zip")
             response["Content-Disposition"] = "attachment; filename=nota_%s.zip" % self.nota.id
             response["Content-Length"] = length
+            response.set_cookie("fileDownload", "true", max_age=6660, path="/")
             return response
 
     def file(self):

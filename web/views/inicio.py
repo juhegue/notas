@@ -14,7 +14,7 @@ class Index(LoginRequiredMixin, TemplateView):
 
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:
-            #return render(request, "web/index.html")
+            #  return render(request, "web/index.html")
             return redirect("listanota")
         return super(Index, self).dispatch(request, *args, **kwargs)
 
