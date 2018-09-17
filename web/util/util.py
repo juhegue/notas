@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import re
+from lxml.html.clean import Cleaner
 
 
 def marca_texto(busca, cadena):
@@ -26,3 +27,18 @@ def marca_texto(busca, cadena):
         """, re.VERBOSE)
 
     return re.sub(patron, r'\1\2\4', nueva)  # El resultado son los bloques 1+2+4
+
+
+def clean_html(texto_html):
+    return texto_html
+
+    # TODO: Anulado ya que quita los 'style' del html
+    if texto_html:
+        cleaner = Cleaner()
+        cleaner.javascript = True  # This is True because we want to activate the javascript filter
+        cleaner.style = False  # This is True because we want to activate the styles & stylesheet filter
+        html_sin = cleaner.clean_html(texto_html)
+        return html_sin
+    else:
+        return ""
+

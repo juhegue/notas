@@ -9,29 +9,10 @@
     {{ form.media.css }}
     <link href="{% static 'css/bootstrap-table.min.css' %}" rel="stylesheet">
     <link href="{% static 'css/bootstrap.fd.css' %}" rel="stylesheet">
-    <link href="{% static 'bootstrap-markdown/bootstrap-markdown.min.css' %}" rel="stylesheet">
     <style>
         .form-control {
             max-width: 200px;   /* limita el ancho para corregir el select2 */
         }
-        .wrappable {            /*  limita el ancho td */
-            min-width: 170px; max-width: 170px; word-wrap: break-word;
-        }
-        .md-preview thead th {
-            padding: 4px !important;  /* alto th */
-        }
-        .pointer {
-            cursor: pointer;
-        }
-
-        td {
-            padding: 3px 0px 0px 5px !important;
-        }
-
-        .fixed-table-container tbody td .th-inner, .fixed-table-container thead th .th-inner {
-            padding: 2px !important;
-        }
-
     </style>
 {% endblock styles %}
 
@@ -74,6 +55,8 @@
                         <th class="col-xs-10" data-field="titulo" data-sortable="true">{% trans 'Título' %}</th>
                         <th class="col-xs-1 text-center" data-sortable="true">{% trans 'Modificado' %}</th>
                         <th class="col-xs-1 text-center">{% trans 'Acciones' %}</th>
+                        <th data-visible="false" data-field="texto">id</th>
+                        <th data-visible="false" data-field="adjunto_html_sin_borrar">id</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -85,8 +68,11 @@
                         <td class="text-center">
                             <a href="{% url 'nota_eliminar' nota.id %}" class="text-danger" role="button"><span class="glyphicon glyphicon-trash"></span></a>&nbsp;&nbsp;
                             <a href="{% url 'nota_editar' nota.id %}" class="text-primary" role="button"><span class="glyphicon glyphicon-pencil"></span></a>&nbsp;&nbsp;
-                            <a href="{% url 'nota_download_zip' nota.id %}" class="text-primary" role="button"><span class="fa fa-file-zip-o"></span></a>&nbsp;&nbsp;
+                            <a href="{% url 'nota_download_zip' nota.id %}" class="text-primary mensaje" data-mensaje="Creando zip..." role="button"><span class="fa fa-file-zip-o"></span></a>&nbsp;
+                            <a href="{% url 'nota_enviar' nota.id %}" class="text-primary" role="button"><span class="glyphicon glyphicon-send"></span></a>
                         </td>
+                        <td>{{ nota.texto|colorea_busca:busca|safe }}</td>
+                        <td>{{ nota.adjunto_html_sin_borrar|colorea_busca:busca|safe|safe }}</td>
                     </tr>
                   {% endfor %}
                 </tbody>
@@ -102,7 +88,14 @@
     <script type="text/javascript">
         var busca_ant = htmlDecode('{{ busca }}');
 
-        $(document).ready(function(){
+        var path = window.location.pathname.split('/');
+        var pag = path[1];
+        if (typeof(Storage) !== 'undefined') {
+            var pos = localStorage.getItem(pag);
+            if (pos) $('html, body').animate({'scrollTop': pos}, 100);
+        }
+
+        $(function(){
             var disabled = 'disabled';
             if ( $('#id_libro').val().length>0 ){ disabled = ''; }
 
@@ -126,46 +119,54 @@
                $(this).attr('placeholder', "Buscar (múltiple separar por comas)");
                $(this).css('max-width', '260px');
                $(this).css('width', '260px');
-               $(this).parent().prepend('<a style="padding-top:6px;" class="close clear_search" data-dismiss="alert"> ×</a>');
+               $(this).parent().prepend('<a style="padding-top:6px;" class="close clear_search" data-dismiss="alert">&nbsp; × &nbsp;</a>');
                if (busca_ant) $(this).select().focus();
             });
-
         });
 
         function detailFormatter(index, row) {
-            var key = zeroFill(row.id, 6);
-
-            var url = '/getdatos_ajax/adjunto_html';
-            var param = {nota_id: key, sin_borrar: true, busca: busca_ant};
-            funcionAjax(url, param, function(data){
-                var $elemento = $('#id_lista_adjuntos'+key);
-                $elemento.html(data);
-                if (data) { var estado = true; } else { var estado = false; }
-                MuestraAdjuntos(key, estado);
-            });
-
-
-            var url = '/getdatos_ajax/lee_nota';
-            var param = {nota_id: key, busca: busca_ant};
-            funcionAjax(url, param, function(data){
-                var $elemento = $('#id_teditor'+key);
-                $elemento.replaceWith(data.html);
-            });
-
-            return `
-                <div class='row'>
-                    <div id='id_editor` + key + `' class='col-md-9' style='padding-right:18px;padding-left:14px;'>
-                        <textarea id='id_teditor` + key + `' rows='14' style='display:none;'></textarea>
-                    </div>
-                    <div id='id_adjuntos` + key + `' class='col-md-3' style='padding-left:0px;display:none;'>
-                        <div class='text-center'>
-                            <button type='button' style='width:100%' id='id_btnadjuntos` + key + `' class='btn btn-primary adjuntos'>`+ '{% trans 'Adjuntos' %}' +`</button>
-                        </div>
-                        <div id='id_lista_adjuntos` + key + `'>
+            if (row.adjunto_html_sin_borrar) {
+                return `
+                    <div class="panel panel-primary">
+                        <div class="panel-body">
+                            <div class='row'>
+                                <div id='id_editor' class='col-md-9'>
+                                    <div class="document-editor__editable-container">
+                                        <div class="document-editor__editable">
+                                            ` + row.texto + `
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id='id_adjuntos' class='col-md-3'>
+                                    <div class='text-center'>
+                                        <button type='button' style='width:100%' id='id_btnadjuntos' class='btn btn-primary adjuntos' {% if create_view %}disabled{% endif %}>{% trans 'Adjuntos' %}
+                                        </button>
+                                    </div>
+                                    <div id='id_lista_adjuntos'>
+                                        ` + row.adjunto_html_sin_borrar + `
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            `;
+                `;
+            } else {
+                return `
+                    <div class="panel panel-primary">
+                        <div class="panel-body">
+                            <div class='row'>
+                                <div id='id_editor' class='col-md-12'>
+                                    <div class="document-editor__editable-container">
+                                        <div class="document-editor__editable">
+                                            ` + row.texto + `
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
         }
 
         $(document).on('change','#id_libro',function(){
@@ -204,14 +205,6 @@
           return $('<textarea/>').text(value).html();
         }
 
-        if (busca_ant == 'None'){
-            busca_ant = localStorage.busca;
-            var libro = localStorage.libro;
-            var libro_ant = $('#id_libro').val();
-            if (libro) $('#id_libro').val(libro);
-            if (busca_ant || !libro_ant) submit();
-        }
-
         function submit(busca){
             if (busca === undefined) busca = busca_ant || '';
 
@@ -219,10 +212,12 @@
 
             if (libro == 0) return;
 
-            var url = '/listanota/'+ libro + '/' + encodeURIComponent(busca);
+            if (busca == '') {
+                busca = '__NULL__';
+                localStorage.setItem(pag, 0);
+            }
 
-            localStorage.busca = busca;
-            localStorage.libro = libro;
+            var url = '/listanota/'+ libro + '/' + encodeURIComponent(busca);
 
             $('#id_cargando').modal('show');
             location.href = url;
@@ -252,6 +247,13 @@
 
         $(document).on('click','.clear_search',function(){
             $('#id_notas').bootstrapTable('resetSearch');
+        });
+
+        $(document).on('click', '.btn, a', function(){
+            if (typeof(Storage) !== 'undefined') {
+                var pos =  $(window).scrollTop();
+                localStorage.setItem(pag, pos);
+            }
         });
 
     </script>

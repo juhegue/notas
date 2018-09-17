@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import json
 import os
 import uuid
 
@@ -12,6 +13,7 @@ from django.dispatch import receiver
 
 from .managers import MyUserManager
 from .modelsmixin import ActualizaMixin
+from .util.util import clean_html
 
 
 class User(AbstractBaseUser, PermissionsMixin):
@@ -22,6 +24,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     date_joined = models.DateTimeField(_('date joined'), auto_now_add=True)
     is_active = models.BooleanField(_('active'), default=True)
     is_staff = models.BooleanField(_('staff'), default=False)
+    propiedades = models.TextField(_('propiedades'), blank=True, null=True)
 
     objects = MyUserManager()
 
@@ -47,6 +50,16 @@ class User(AbstractBaseUser, PermissionsMixin):
         Returns the short name for the user.
         """
         return self.first_name
+
+    def set_propiedad(self, nombre, valor):
+        p = json.loads(self.propiedades or "{}")
+        p[nombre] = valor
+        self.propiedades = json.dumps(p)
+        self.save()
+
+    def get_propiedad(self, nombre):
+        p = json.loads(self.propiedades or "{}")
+        return p.get(nombre)
 
 
 class UserMixin(models.Model):
@@ -76,6 +89,46 @@ class Nota(ActualizaMixin, UserMixin):
 
     def __str__(self):
         return self.nombre
+
+    def adjunto_html(self):
+        html = ""
+        for adj in self.adjunto_set.all():
+            link_download = "<a href='/adjunto_bajar/%s/'>%s</a>" % (adj.id, adj.nombre)
+            href_baja = "javascript:borraAdjunto(%s);" % adj.id
+            html += """
+                <tr>
+                    <td class="wrappable">%s</td>
+                    <td class="text-center">
+                        <a href="%s" class="text-danger" role="button"><span class="glyphicon glyphicon-trash"></span></a>
+                    </td>                
+                </tr>            
+        """ % (link_download, href_baja)
+
+        return "" if not html else """
+            <div class="panel panel-default">
+            <table class='table' style='width:100%%'>
+              %s
+            </table>
+            </div>                
+            """ % html
+
+    def adjunto_html_sin_borrar(self):
+        html = ""
+        for adj in self.adjunto_set.all():
+            link_download = "<a href='/adjunto_bajar/%s/'>%s</a>" % (adj.id, adj.nombre)
+            html += '<tr><td class="wrappable">%s</td></tr>' % link_download
+
+        return "" if not html else """
+            <div class="panel panel-default">
+            <table class='table' style='width:100%%'>
+              %s
+            </table>
+            </div>                
+            """ % html
+
+    def save(self, *args, **kwargs):
+        self.texto = clean_html(self.texto)
+        return super(Nota, self).save(*args, **kwargs)
 
 
 def adjunto_upload_to(instance, filename):

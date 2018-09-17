@@ -25,7 +25,7 @@ function uploadFiles(key, files, csrf_token){
         processData: false,
         contentType: false,
         success: function(data){
-            $elemento = $('#id_lista_adjuntos'+key);
+            $elemento = $('#id_lista_adjuntos');
             $elemento.html(data);
             $('#id_cargando').modal('hide');
         },
@@ -42,29 +42,30 @@ function borraAdjunto(adj_id) {
     var param = {adj_id: adj_id};
     funcionAjax(url, param, function(data){
         var key = zeroFill(data.nota_id, 6);
-        $elemento = $('#id_lista_adjuntos'+key);
+        $elemento = $('#id_lista_adjuntos');
         $elemento.html(data.data);
     });
 }
 
-var adjuntos_visible = {};
-
-function MuestraAdjuntos(key, estado) {
-    if (estado == undefined) {
-        if (adjuntos_visible.key) {estado = false;} else {estado = true;};
+function temporizador_descarga() {
+    if ($.cookie('fileDownload') == 'true') {
+        $.removeCookie('fileDownload', { path: '/' });
+        $('#id_cargando').modal('hide');
+    }  else {
+        setTimeout("temporizador_descarga()", 500);
     }
-
-    if (estado) {
-        $('#id_editor' + key).attr('class', 'col-md-9');
-        $('#id_adjuntos' + key).show();
-    } else {
-        $('#id_adjuntos' + key).hide();
-        $('#id_editor' + key).attr('class', 'col-md-12');
-    }
-    adjuntos_visible.key = estado;
 }
 
-$(document).ready(function(){
+function mensajeLoading(message) {
+    $('#id_cargando').modal('show');
+    if (message) $('#id_cargando_msg').text(message);
+    $.removeCookie('fileDownload', { path: '/' });
+    setTimeout('temporizador_descarga()', 1000);
+}
+
+$(function () {
+    $('.hidden-on-load').show();
+
     // los link con 'onclick' activar con espacio o enter
     $(document).on('keyup', 'a' , function (event) {
         var onclick = $(this).attr('onclick');
@@ -74,5 +75,12 @@ $(document).ready(function(){
             }
         }
     });
+
+    /* muestra el mensaje 'data-mensaje' de la clase '.mensaje' en el click*/
+    $(document).on('click', '.mensaje', function (e) {
+        var msg = $(this).attr('data-mensaje') || "Cargando...";
+        mensajeLoading(msg);
+    });
+
 });
 

@@ -36,8 +36,20 @@ class ListaNotaView(LoginRequiredMixin, FormView, Busca):
     form_class = ListaNotaForm
 
     def dispatch(self, request, *args, **kwargs):
-        self.libro_id = int(kwargs.get("libro") or 0) #or request.COOKIES.get('libro', 0))
-        self.busca = kwargs.get("busca")
+        self.libro_id = int(kwargs.get("libro") or 0)
+        if self.libro_id:
+            request.user.set_propiedad("libro", self.libro_id)
+        else:
+            self.libro_id = request.user.get_propiedad("libro")
+
+        self.busca = kwargs.get("busca", "")
+        if self.busca:
+            if self.busca == "__NULL__":
+                self.busca = ""
+            request.user.set_propiedad("busca", self.busca)
+        else:
+            self.busca = request.user.get_propiedad("busca") or ""
+
         return super(ListaNotaView, self).dispatch(request, *args, **kwargs)
 
     def get_initial(self):

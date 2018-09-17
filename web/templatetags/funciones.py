@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from django import template
-from django.conf import settings
 from django.utils.safestring import mark_safe
 from ..util.util import marca_texto
 

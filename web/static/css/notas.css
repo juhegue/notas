@@ -52,3 +52,26 @@ body {
     margin-bottom: 0px;
     margin-top: 0px;
 }
+
+.hidden-on-load {
+    display:none;
+}
+
+
+/* Campos obligatorios */
+.required_fields {
+    color: red;
+    font-weight: bold;
+}
+
+/* Error validator */
+label.error {
+    color: #ba2121;
+    font-weight: normal;
+}
+
+/* Error label */
+ul.errorlist {
+    color: #ba2121;
+    padding: 0 0 0 15px;
+}

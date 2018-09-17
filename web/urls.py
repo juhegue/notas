@@ -11,11 +11,11 @@ from .views.libro import LibroCreateView
 from .views.nota import NotaCreateView
 from .views.nota import NotaUpdateView
 from .views.nota import NotaDeleteView
+from .views.nota import NotaEnviarView
 from .views.nota import NotaDownloadZip
 from .views.ajax import AjaxView
 from .views.adjunto import AdjuntoSubir
 from .views.adjunto import AdjuntoBajar
-from .views.guia_markdawn import GuiaMarkdownView
 
 # https://simpleisbetterthancomplex.com/references/2016/10/10/url-patterns.html
 
@@ -35,6 +35,7 @@ urlpatterns = [
     re_path(r'^nota/editar/(?P<pk>\d+)/$', NotaUpdateView.as_view(), name='nota_editar'),
     re_path(r'^nota/eliminar/(?P<pk>\d+)/$', NotaDeleteView.as_view(), name='nota_eliminar'),
     re_path(r'^nota/download_zip/(?P<pk>\d+)/$', NotaDownloadZip.as_view(), name='nota_download_zip'),
+    re_path(r'^nota/enviar/(?P<pk>\d+)/$', NotaEnviarView.as_view(), name='nota_enviar'),
 
     # Adjuntos
     re_path(r'^adjunto_subir/$', AdjuntoSubir.as_view()),
@@ -42,8 +43,6 @@ urlpatterns = [
 
     # Ajax
     re_path(r'^getdatos_ajax/([^/]+)', AjaxView.as_view()),
-
-    re_path(r'^guia_markdawn/$', GuiaMarkdownView.as_view()),
 ]
 
 if settings.DEBUG:
