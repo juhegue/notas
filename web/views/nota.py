@@ -1,24 +1,24 @@
 # coding=utf-8
 
-from io import BytesIO
-import tempfile
-import zipfile
-from xhtml2pdf import pisa
-from tomd import Tomd
-
 from django.urls import reverse
+from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import View
 from django.views.generic import CreateView
 from django.views.generic import UpdateView
 from django.views.generic import DeleteView
+from django.views.generic import FormView
 from django.http.response import HttpResponseForbidden
-from django.http import HttpResponse
-from wsgiref.util import FileWrapper
+from django.shortcuts import redirect
 
-from web.models import Adjunto
+from post_office import mail
+
 from web.models import Nota
 from web.forms.notaform import NotaForm
+from web.forms.notaform import NotaEnviarForm
+
+from ..util.notazip import NotaZip
 
 
 class NotaCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
@@ -88,7 +88,7 @@ class NotaUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
 
 
 class NotaDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
-    template_name = 'web/nota/elimina.html'
+    template_name = 'web/nota/eliminar.html'
     model = Nota
     success_message = "Éxito al eliminar nota."
 
@@ -104,56 +104,51 @@ class NotaDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
         return super(NotaDeleteView, self).delete(*args, **kwargs)
 
 
-class NotaDownloadZip(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
+class NotaDownloadZip(LoginRequiredMixin, SuccessMessageMixin, View):
     def dispatch(self, request, *args, **kwargs):
         pk = kwargs.get("pk")
-        nota = Nota.objects.get(pk=pk)
-        adj = Adjunto.objects.filter(nota=nota)
-        return self.get_zip(nota, adj)
+        return NotaZip(pk).response()
 
-    @staticmethod
-    def get_zip(nota, adj):
-        with tempfile.SpooledTemporaryFile() as tmp:
-            with zipfile.ZipFile(tmp, 'w', zipfile.ZIP_DEFLATED) as archive:
-                html = """
-<!doctype html>
-<html lang="es">
-<head>
-<meta charset="utf-8">
-<meta name="author" content="Juhegue">
-<title>%s</title>
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">    
-</head>
-<body>
-%s
-</body>
-</html>                        
-                """ % (nota.nombre, nota.texto)
 
-                nombre = "nota_%s.html" % nota.id
-                archive.writestr(nombre, html)
+class NotaEnviarView(LoginRequiredMixin, SuccessMessageMixin, FormView):
+    template_name = 'web/nota/enviar.html'
+    form_class = NotaEnviarForm
+    id_nota = None
 
-                result = BytesIO()
-                pdf = pisa.pisaDocument(BytesIO(html.encode("utf-8")), result)
-                if not pdf.err:
-                    nombre = "nota_%s.pdf" % nota.id
-                    archive.writestr(nombre, result.getvalue())
+    def dispatch(self, request, *args, **kwargs):
+        self.id_nota = kwargs.get("pk")
+        return super(NotaEnviarView, self).dispatch(request, *args, **kwargs)
 
-                md = Tomd(html).markdown
-                nombre = "nota_%s.md" % nota.id
-                archive.writestr(nombre, md)
+    def get_form_kwargs(self):
+        kwargs = super(NotaEnviarView, self).get_form_kwargs()
+        kwargs["request"] = self.request
+        kwargs["id_nota"] = self.id_nota
+        return kwargs
 
-                for a in adj:
-                    archive.write(a.fichero.file.name, a.nombre)
-                archive.close()
+    def get_context_data(self, **kwargs):
+        context = super(NotaEnviarView, self).get_context_data(**kwargs)
+        context["nota"] = Nota.objects.get(id=self.id_nota)
+        return context
 
-            length = tmp.tell()
-            # Reset file pointer
-            tmp.seek(0)
+    def form_valid(self, form):
+        if form.is_valid():
+            data = form.cleaned_data
+            adj = NotaZip(self.id_nota).file()
 
-            wrapper = FileWrapper(tmp)
-            response = HttpResponse(wrapper, content_type="application/zip")
-            response["Content-Disposition"] = "attachment; filename=nota_%s.zip" % nota.id
-            response["Content-Length"] = length
-            return response
+            try:
+                mail.send(
+                    recipients=data.get("para"),
+                    cc=data.get("cc"),
+                    subject=data.get("asunto"),
+                    #  message=data.get("mensaje"),
+                    html_message=data.get("mensaje"),
+                    attachments={"nota_%s.zip" % self.id_nota: adj}
+                )
+                messages.success(self.request, "Correo enviado.")
+            except Exception as e:
+                messages.error(self.request, "Error al enviar correo. (%s)" % e)
+
+            return redirect("listanota")
+
+        return super(NotaEnviarView, self).form_valid(form)
 

@@ -68,7 +68,8 @@
                         <td class="text-center">
                             <a href="{% url 'nota_eliminar' nota.id %}" class="text-danger" role="button"><span class="glyphicon glyphicon-trash"></span></a>&nbsp;&nbsp;
                             <a href="{% url 'nota_editar' nota.id %}" class="text-primary" role="button"><span class="glyphicon glyphicon-pencil"></span></a>&nbsp;&nbsp;
-                            <a href="{% url 'nota_download_zip' nota.id %}" class="text-primary" role="button"><span class="fa fa-file-zip-o"></span></a>&nbsp;&nbsp;
+                            <a href="{% url 'nota_download_zip' nota.id %}" class="text-primary" role="button"><span class="fa fa-file-zip-o"></span></a>&nbsp;
+                            <a href="{% url 'nota_enviar' nota.id %}" class="text-primary" role="button"><span class="glyphicon glyphicon-send"></span></a>
                         </td>
                         <td>{{ nota.texto|colorea_busca:busca|safe }}</td>
                         <td>{{ nota.adjunto_html_sin_borrar|colorea_busca:busca|safe|safe }}</td>

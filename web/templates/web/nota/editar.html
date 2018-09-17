@@ -31,11 +31,13 @@
             {{ form.texto }}
             <div class="panel panel-primary">
                 <div class="panel-heading">
+                    <h3 class="panel-title">
                     {% if create_view %}
-                        <h3 class="panel-title">{% trans 'Nueva Nota' %}</h3>
+                        {% trans 'Nueva Nota' %}
                     {% else %}
-                        <h3 class="panel-title">{% trans 'Modificar Nota' %}</h3>
+                        {% trans 'Modificar Nota' %}
                     {% endif %}
+                    </h3>
                 </div>
                 <div class="panel-body">
                     <div class="row">
@@ -80,13 +82,12 @@
                             <div id='id_lista_adjuntos'>{{ adjunto_html|safe }}</div>
                         </div>
                     </div>
-
-                    <div class="panel-footer">
-                        <button type="submit" class="btn btn-primary btn-normal">
-                            <i class="fa fw fa-floppy-o"></i> {% trans 'Guardar' %}
-                        </button>
-                        <a class="btn btn-default btn-normal" href="{% url 'listanota' %}">{% trans 'Cancelar' %}</a>
-                    </div>
+                </div>
+                <div class="panel-footer">
+                    <button type="submit" class="btn btn-primary btn-normal">
+                        <i class="fa fw fa-floppy-o"></i> {% trans 'Guardar' %}
+                    </button>
+                    <a class="btn btn-default btn-normal" href="{% url 'listanota' %}">{% trans 'Cancelar' %}</a>
                 </div>
             </div>
         </form>

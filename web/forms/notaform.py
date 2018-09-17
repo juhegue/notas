@@ -41,3 +41,38 @@ class NotaForm(forms.ModelForm):
             'texto': forms.Textarea(attrs={'class': 'form-control', "style": "display:none;"}),
         }
 
+
+class NotaEnviarForm(forms.Form):
+    para = forms.CharField(label=_("Para"),
+                           widget=forms.EmailInput(attrs={"class": "form-control"}),
+                           required=True
+                           )
+
+    cc = forms.CharField(label=_("CC"),
+                         widget=forms.EmailInput(attrs={"class": "form-control"}),
+                         required=False
+                         )
+
+    asunto = forms.CharField(label=_("Asunto"),
+                             widget=forms.TextInput(attrs={"class": "form-control"}),
+                             required=True
+                             )
+
+    mensaje = forms.CharField(label=_("Mensaje"),
+                              widget=forms.TextInput(attrs={"style": "display:none;"}),
+                              required=False
+                              )
+
+    def __init__(self, *args, **kwargs):
+        request = kwargs.pop('request', None)
+        nota_id = kwargs.pop('id_nota', None)
+        super(NotaEnviarForm, self).__init__(*args, **kwargs)
+
+        nota = Nota.objects.get(id=nota_id)
+        if nota:
+            self.fields['asunto'].initial = "%s (%s)" % (nota.nombre, nota.libro)
+            self.fields['mensaje'].initial = nota.nombre
+
+
+
+
