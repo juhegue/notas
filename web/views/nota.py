@@ -4,6 +4,7 @@ from io import BytesIO
 import tempfile
 import zipfile
 from xhtml2pdf import pisa
+from tomd import Tomd
 
 from django.urls import reverse
 from django.contrib.messages.views import SuccessMessageMixin
@@ -118,15 +119,17 @@ class NotaDownloadZip(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
 <!doctype html>
 <html lang="es">
 <head>
-    <meta charset="utf-8">
-    <title>%s</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">    
+<meta charset="utf-8">
+<meta name="author" content="Juhegue">
+<title>%s</title>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">    
 </head>
 <body>
-    %s
+%s
 </body>
 </html>                        
                 """ % (nota.nombre, nota.texto)
+
                 nombre = "nota_%s.html" % nota.id
                 archive.writestr(nombre, html)
 
@@ -135,6 +138,10 @@ class NotaDownloadZip(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
                 if not pdf.err:
                     nombre = "nota_%s.pdf" % nota.id
                     archive.writestr(nombre, result.getvalue())
+
+                md = Tomd(html).markdown
+                nombre = "nota_%s.md" % nota.id
+                archive.writestr(nombre, md)
 
                 for a in adj:
                     archive.write(a.fichero.file.name, a.nombre)
