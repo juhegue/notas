@@ -42,13 +42,13 @@ class ListaNotaView(LoginRequiredMixin, FormView, Busca):
         else:
             self.libro_id = request.user.get_propiedad("libro")
 
-        self.busca = kwargs.get("busca")
+        self.busca = kwargs.get("busca", "")
         if self.busca:
             if self.busca == "__NULL__":
                 self.busca = ""
             request.user.set_propiedad("busca", self.busca)
         else:
-            self.busca = request.user.get_propiedad("busca")
+            self.busca = request.user.get_propiedad("busca") or ""
 
         return super(ListaNotaView, self).dispatch(request, *args, **kwargs)
 
