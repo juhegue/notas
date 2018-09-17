@@ -31,10 +31,12 @@ def marca_texto(busca, cadena):
 
 def clean_html(texto_html):
     return texto_html
+
+    # TODO: Anulado ya que quita los 'style' del html
     if texto_html:
         cleaner = Cleaner()
         cleaner.javascript = True  # This is True because we want to activate the javascript filter
-        cleaner.style = True  # This is True because we want to activate the styles & stylesheet filter
+        cleaner.style = False  # This is True because we want to activate the styles & stylesheet filter
         html_sin = cleaner.clean_html(texto_html)
         return html_sin
     else:

@@ -70,8 +70,8 @@
                             <a href="{% url 'nota_editar' nota.id %}" class="text-primary" role="button"><span class="glyphicon glyphicon-pencil"></span></a>&nbsp;&nbsp;
                             <a href="{% url 'nota_download_zip' nota.id %}" class="text-primary" role="button"><span class="fa fa-file-zip-o"></span></a>&nbsp;&nbsp;
                         </td>
-                        <td>{{ nota.texto|safe }}</td>
-                        <td>{{ nota.adjunto_html_sin_borrar|safe }}</td>
+                        <td>{{ nota.texto|colorea_busca:busca|safe }}</td>
+                        <td>{{ nota.adjunto_html_sin_borrar|colorea_busca:busca|safe|safe }}</td>
                     </tr>
                   {% endfor %}
                 </tbody>
@@ -111,7 +111,7 @@
                $(this).attr('placeholder', "Buscar (múltiple separar por comas)");
                $(this).css('max-width', '260px');
                $(this).css('width', '260px');
-               $(this).parent().prepend('<a style="padding-top:6px;" class="close clear_search" data-dismiss="alert"> ×</a>');
+               $(this).parent().prepend('<a style="padding-top:6px;" class="close clear_search" data-dismiss="alert">&nbsp; × &nbsp;</a>');
                if (busca_ant) $(this).select().focus();
             });
 
