@@ -4,6 +4,8 @@ from django.utils.translation import ugettext_lazy as _
 from .select2es import *
 from ..models import Libro
 from ..models import Nota
+from .select2es import Select2Es
+from .emailmultiple import EmailMultipleField
 
 
 class NotaForm(forms.ModelForm):
@@ -43,15 +45,11 @@ class NotaForm(forms.ModelForm):
 
 
 class NotaEnviarForm(forms.Form):
-    para = forms.CharField(label=_("Para"),
-                           widget=forms.EmailInput(attrs={"class": "form-control"}),
-                           required=True
-                           )
-
-    cc = forms.CharField(label=_("CC"),
-                         widget=forms.EmailInput(attrs={"class": "form-control"}),
-                         required=False
-                         )
+    para = EmailMultipleField(label=_("Para"),
+                              widget=forms.TextInput(attrs={"class": "form-control"}),
+                              required=True,
+                              help_text="Separar por ; para indicar más de un correo."
+                             )
 
     asunto = forms.CharField(label=_("Asunto"),
                              widget=forms.TextInput(attrs={"class": "form-control"}),

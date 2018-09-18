@@ -1,5 +1,8 @@
 # coding=utf-8
 
+from html2text import html2text
+from post_office import mail
+
 from django.urls import reverse
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
@@ -11,8 +14,6 @@ from django.views.generic import DeleteView
 from django.views.generic import FormView
 from django.http.response import HttpResponseForbidden
 from django.shortcuts import redirect
-
-from post_office import mail
 
 from web.models import Nota
 from web.forms.notaform import NotaForm
@@ -134,13 +135,11 @@ class NotaEnviarView(LoginRequiredMixin, SuccessMessageMixin, FormView):
         if form.is_valid():
             data = form.cleaned_data
             adj = NotaZip(self.id_nota).file()
-
             try:
                 mail.send(
                     recipients=data.get("para"),
-                    cc=data.get("cc") or None,  # con "" da error
                     subject=data.get("asunto"),
-                    #  message=data.get("mensaje"),
+                    message=html2text(data.get("mensaje")),
                     html_message=data.get("mensaje"),
                     attachments={"nota_%s.zip" % self.id_nota: adj}
                 )
