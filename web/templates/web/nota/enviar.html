@@ -50,21 +50,6 @@
                     <div class="row">
                         <div class="col-md-12">
                             <div class="form-group">
-                                {{ form.cc.errors }}
-                                <label for={{form.cc.auto_id}} class="control-label">
-                                {{ form.cc.label }}
-                                {% if form.cc.field.required %}<span class="required_fields">*</span>{% endif %}
-                                </label>
-                                {{ form.cc }}
-                                {% if form.cc.help_text %}
-                                <p class="help-block">{{ form.cc.help_text|safe }}</p>
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group">
                                 {{ form.asunto.errors }}
                                 <label for={{form.asunto.auto_id}} class="control-label">
                                 {{ form.asunto.label }}
