@@ -41,10 +41,16 @@ class NotaZip(object):
             archive.writestr(nombre, html)
 
             result = BytesIO()
-            pdf = pisa.pisaDocument(BytesIO(html.encode("utf-8")), result)
-            if not pdf.err:
-                nombre = "nota_%s.pdf" % self.nota.id
-                archive.writestr(nombre, result.getvalue())
+            try:
+                pdf = pisa.pisaDocument(BytesIO(html.encode("utf-8")), result)
+                if not pdf.err:
+                    nombre = "nota_%s.pdf" % self.nota.id
+                    archive.writestr(nombre, result.getvalue())
+                else:
+                    logger.debug("ERROR al crear PDF (1) %s" % pdf.err)
+
+            except Exception as e:
+                logger.debug("ERROR al crear PDF %s" % e)
 
             md = Tomd(html).markdown
             nombre = "nota_%s.md" % self.nota.id
@@ -54,7 +60,7 @@ class NotaZip(object):
                 try:
                     archive.write(a.fichero.file.name, a.nombre)
                 except Exception as e:
-                    logger.debug(str(e))
+                    logger.debug("ERROR al comprimir adjunto %s" % e)
 
             archive.close()
 

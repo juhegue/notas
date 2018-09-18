@@ -138,7 +138,7 @@ class NotaEnviarView(LoginRequiredMixin, SuccessMessageMixin, FormView):
             try:
                 mail.send(
                     recipients=data.get("para"),
-                    cc=data.get("cc"),
+                    cc=data.get("cc") or None,  # con "" da error
                     subject=data.get("asunto"),
                     #  message=data.get("mensaje"),
                     html_message=data.get("mensaje"),
