@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
+from django.contrib.admin import SimpleListFilter
 from django.utils.translation import ugettext_lazy as _
 import nested_admin
 
@@ -17,6 +18,24 @@ from .util.admincsvexporta import CsvExporta
 
 def exportar_csv(modeladmin, request, queryset):
     return CsvExporta(modeladmin, request, queryset).response
+
+
+class NotaActivaFilter(SimpleListFilter):
+    title = _("activa")
+    parameter_name = "activa"
+
+    def lookups(self, request, modeladmin):
+        return [(True, "activa"), (False, "desactiva")]
+
+    def queryset(self, request, queryset):
+        if self.value() is None:
+            return queryset
+
+        return queryset.filter(activa=self.value())
+
+    def value(self):
+        value = super(NotaActivaFilter, self).value()
+        return value
 
 
 # Custom Admin User
@@ -77,9 +96,11 @@ class NotaAdmin(admin.ModelAdmin):
         'nombre',
         'user',
         'creado',
-        'modificado'
+        'modificado',
+        'activa',
     )
     actions = [exportar_csv]
+    list_filter = (NotaActivaFilter,)
 
 
 @admin.register(Adjunto)
