@@ -75,6 +75,8 @@
     <script src="{% static 'js/bootstrap-table-cookie.min.js' %}"></script>
     <script src="{% static 'js/bootstrap-table-locale-all.min.js' %}"></script>
     <script type="text/javascript">
+        var row_name;
+
         var path = window.location.pathname.split('/');
         var pag = path[1];
         if (typeof(Storage) !== 'undefined') {
@@ -114,9 +116,14 @@
             }
         });
 
+        $('#id_notas').on('click-cell.bs.table', function (e, value, row, $el) {
+            row_name = value;
+        });
         $('#id_notas').on('click-row.bs.table', function (e, row, $el) {
-            data = $('#id_notas').bootstrapTable('getData');
-            $el.find('>td>.detail-icon').trigger('click');
+            if (row_name == 'nombre'){
+                data = $('#id_notas').bootstrapTable('getData');
+                $el.find('>td>.detail-icon').trigger('click');
+            }
         });
 
         function responseHandler(res) {
