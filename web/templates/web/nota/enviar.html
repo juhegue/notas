@@ -1,13 +1,19 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load i18n %}
+{% load funciones %}
 
 {% block titlehead %}{% trans 'Enviar Nota' %}{% endblock titlehead %}
 {% block title %}{% endblock title %}
 
 {% block styles %}
     {{ form.media.css }}
-    <link href="{% static 'summernote-0.8.9/dist/summernote.css' %}" rel="stylesheet">
+
+    {% settings_value 'EDITOR' as EDITOR %}
+    {% if EDITOR == 'summernote' %}
+        <link href="{% static 'summernote-0.8.9/dist/summernote.css' %}" rel="stylesheet">
+    {% endif %}
+
     <style>
     </style>
 {% endblock styles %}
@@ -85,19 +91,23 @@
 
 {% block scripts %}
     {{ form.media.js }}
-    <script src="{% static 'summernote-0.8.9/dist/summernote.js' %}"></script>
-    <script src="{% static 'summernote-0.8.9/dist/lang/summernote-es-ES.js' %}"></script>
-    <script type="text/javascript">
-        $(function(){
-            $('#id_editor').summernote({
-                focus: true,
-                tabsize: 4,
-            });
 
-            $('#id_formulario').submit(function(e) {
-                var editorData = $('#id_editor').summernote('code');
-                $('#id_mensaje').val(editorData);
+    {% settings_value 'EDITOR' as EDITOR %}
+    {% if EDITOR == 'summernote' %}
+        <script src="{% static 'summernote-0.8.9/dist/summernote.js' %}"></script>
+        <script src="{% static 'summernote-0.8.9/dist/lang/summernote-es-ES.js' %}"></script>
+        <script type="text/javascript">
+            $(function(){
+                $('#id_editor').summernote({
+                    focus: true,
+                    tabsize: 4,
+                });
+                $('#id_formulario').submit(function(e) {
+                    var editorData = $('#id_editor').summernote('code');
+                    $('#id_mensaje').val(editorData);
+                });
             });
-        });
-    </script>
+        </script>
+    {% endif %}
+
 {% endblock scripts %}

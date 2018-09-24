@@ -78,8 +78,6 @@
     <script src="{% static 'js/bootstrap-table-cookie.min.js' %}"></script>
     <script src="{% static 'js/bootstrap-table-locale-all.min.js' %}"></script>
     <script type="text/javascript">
-        var row_name;
-
         var path = window.location.pathname.split('/');
         var pag = path[1];
         if (typeof(Storage) !== 'undefined') {
@@ -119,12 +117,12 @@
             }
         });
 
+        var row_name;
         $('#id_notas').on('click-cell.bs.table', function (e, value, row, $el) {
             row_name = value;
         });
         $('#id_notas').on('click-row.bs.table', function (e, row, $el) {
             if (row_name == 'nombre'){
-                data = $('#id_notas').bootstrapTable('getData');
                 $el.find('>td>.detail-icon').trigger('click');
             }
         });
@@ -187,7 +185,7 @@
             var eliminar = "{% url 'nota_eliminar' 0 %}".replace('0', row.id);
             var editar = "{% url 'nota_editar' 0 %}".replace('0', row.id);
             var dowload = "{% url 'nota_download_zip' 0 %}".replace('0', row.id);
-            var enviar = "{% url 'nota_enviar' 000 %}".replace('0', row.id);
+            var enviar = "{% url 'nota_enviar' 0 %}".replace('0', row.id);
             return `
                 <a href="`+ eliminar +`" class="text-danger" role="button"><span class="glyphicon glyphicon-trash"></span></a>&nbsp;&nbsp;
                 <a href="`+ editar +`" class="text-primary" role="button"><span class="glyphicon glyphicon-pencil"></span></a>&nbsp;&nbsp;

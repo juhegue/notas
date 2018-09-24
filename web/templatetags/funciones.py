@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from django import template
+from django.conf import settings
 from django.utils.safestring import mark_safe
 from ..util.util import marca_texto
 
@@ -16,3 +17,9 @@ def colorea_busca(valor, arg):
         return mark_safe(valor)
 
     return valor
+
+
+# settings value
+@register.simple_tag
+def settings_value(name):
+    return getattr(settings, name, "")

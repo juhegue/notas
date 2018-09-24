@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load i18n %}
+{% load funciones %}
+{% settings_value 'EDITOR' as EDITOR %}
 
 {% block titlehead %}{% trans 'Notas' %}{% endblock titlehead %}
 {% block title %}{% endblock title %}
@@ -9,7 +11,12 @@
     {{ form.media.css }}
     <link href="{% static 'css/bootstrap-table.min.css' %}" rel="stylesheet">
     <link href="{% static 'css/bootstrap.fd.css' %}" rel="stylesheet">
-    <link href="{% static 'summernote-0.8.9/dist/summernote.css' %}" rel="stylesheet">
+
+    {% settings_value 'EDITOR' as EDITOR %}
+    {% if EDITOR == 'summernote' %}
+        <link href="{% static 'summernote-0.8.9/dist/summernote.css' %}" rel="stylesheet">
+    {% endif %}
+
     <style>
     </style>
 {% endblock styles %}
@@ -98,21 +105,8 @@
 {% block scripts %}
     {{ form.media.js }}
     <script src="{% static 'js/bootstrap.fd.js' %}"></script>
-    <script src="{% static 'summernote-0.8.9/dist/summernote.js' %}"></script>
-    <script src="{% static 'summernote-0.8.9/dist/lang/summernote-es-ES.js' %}"></script>
     <script type="text/javascript">
         $(function(){
-            $('#id_editor').summernote({
-                focus: true,
-                tabsize: 4,
-            });
-
-            $('#id_formulario').submit(function(e) {
-                var editorData = $('#id_editor').summernote('code');
-                $('#id_texto').val(editorData);
-                $( '#id_libro' ).prop( 'disabled', false );
-            });
-
             $('.adjuntos').on('click',function(e){
                 var key = $(e.target).attr('id');
                 key = key.substr(key.length-6, 6);
@@ -133,6 +127,26 @@
                 });
             });
         });
-
     </script>
+
+    {% settings_value 'EDITOR' as EDITOR %}
+    {% if EDITOR == 'summernote' %}
+        <script src="{% static 'summernote-0.8.9/dist/summernote.js' %}"></script>
+        <script src="{% static 'summernote-0.8.9/dist/lang/summernote-es-ES.js' %}"></script>
+        <script type="text/javascript">
+            $(function(){
+                $('#id_editor').summernote({
+                    focus: true,
+                    tabsize: 4,
+                });
+
+                $('#id_formulario').submit(function(e) {
+                    var editorData = $('#id_editor').summernote('code');
+                    $('#id_texto').val(editorData);
+                    $( '#id_libro' ).prop( 'disabled', false );
+                });
+            });
+        </script>
+    {% endif %}
+
 {% endblock scripts %}
