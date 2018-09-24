@@ -12,22 +12,11 @@ class NotaForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         request = kwargs.pop("request", None)
-        libro = kwargs.pop("libro", None)
         super(NotaForm, self).__init__(*args, **kwargs)
-
-        choices = list()
-        for libro in Libro.objects.all().order_by("nombre"):
-            choices.append((libro.id, libro.nombre))
-
-        self.fields["libro"].choices = choices
-        if libro:
-            # al ser el campo requerido en el template, antes del submit, hay que habilitarlo
-            self.fields['libro'].widget.attrs['disabled'] = True
 
     def clean_nombre(self):
         cleaned_data = super(NotaForm, self).clean()
         nombre = cleaned_data.get("nombre")
-
         if not nombre:
             raise forms.ValidationError(_("¡El campo es obligatorio!"))
 

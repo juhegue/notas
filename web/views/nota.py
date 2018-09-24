@@ -36,7 +36,6 @@ class NotaCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     def get_form_kwargs(self):
         kwargs = super(NotaCreateView, self).get_form_kwargs()
         kwargs["request"] = self.request
-        kwargs["libro"] = self.libro_id
         return kwargs
 
     def get_initial(self):
@@ -46,9 +45,7 @@ class NotaCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super(NotaCreateView, self).get_context_data(**kwargs)
-        context["libro"] = self.libro_id
         context["create_view"] = True
-        context["nota_id"] = "000000"
         return context
 
     def form_valid(self, form):
@@ -56,11 +53,13 @@ class NotaCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
             data = form.cleaned_data
             f = form.save(commit=False)
             f.user = self.request.user
+            f.activa = True
             f.save()
         return super(NotaCreateView, self).form_valid(form)
 
     def get_success_url(self):
-        return reverse('nota_editar', kwargs={'pk': self.object.id})
+        # return reverse('nota_editar', kwargs={'pk': self.object.id})
+        return reverse('listanota', kwargs={'libro': self.object.libro.id})
 
 
 class NotaUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):

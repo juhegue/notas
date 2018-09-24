@@ -204,19 +204,8 @@
 
         $(document).on('click','#id_nota_nueva',function(){
             var libro = $('#id_libro').val();
-
-            /*  en lugar de ir a nueva nota
             var href = '{% url "nota_nuevo" %}' + libro + '/';
             window.location.assign(href);
-
-               se crea y se edita
-            */
-            var url = '/getdatos_ajax/nueva_nota';
-            var param = {libro_id: libro};
-            funcionAjax(url, param, function(data){
-                var href = '/nota/editar/' + data + '/';
-                window.location.assign(href);
-            });
         });
 
         $(document).on('click', '.adjuntos',function(e){
