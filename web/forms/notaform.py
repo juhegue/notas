@@ -59,7 +59,7 @@ class NotaEnviarForm(forms.Form):
                              required=True
                              )
 
-    mensaje = forms.CharField(label=_("Mensaje"),
+    texto = forms.CharField(label=_("Mensaje"),
                               widget=forms.TextInput(attrs={"style": "display:none;"}),
                               required=False
                               )
@@ -72,7 +72,7 @@ class NotaEnviarForm(forms.Form):
         nota = Nota.objects.get(id=nota_id)
         if nota:
             self.fields['asunto'].initial = "%s (%s)" % (nota.nombre, nota.libro)
-            self.fields['mensaje'].initial = nota.nombre
+            self.fields['texto'].initial = nota.nombre
 
 
 

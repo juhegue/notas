@@ -25,7 +25,7 @@
     <div class="col-md-12">
         <form action="" method="post" enctype="multipart/form-data" role="form" id="id_formulario">
             {% csrf_token %}
-            {{ form.mensaje }}
+            {{ form.texto }}
             <div class="panel panel-primary">
                 <div class="panel-heading">
                     <h3 class="panel-title">{% trans 'Enviar Nota' %}</h3>
@@ -64,7 +64,7 @@
                     <div class="row">
                         <div class="col-md-12">
                             <div class="form-group">
-                                <label>{{ form.mensaje.label }}</label>
+                                <label>{{ form.texto.label }}</label>
                                 <div id="id_editorToolbar"></div>
                                 <div id='id_editor'>{{ nota.texto|default:'<p>Nuevo texto.</p>'|safe }}</div>
                             </div>
