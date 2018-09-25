@@ -207,3 +207,5 @@ POST_OFFICE = {
     'DEFAULT_PRIORITY': 'now'
 }
 
+# posibles:  summernote, ckeditor
+EDITOR = "ckeditor"

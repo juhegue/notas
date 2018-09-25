@@ -3,7 +3,11 @@
 {% load funciones %}
 
 {% settings_value 'EDITOR' as EDITOR %}
+
 {% if EDITOR == 'summernote' %}
     <link href="{% static 'summernote-0.8.9/dist/summernote.css' %}" rel="stylesheet">
 {% endif %}
 
+{% if EDITOR == 'ckeditor' %}
+    <link href="{% static 'ckeditor5-build-decoupled-document-11.0.1/ckeditor.css' %}" rel="stylesheet">
+{% endif %}
