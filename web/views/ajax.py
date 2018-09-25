@@ -35,6 +35,13 @@ class Datos(object):
         print (nota.id)
         return {"data": nota.adjunto_html(), "nota_id": nota.id}
 
+    def nueva_nota(self, libro_id):
+        nota = Nota()
+        nota.user = self.request.user
+        nota.libro = Libro.objects.get(id=libro_id)
+        nota.save()
+        return nota.id
+
 
 class AjaxView(View):
     def dispatch(self, request, *args, **kwargs):

@@ -11,14 +11,7 @@
     {{ form.media.css }}
     <link href="{% static 'css/bootstrap-table.min.css' %}" rel="stylesheet">
     <link href="{% static 'css/bootstrap.fd.css' %}" rel="stylesheet">
-
-    {% settings_value 'EDITOR' as EDITOR %}
-    {% if EDITOR == 'summernote' %}
-        <link href="{% static 'summernote-0.8.9/dist/summernote.css' %}" rel="stylesheet">
-    {% endif %}
-
-    <style>
-    </style>
+    {% include 'web/nota/_editores_css.html' %}
 {% endblock styles %}
 
 {% block breadcrumb %}
@@ -94,7 +87,7 @@
                     <button type="submit" class="btn btn-primary btn-normal">
                         <i class="fa fw fa-floppy-o"></i> {% trans 'Guardar' %}
                     </button>
-                    <a class="btn btn-default btn-normal" href="{% url 'listanota' %}">{% trans 'Cancelar' %}</a>
+                    <a class="btn btn-default btn-normal" href="{% url 'listanota' libro %}">{% trans 'Cancelar' %}</a>
                 </div>
             </div>
         </form>
@@ -128,24 +121,5 @@
             });
         });
     </script>
-
-    {% settings_value 'EDITOR' as EDITOR %}
-    {% if EDITOR == 'summernote' %}
-        <script src="{% static 'summernote-0.8.9/dist/summernote.js' %}"></script>
-        <script src="{% static 'summernote-0.8.9/dist/lang/summernote-es-ES.js' %}"></script>
-        <script type="text/javascript">
-            $(function(){
-                $('#id_editor').summernote({
-                    focus: true,
-                    tabsize: 4,
-                });
-
-                $('#id_formulario').submit(function(e) {
-                    var editorData = $('#id_editor').summernote('code');
-                    $('#id_texto').val(editorData);
-                });
-            });
-        </script>
-    {% endif %}
-
+    {% include 'web/nota/_editores_js.html' %}
 {% endblock scripts %}

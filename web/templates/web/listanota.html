@@ -75,7 +75,7 @@
 {% block scripts %}
     {{ form.media.js }}
     <script src="{% static 'js/bootstrap-table.min.js' %}"></script>
-    <script src="{% static 'js/bootstrap-table-cookie.min.js' %}"></script>
+    <script src="{% static 'js/_bootstrap-table-cookie.min.js' %}"></script>
     <script src="{% static 'js/bootstrap-table-locale-all.min.js' %}"></script>
     <script type="text/javascript">
         var path = window.location.pathname.split('/');
@@ -111,10 +111,11 @@
                $(this).parent().prepend('<a style="padding-top:6px;" class="close clear_search" data-dismiss="alert">&nbsp; × &nbsp;</a>');
             });
 
-            /* Al entrar, con data-cookie="true" sino hay searchText no refresca la tabla */
+            /* Al entrar, con data-cookie="true" sino hay searchText no refresca la tabla
             if ($('#id_notas').bootstrapTable('getOptions').searchText == '') {
                 $('#id_notas').bootstrapTable('refresh');
             }
+                */
         });
 
         var row_name;
@@ -204,8 +205,19 @@
 
         $(document).on('click','#id_nota_nueva',function(){
             var libro = $('#id_libro').val();
+
+            /*  en lugar de ir a nueva nota
             var href = '{% url "nota_nuevo" %}' + libro + '/';
             window.location.assign(href);
+
+               se crea y se edita
+            */
+            var url = '/getdatos_ajax/nueva_nota';
+            var param = {libro_id: libro};
+            funcionAjax(url, param, function(data){
+                var href = '/nota/editar/' + data + '/';
+                window.location.assign(href);
+            });
         });
 
         $(document).on('click', '.adjuntos',function(e){

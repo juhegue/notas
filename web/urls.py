@@ -27,7 +27,7 @@ urlpatterns = [
     # Indice
     re_path(r'^$', Index.as_view(), name="index"),
 
-    re_path(r'^listanota(?:/(?P<libro>\d+))?(?:/(?P<busca>[\w|\W]+))?/$', ListaNotaView.as_view(), name="listanota"),
+    re_path(r'^listanota(?:/(?P<libro>\d+))?/$', ListaNotaView.as_view(), name="listanota"),
 
     re_path(r'^libro/nuevo/$', LibroCreateView.as_view(), name="libro_nuevo"),
 

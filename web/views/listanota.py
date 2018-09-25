@@ -46,7 +46,7 @@ class NotasView(LoginRequiredMixin, View):
             sort = sort if order == "asc" else "-%s" % sort
             query = Nota.objects.filter(activa=True).order_by(sort)
         else:
-            query = Nota.objects.filter(activa=True)
+            query = Nota.objects.filter(activa=True).order_by("-modificado")
 
         if libro:
             query = query.filter(libro=libro)

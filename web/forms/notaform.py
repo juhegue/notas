@@ -12,7 +12,21 @@ class NotaForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         request = kwargs.pop("request", None)
+        libro = kwargs.pop("libro", None)
         super(NotaForm, self).__init__(*args, **kwargs)
+
+        if libro:
+            data = self.data.copy()         # actualiza data ya que libro al estar disabled no lo envia la página
+            data.update({'libro': libro})   # y al ser requerido da error
+            self.data = data
+            self.fields['libro'].widget.attrs['disabled'] = True
+
+        #  NotaUpdateView (esto ya no hace falta porque tambien se envia libro en kwargs)
+        # if hasattr(self.instance, "libro"):
+        #     data = self.data.copy()
+        #     data.update({'libro': self.instance.libro.id})
+        #     self.data = data
+        #     self.fields['libro'].widget.attrs['disabled'] = True
 
     def clean_nombre(self):
         cleaned_data = super(NotaForm, self).clean()

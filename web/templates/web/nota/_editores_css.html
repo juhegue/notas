@@ -1,0 +1,9 @@
+{% load static %}
+{% load i18n %}
+{% load funciones %}
+
+{% settings_value 'EDITOR' as EDITOR %}
+{% if EDITOR == 'summernote' %}
+    <link href="{% static 'summernote-0.8.9/dist/summernote.css' %}" rel="stylesheet">
+{% endif %}
+
