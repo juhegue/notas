@@ -46,6 +46,7 @@ class UserAdminExtended(UserAdmin):
         'first_name',
         'last_name',
         'apellido2',
+        'editor',
         'is_active',
         'is_staff',
     )
@@ -53,7 +54,7 @@ class UserAdminExtended(UserAdmin):
     list_filter = ()
     ordering = ('email',)
     fieldsets = (
-        (None, {'fields': ('email', 'password')}),
+        (None, {'fields': ('email', 'password', 'editor')}),
         (_('Personal info'), {'fields': ('first_name', 'last_name', 'apellido2')}),
         (_('Permissions'), {'fields': ('is_active', 'is_staff', 'groups')}),
         (_('Important dates'), {'fields': ('last_login',)}),
@@ -64,7 +65,7 @@ class UserAdminExtended(UserAdmin):
             'fields': ('email', 'password1', 'password2'),
         }),
     )
-    search_fields = ('email', 'first_name', 'last_name', 'apellido2')
+    search_fields = ('email', 'first_name', 'last_name', 'apellido2', 'editor')
 
     def get_object(self, request, object_id, from_field=None):
         obj = super(UserAdminExtended, self).get_object(request, object_id)

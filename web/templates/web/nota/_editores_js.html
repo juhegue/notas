@@ -2,9 +2,7 @@
 {% load i18n %}
 {% load funciones %}
 
-{% settings_value 'EDITOR' as EDITOR %}
-
-{% if EDITOR == 'summernote' %}
+{% if user.editor == 'summernote' %}
     <script src="{% static 'summernote-0.8.9/dist/summernote.js' %}"></script>
     <script src="{% static 'summernote-0.8.9/dist/lang/summernote-es-ES.js' %}"></script>
     <script type="text/javascript">
@@ -21,7 +19,7 @@
     </script>
 {% endif %}
 
-{% if EDITOR == 'ckeditor' %}
+{% if user.editor == 'ckeditor' %}
     <script src="{% static 'ckeditor5-build-decoupled-document-11.0.1/ckeditor.js' %}"></script>
     <script src="{% static 'ckeditor5-build-decoupled-document-11.0.1/translations/es.js' %}"></script>
     <script type="text/javascript">
