@@ -6,7 +6,7 @@ from django.contrib.auth.views import login, logout
 from django.urls import re_path
 
 from .views.inicio import Index
-from .views.listanota import ListaNotaView
+from .views.listanota import ListaNotaView, NotasView
 from .views.libro import LibroCreateView
 from .views.nota import NotaCreateView
 from .views.nota import NotaUpdateView
@@ -27,7 +27,7 @@ urlpatterns = [
     # Indice
     re_path(r'^$', Index.as_view(), name="index"),
 
-    re_path(r'^listanota(?:/(?P<libro>\d+))?(?:/(?P<busca>[\w|\W]+))?/$', ListaNotaView.as_view(), name="listanota"),
+    re_path(r'^listanota(?:/(?P<del_cookie>\d+))?/$', ListaNotaView.as_view(), name="listanota"),
 
     re_path(r'^libro/nuevo/$', LibroCreateView.as_view(), name="libro_nuevo"),
 
@@ -36,6 +36,7 @@ urlpatterns = [
     re_path(r'^nota/eliminar/(?P<pk>\d+)/$', NotaDeleteView.as_view(), name='nota_eliminar'),
     re_path(r'^nota/download_zip/(?P<pk>\d+)/$', NotaDownloadZip.as_view(), name='nota_download_zip'),
     re_path(r'^nota/enviar/(?P<pk>\d+)/$', NotaEnviarView.as_view(), name='nota_enviar'),
+    re_path(r'^notas/$', NotasView.as_view()),
 
     # Adjuntos
     re_path(r'^adjunto_subir/$', AdjuntoSubir.as_view()),

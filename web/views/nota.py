@@ -35,8 +35,8 @@ class NotaCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
 
     def get_form_kwargs(self):
         kwargs = super(NotaCreateView, self).get_form_kwargs()
-        kwargs["request"] = self.request
         kwargs["libro"] = self.libro_id
+        kwargs["request"] = self.request
         return kwargs
 
     def get_initial(self):
@@ -46,9 +46,8 @@ class NotaCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super(NotaCreateView, self).get_context_data(**kwargs)
-        context["libro"] = self.libro_id
         context["create_view"] = True
-        context["nota_id"] = "000000"
+        context["libro"] = self.libro_id
         return context
 
     def form_valid(self, form):
@@ -56,6 +55,7 @@ class NotaCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
             data = form.cleaned_data
             f = form.save(commit=False)
             f.user = self.request.user
+            f.activa = True
             f.save()
         return super(NotaCreateView, self).form_valid(form)
 
@@ -69,9 +69,15 @@ class NotaUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     form_class = NotaForm
     success_message = "Éxito al modificar nota."
 
+    def get_form_kwargs(self):
+        kwargs = super(NotaUpdateView, self).get_form_kwargs()
+        kwargs["libro"] = self.object.libro.id
+        kwargs["request"] = self.request
+        return kwargs
+
     def get_context_data(self, **kwargs):
         context = super(NotaUpdateView, self).get_context_data(**kwargs)
-        context["nota_id"] = "%06d" % self.object.id
+        context["libro"] = self.object.libro.id
         context["adjunto_html"] = self.object.adjunto_html()
         return context
 
@@ -85,7 +91,7 @@ class NotaUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
         return super(NotaUpdateView, self).form_valid(form)
 
     def get_success_url(self):
-        return reverse('listanota', kwargs={'libro': self.object.libro.id})
+        return reverse('listanota')
 
 
 class NotaDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
@@ -94,7 +100,7 @@ class NotaDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
     success_message = "Éxito al eliminar nota."
 
     def get_success_url(self):
-        return reverse('listanota', kwargs={'libro': self.object.libro.id})
+        return reverse('listanota')
 
     def delete(self, *args, **kwargs):
         object = self.get_object()

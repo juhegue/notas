@@ -16,6 +16,13 @@ from .modelsmixin import ActualizaMixin
 from .util.util import clean_html
 
 
+EDITOR_CHOICES = (
+    ("summernote", "Summernote"),
+    ("ckeditor",  "Ckeditor"),
+    ("froala",  "Froala"),
+)
+
+
 class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(_('email address'), unique=True)
     first_name = models.CharField(_('first name'), max_length=30, blank=True)
@@ -25,6 +32,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(_('active'), default=True)
     is_staff = models.BooleanField(_('staff'), default=False)
     propiedades = models.TextField(_('propiedades'), blank=True, null=True)
+    editor = models.CharField(_('editor'), max_length=30, choices=EDITOR_CHOICES, default="summernote")
 
     objects = MyUserManager()
 

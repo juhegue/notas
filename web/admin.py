@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
+from django.contrib.admin import SimpleListFilter
 from django.utils.translation import ugettext_lazy as _
 import nested_admin
 
@@ -19,6 +20,24 @@ def exportar_csv(modeladmin, request, queryset):
     return CsvExporta(modeladmin, request, queryset).response
 
 
+class NotaActivaFilter(SimpleListFilter):
+    title = _("activa")
+    parameter_name = "activa"
+
+    def lookups(self, request, modeladmin):
+        return [(True, "activa"), (False, "desactiva")]
+
+    def queryset(self, request, queryset):
+        if self.value() is None:
+            return queryset
+
+        return queryset.filter(activa=self.value())
+
+    def value(self):
+        value = super(NotaActivaFilter, self).value()
+        return value
+
+
 # Custom Admin User
 @admin.register(User)
 class UserAdminExtended(UserAdmin):
@@ -27,6 +46,7 @@ class UserAdminExtended(UserAdmin):
         'first_name',
         'last_name',
         'apellido2',
+        'editor',
         'is_active',
         'is_staff',
     )
@@ -34,7 +54,7 @@ class UserAdminExtended(UserAdmin):
     list_filter = ()
     ordering = ('email',)
     fieldsets = (
-        (None, {'fields': ('email', 'password')}),
+        (None, {'fields': ('email', 'password', 'editor')}),
         (_('Personal info'), {'fields': ('first_name', 'last_name', 'apellido2')}),
         (_('Permissions'), {'fields': ('is_active', 'is_staff', 'groups')}),
         (_('Important dates'), {'fields': ('last_login',)}),
@@ -45,7 +65,7 @@ class UserAdminExtended(UserAdmin):
             'fields': ('email', 'password1', 'password2'),
         }),
     )
-    search_fields = ('email', 'first_name', 'last_name', 'apellido2')
+    search_fields = ('email', 'first_name', 'last_name', 'apellido2', 'editor')
 
     def get_object(self, request, object_id, from_field=None):
         obj = super(UserAdminExtended, self).get_object(request, object_id)
@@ -77,9 +97,11 @@ class NotaAdmin(admin.ModelAdmin):
         'nombre',
         'user',
         'creado',
-        'modificado'
+        'modificado',
+        'activa',
     )
     actions = [exportar_csv]
+    list_filter = (NotaActivaFilter,)
 
 
 @admin.register(Adjunto)

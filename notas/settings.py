@@ -206,4 +206,3 @@ DEFAULT_FROM_EMAIL = "%s <%s>" % ("Notas", EMAIL_HOST_USER)
 POST_OFFICE = {
     'DEFAULT_PRIORITY': 'now'
 }
-

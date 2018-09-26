@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load i18n %}
+{% load funciones %}
+{% settings_value 'EDITOR' as EDITOR %}
 
 {% block titlehead %}{% trans 'Notas' %}{% endblock titlehead %}
 {% block title %}{% endblock title %}
@@ -9,9 +11,7 @@
     {{ form.media.css }}
     <link href="{% static 'css/bootstrap-table.min.css' %}" rel="stylesheet">
     <link href="{% static 'css/bootstrap.fd.css' %}" rel="stylesheet">
-    <link href="{% static 'summernote-0.8.9/dist/summernote.css' %}" rel="stylesheet">
-    <style>
-    </style>
+    {% include 'web/nota/_editores_css.html' %}
 {% endblock styles %}
 
 {% block breadcrumb %}
@@ -19,7 +19,7 @@
 {% endblock breadcrumb %}
 
 {% block breadcrumb_active %}
-    {% trans 'Nota' %}
+    {% trans 'Nota' %} ({{ user.editor }})
 {% endblock breadcrumb_active %}
 
 {% block content %}
@@ -73,6 +73,7 @@
 
                     <div class='row'>
                         <div class='col-md-9'>
+                            <div id="id_editorToolbar"></div>
                             <div id='id_editor'>{{ nota.texto|default:'<p>Nuevo texto.</p>'|safe }}</div>
                         </div>
                         <div id='id_adjuntos' class='col-md-3'>
@@ -98,21 +99,8 @@
 {% block scripts %}
     {{ form.media.js }}
     <script src="{% static 'js/bootstrap.fd.js' %}"></script>
-    <script src="{% static 'summernote-0.8.9/dist/summernote.js' %}"></script>
-    <script src="{% static 'summernote-0.8.9/dist/lang/summernote-es-ES.js' %}"></script>
     <script type="text/javascript">
         $(function(){
-            $('#id_editor').summernote({
-                focus: true,
-                tabsize: 4,
-            });
-
-            $('#id_formulario').submit(function(e) {
-                var editorData = $('#id_editor').summernote('code');
-                $('#id_texto').val(editorData);
-                $( '#id_libro' ).prop( 'disabled', false );
-            });
-
             $('.adjuntos').on('click',function(e){
                 var key = $(e.target).attr('id');
                 key = key.substr(key.length-6, 6);
@@ -133,6 +121,6 @@
                 });
             });
         });
-
     </script>
+    {% include 'web/nota/_editores_js.html' %}
 {% endblock scripts %}

@@ -15,19 +15,22 @@ class NotaForm(forms.ModelForm):
         libro = kwargs.pop("libro", None)
         super(NotaForm, self).__init__(*args, **kwargs)
 
-        choices = list()
-        for libro in Libro.objects.all().order_by("nombre"):
-            choices.append((libro.id, libro.nombre))
-
-        self.fields["libro"].choices = choices
         if libro:
-            # al ser el campo requerido en el template, antes del submit, hay que habilitarlo
+            data = self.data.copy()         # actualiza data ya que libro al estar disabled no lo envia la página
+            data.update({'libro': libro})   # y al ser requerido da error
+            self.data = data
             self.fields['libro'].widget.attrs['disabled'] = True
+
+        #  NotaUpdateView (esto ya no hace falta porque tambien se envia libro en kwargs)
+        # if hasattr(self.instance, "libro"):
+        #     data = self.data.copy()
+        #     data.update({'libro': self.instance.libro.id})
+        #     self.data = data
+        #     self.fields['libro'].widget.attrs['disabled'] = True
 
     def clean_nombre(self):
         cleaned_data = super(NotaForm, self).clean()
         nombre = cleaned_data.get("nombre")
-
         if not nombre:
             raise forms.ValidationError(_("¡El campo es obligatorio!"))
 
@@ -56,7 +59,7 @@ class NotaEnviarForm(forms.Form):
                              required=True
                              )
 
-    mensaje = forms.CharField(label=_("Mensaje"),
+    texto = forms.CharField(label=_("Mensaje"),
                               widget=forms.TextInput(attrs={"style": "display:none;"}),
                               required=False
                               )
@@ -69,7 +72,7 @@ class NotaEnviarForm(forms.Form):
         nota = Nota.objects.get(id=nota_id)
         if nota:
             self.fields['asunto'].initial = "%s (%s)" % (nota.nombre, nota.libro)
-            self.fields['mensaje'].initial = nota.nombre
+            self.fields['texto'].initial = nota.nombre
 
 
 
