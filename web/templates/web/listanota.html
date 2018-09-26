@@ -116,12 +116,7 @@
         });
 
         {% if del_cookie %}
-            var prefijo = $('#id_notas').attr('data-cookie-id-table');
-            $.removeCookie(prefijo + '.bs.table.sortOrder', { path: '/' });
-            $.removeCookie(prefijo + '.bs.table.sortName', { path: '/' });
-            $.removeCookie(prefijo + '.bs.table.pageNumber', { path: '/' });
-            $.removeCookie(prefijo + '.bs.table.pageList', { path: '/' });
-            $.removeCookie(prefijo + '.bs.table.searchText', { path: '/' });
+            bootstrapTableDelCookie($('#id_notas'));
         {% endif %}
 
         var row_name;
@@ -194,10 +189,10 @@
             var dowload = "{% url 'nota_download_zip' 0 %}".replace('0', row.id);
             var enviar = "{% url 'nota_enviar' 0 %}".replace('0', row.id);
             return `
-                <a href="`+ eliminar +`" class="text-danger" role="button"><span class="glyphicon glyphicon-trash"></span></a>&nbsp;&nbsp;
-                <a href="`+ editar +`" class="text-primary" role="button"><span class="glyphicon glyphicon-pencil"></span></a>&nbsp;&nbsp;
-                <a href="`+ dowload +`" class="text-primary mensaje" data-mensaje="Creando zip..." role="button"><span class="fa fa-file-zip-o"></span></a>&nbsp;&nbsp;
-                <a href="`+ enviar +`" class="text-primary" role="button"><span class="glyphicon glyphicon-send"></span></a>&nbsp;&nbsp;
+                <a href="`+ eliminar +`" class="text-danger" role="button"><span class="glyphicon glyphicon-trash"></span></a>
+                <a href="`+ editar +`" class="text-primary" role="button"><span class="glyphicon glyphicon-pencil"></span></a>
+                <a href="`+ dowload +`" class="text-primary mensaje" data-mensaje="Creando zip..." role="button"><span class="fa fa-file-zip-o"></span></a>
+                <a href="`+ enviar +`" class="text-primary" role="button"><span class="glyphicon glyphicon-send"></span></a>
             `;
         }
 

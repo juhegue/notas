@@ -3,6 +3,7 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import FormView, View
 from django.http import JsonResponse
+from django.utils import timezone
 
 from ..forms.listanotaform import ListaNotaForm
 from ..models import Nota
@@ -67,12 +68,14 @@ class NotasView(LoginRequiredMixin, View):
         if offset or limit:
             query = query[offset:offset+limit]
 
+        hoy = timezone.now().date()
         rows = list()
         for q in query:
+            modi = q.modificado.strftime("%H:%M") if hoy == q.modificado.date() else q.modificado.strftime("%d/%m/%Y")
             rows.append({
                 "id": q.id,
                 "nombre": marca_texto(search, q.nombre),
-                "modificado": q.modificado.strftime("%d/%m/%Y %H:%M"),
+                "modificado": modi,
                 "texto": marca_texto(search, q.texto),
                 "adjunto_html_sin_borrar": marca_texto(search, q.adjunto_html_sin_borrar()),
             })

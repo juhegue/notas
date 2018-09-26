@@ -7,6 +7,16 @@ function zeroFill( number, width ) {
     return number + "";
 }
 
+function bootstrapTableDelCookie($table) {
+    var prefijo = $table.attr('data-cookie-id-table');
+    var path = $table.attr('data-cookie-path');
+    $.removeCookie(prefijo + '.bs.table.sortOrder', { path: path });
+    $.removeCookie(prefijo + '.bs.table.sortName', { path: path });
+    $.removeCookie(prefijo + '.bs.table.pageNumber', { path: path });
+    $.removeCookie(prefijo + '.bs.table.pageList', { path: path });
+    $.removeCookie(prefijo + '.bs.table.searchText', { path: path });
+}
+
 function uploadFiles(key, files, csrf_token){
     $('#id_cargando').modal('show');
 

@@ -11,6 +11,7 @@
                 focus: true,
                 tabsize: 4,
             });
+
             $('#id_formulario').submit(function(e) {
                 var editorData = $('#id_editor').summernote('code');
                 $('#id_texto').val(editorData);
@@ -46,3 +47,25 @@
         });
     </script>
 {% endif %}
+
+
+{% if user.editor == 'froala' %}
+    <script src="{% static 'froala_editor_2.8.5/js/froala_editor.min.js' %}"></script>
+    <script src="{% static 'froala_editor_2.8.5/js/froala_editor.pkgd.min.js' %}"></script>
+    <script src="{% static 'froala_editor_2.8.5/js/languages/es.js' %}"></script>
+    <script type="text/javascript">
+        $(function(){
+            $('#id_editor').froalaEditor({
+                language: 'es',
+                theme: 'gray',
+                pastePlain: true,
+            });
+
+            $('#id_formulario').submit(function(e) {
+                var editorData = $('#id_editor').froalaEditor('html.get', true);
+                $('#id_texto').val(editorData);
+            });
+        });
+    </script>
+{% endif %}
+

@@ -19,6 +19,7 @@ from .util.util import clean_html
 EDITOR_CHOICES = (
     ("summernote", "Summernote"),
     ("ckeditor",  "Ckeditor"),
+    ("froala",  "Froala"),
 )
 
 
