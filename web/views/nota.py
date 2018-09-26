@@ -91,7 +91,7 @@ class NotaUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
         return super(NotaUpdateView, self).form_valid(form)
 
     def get_success_url(self):
-        return reverse('listanota', kwargs={'libro': self.object.libro.id})
+        return reverse('listanota')
 
 
 class NotaDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
@@ -100,7 +100,7 @@ class NotaDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
     success_message = "Éxito al eliminar nota."
 
     def get_success_url(self):
-        return reverse('listanota', kwargs={'libro': self.object.libro.id})
+        return reverse('listanota')
 
     def delete(self, *args, **kwargs):
         object = self.get_object()

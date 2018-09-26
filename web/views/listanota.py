@@ -12,8 +12,10 @@ from ..util.util import marca_texto
 class ListaNotaView(LoginRequiredMixin, FormView):
     template_name = "web/listanota.html"
     form_class = ListaNotaForm
+    del_cookie = None
 
     def dispatch(self, request, *args, **kwargs):
+        self.del_cookie = kwargs.get("del_cookie")
         return super(ListaNotaView, self).dispatch(request, *args, **kwargs)
 
     def get_initial(self):
@@ -28,6 +30,7 @@ class ListaNotaView(LoginRequiredMixin, FormView):
 
     def get_context_data(self, **kwargs):
         context = super(ListaNotaView, self).get_context_data(**kwargs)
+        context["del_cookie"] = self.del_cookie
         return context
 
 
@@ -40,6 +43,7 @@ class NotasView(LoginRequiredMixin, View):
         offset = int(self.request.GET.get("offset"))
 
         libro = self.request.GET.get("libro")
+
         request.user.set_propiedad("libro", libro)
 
         if sort:

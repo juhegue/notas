@@ -35,4 +35,4 @@ class LibroCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
         return super(LibroCreateView, self).form_valid(form)
 
     def get_success_url(self):
-        return reverse('listanota', kwargs={'libro': self.object.id})
+        return reverse('listanota')

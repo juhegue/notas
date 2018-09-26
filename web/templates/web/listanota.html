@@ -48,6 +48,7 @@
                 data-cookie="true"
                 data-cookie-id-table="Notas"
                 data-cookie-expire="12m"
+                data-cookie-path="/"
                 data-detail-view="true"
                 data-detail-formatter="detailFormatter"
                 data-id-field="id"
@@ -75,7 +76,7 @@
 {% block scripts %}
     {{ form.media.js }}
     <script src="{% static 'js/bootstrap-table.min.js' %}"></script>
-    <script src="{% static 'js/_bootstrap-table-cookie.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap-table-cookie.min.js' %}"></script>
     <script src="{% static 'js/bootstrap-table-locale-all.min.js' %}"></script>
     <script type="text/javascript">
         var path = window.location.pathname.split('/');
@@ -111,12 +112,17 @@
                $(this).parent().prepend('<a style="padding-top:6px;" class="close clear_search" data-dismiss="alert">&nbsp; × &nbsp;</a>');
             });
 
-            /* Al entrar, con data-cookie="true" sino hay searchText no refresca la tabla
-            if ($('#id_notas').bootstrapTable('getOptions').searchText == '') {
-                $('#id_notas').bootstrapTable('refresh');
-            }
-                */
+            $('#id_notas').bootstrapTable('refresh');
         });
+
+        {% if del_cookie %}
+            var prefijo = $('#id_notas').attr('data-cookie-id-table');
+            $.removeCookie(prefijo + '.bs.table.sortOrder', { path: '/' });
+            $.removeCookie(prefijo + '.bs.table.sortName', { path: '/' });
+            $.removeCookie(prefijo + '.bs.table.pageNumber', { path: '/' });
+            $.removeCookie(prefijo + '.bs.table.pageList', { path: '/' });
+            $.removeCookie(prefijo + '.bs.table.searchText', { path: '/' });
+        {% endif %}
 
         var row_name;
         $('#id_notas').on('click-cell.bs.table', function (e, value, row, $el) {
