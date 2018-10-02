@@ -69,3 +69,22 @@
     </script>
 {% endif %}
 
+{% if user.editor == 'trumbowyg' %}
+    <script src="{% static 'trumbowyg-master/dist/trumbowyg.min.js' %}"></script>
+    <script src="{% static 'trumbowyg-master/dist/langs/es.min.js' %}"></script>
+    <script type="text/javascript">
+        $(function(){
+            $('#id_editor').trumbowyg({
+                lang: 'es',
+                removeformatPasted: true,
+                autogrow: true,
+                autogrowOnEnter: true,
+            });
+
+            $('#id_formulario').submit(function(e) {
+                var editorData = $('#id_editor').trumbowyg('html');
+                $('#id_texto').val(editorData);
+            });
+        });
+    </script>
+{% endif %}
