@@ -16,6 +16,7 @@ from .views.nota import NotaDownloadZip
 from .views.ajax import AjaxView
 from .views.adjunto import AdjuntoSubir
 from .views.adjunto import AdjuntoBajar
+from .views.cambiaeditor import CambiaEditorView
 
 # https://simpleisbetterthancomplex.com/references/2016/10/10/url-patterns.html
 
@@ -44,6 +45,9 @@ urlpatterns = [
 
     # Ajax
     re_path(r'^getdatos_ajax/([^/]+)', AjaxView.as_view()),
+
+    re_path(r'^cambia_editor/(?P<url_origen>[^/]+)/(?P<editor>[^/]+)/$', CambiaEditorView.as_view()),
+
 ]
 
 if settings.DEBUG:

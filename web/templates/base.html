@@ -50,8 +50,10 @@
                         <li class="dropdown active">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ user.email }}<span class="caret"></span></a>
                             <ul class="dropdown-menu">
-                                <li><a href="/logout/"><i class="fa fa-sign-out"></i>Salir</a></li>
+                                {% editor_choices %}
+                              <!--  <li><a href="/logout/"><i class="fa fa-sign-out"></i>Salir</a></li> -->
                             </ul>
+
                         </li>
                     </ul>
                     <!--
