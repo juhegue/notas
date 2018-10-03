@@ -20,6 +20,7 @@ EDITOR_CHOICES = (
     ("summernote", "Summernote"),
     ("ckeditor",  "Ckeditor"),
     ("froala",  "Froala"),
+    ("trumbowyg",  "Trumbowyg"),
 )
 
 

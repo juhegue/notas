@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import re
+import codecs
+import binascii
 from lxml.html.clean import Cleaner
 
 
@@ -45,3 +47,18 @@ def clean_html(texto_html):
     else:
         return ""
 
+
+def codehex(key):    # simple, pero funcional :)
+    if key:
+        b = key.encode()
+        h = binascii.hexlify(b)
+        return h.decode("utf8")
+    return ""
+
+
+def decodehex(key):
+    if key:
+        b = key.encode()
+        s = binascii.unhexlify(b)
+        return s.decode("utf8")
+    return ""
