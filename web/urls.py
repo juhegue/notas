@@ -2,7 +2,7 @@
 
 from django.conf import settings
 from django.conf.urls.static import static
-from django.contrib.auth.views import login, logout
+from django.contrib.auth import views as auth_views
 from django.urls import re_path
 
 from .views.inicio import Index
@@ -22,8 +22,8 @@ from .views.cambiaeditor import CambiaEditorView
 
 urlpatterns = [
     # Login / Logout
-    re_path(r'^login/$', login, {'template_name': 'web/login.html', }, name="login"),
-    re_path(r'^logout/$', logout, {'next_page': '/login/'}, name="logout"),
+    re_path(r'^login/$',  auth_views.LoginView.as_view(template_name='web/login.html'), name="login"),
+    re_path(r'^logout/$', auth_views.LogoutView.as_view(template_name='web/logout.html'), name="logout"),
 
     # Indice
     re_path(r'^$', Index.as_view(), name="index"),
