@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load i18n %}
+
+{% block titlehead %}{% trans 'Login' %}{% endblock titlehead %}
+
+{% block styles %}
+    {{ block.super }}
+    <style>
+        .well {
+            margin-top: 100px;
+        }
+
+        .logo {
+            top: 20px;
+            left: 20px;
+            position: fixed;
+        }
+    </style>
+{% endblock styles %}
+
+{% block header %}
+{% endblock header %}
+
+{% block nucleocentral %}
+    <div class="logo">
+        <img src="{% static 'images/logo-juhegue.png' %}" height="20%" width="20%">
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 col-md-offset-4">
+                <div class="well">
+                    <div class="row">
+                        <div class="col-md-3 col-md-offset-3">
+                            <img src="{% static 'images/logo-notas.png' %}" alt="logo" height="100" width="100">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        {% if form.errors %}
+                            {% for error in form.non_field_errors %}
+                                <div class="alert alert-danger">
+                                     <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                                    <strong>{{ error|escape }}</strong>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                    <h3 class="text-center">Sesión finalizada</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock nucleocentral %}
+
+{% block scripts %}
+    <script type="text/javascript">
+    </script>
+{% endblock scripts %}
