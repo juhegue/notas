@@ -1,4 +1,4 @@
-Django==2.1.7
+Django==2.0.13
 django-autocomplete-light==3.2.10
 django-extensions==1.9.9
 django-nested-admin==3.0.21
