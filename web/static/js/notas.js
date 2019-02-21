@@ -92,5 +92,9 @@ $(function () {
         mensajeLoading(msg);
     });
 
+    // lenguaje de select2
+    $('select').select2({
+        language: "es"
+    });
 });
 
