@@ -14,8 +14,12 @@ class LibroForm(forms.ModelForm):
         cleaned_data = super(LibroForm, self).clean()
         nombre = cleaned_data.get("nombre")
 
-        if Libro.objects.filter(nombre=nombre).first():
-            raise forms.ValidationError(_("¡Ya existe un libro con ese mismo nombre!"))
+        if self.instance:
+            if Libro.objects.filter(nombre=nombre).exclude(pk=self.instance.pk).first():
+                raise forms.ValidationError(_("¡Ya existe un libro con ese mismo nombre!"))
+        else:
+            if Libro.objects.filter(nombre=nombre).first():
+                raise forms.ValidationError(_("¡Ya existe un libro con ese mismo nombre!"))
 
         return nombre
 
@@ -33,5 +37,8 @@ class LibroForm(forms.ModelForm):
         exclude = ['user', 'creado', 'modificado']
 
         widgets = {
-            'nombre': forms.TextInput(attrs={'class': 'form-control', 'required': 'true'}),
+            'nombre': forms.TextInput(attrs={'class': 'form-control',
+                                             'required': 'true',
+                                             "autofocus": "autofocus"
+                                             }),
         }

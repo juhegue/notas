@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from django.utils.translation import ugettext_lazy as _
+from django.db.models.functions import Lower
 from .select2es import *
 from ..models import Libro
 
@@ -18,7 +19,7 @@ class ListaNotaForm(forms.Form):
         super(ListaNotaForm, self).__init__(*args, **kwargs)
 
         choices = list()
-        for libro in Libro.objects.all().order_by("nombre"):
-            choices.append((libro.id, libro.nombre))
+        for libro in Libro.objects.all().order_by(Lower("nombre")):
+            choices.append((libro.id, libro.nombre.title))
 
         self.fields["libro"].choices = choices

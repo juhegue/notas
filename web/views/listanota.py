@@ -7,6 +7,7 @@ from django.utils import timezone
 
 from ..forms.listanotaform import ListaNotaForm
 from ..models import Nota
+from ..models import Libro
 from ..util.util import marca_texto
 
 
@@ -21,7 +22,11 @@ class ListaNotaView(LoginRequiredMixin, FormView):
 
     def get_initial(self):
         initial = super(ListaNotaView, self).get_initial()
-        initial["libro"] = self.request.user.get_propiedad("libro")
+        libro_id = self.request.user.get_propiedad("libro")
+        if not libro_id or not Libro.objects.filter(id=libro_id).first():
+            libro = Libro.objects.all().first()
+            libro_id = libro.id if libro else 0
+        initial["libro"] = libro_id
         return initial
 
     def get_form_kwargs(self):
@@ -32,6 +37,7 @@ class ListaNotaView(LoginRequiredMixin, FormView):
     def get_context_data(self, **kwargs):
         context = super(ListaNotaView, self).get_context_data(**kwargs)
         context["del_cookie"] = self.del_cookie
+        context["libro"] = self.request.user.get_propiedad("libro", 0)
         return context
 
 

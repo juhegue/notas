@@ -26,7 +26,7 @@ class NotaCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     template_name = 'web/nota/editar.html'
     model = Nota
     form_class = NotaForm
-    success_message = u"Nota creada correctamente."
+    success_message = "Nota creada correctamente."
     libro_id = 0
 
     def dispatch(self, request, *args, **kwargs):

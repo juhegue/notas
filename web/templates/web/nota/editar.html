@@ -120,6 +120,11 @@
                 }).on('cancel.bs.filedialog', function(ev) {
                 });
             });
+
+            setTimeout(function(){
+                $('#id_nombre').focus().select();
+            }, 100);
+
         });
     </script>
     {% include 'web/nota/_editores_js.html' %}

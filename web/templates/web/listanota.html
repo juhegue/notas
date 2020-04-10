@@ -29,6 +29,10 @@
             {% csrf_token %}
             <a href="{% url 'libro_nuevo' %}" title="{% trans 'Nuevo' %}" class="btn btn-sm btn-default btn-plus" role="button"><span class="glyphicon glyphicon-plus-sign"></span></a>
             {{ form.libro }}
+            {% if libro != 0 %}
+                <a id="id_libro_eliminar" href="{% url 'libro_eliminar' libro %}" title="{% trans 'Editar' %}" class="btn btn-sm btn-default btn-plus" role="button"><span class="glyphicon glyphicon-trash"></span></a>
+                <a id="id_libro_editar" href="{% url 'libro_editar' libro %}" title="{% trans 'Eliminar' %}" class="btn btn-sm btn-default btn-plus" role="button"><span class="glyphicon glyphicon-pencil"></span></a>
+            {% endif %}
         </form>
     </div>
     <div class="container-fluid">
@@ -93,6 +97,22 @@
             }
         });
 
+        function actualizaHref($obj) {
+            try {
+                var libro = $('#id_libro').val(),
+                    href = $obj.attr('href'),
+                    data = href.split('/');
+                data.pop();
+                data.pop();
+                data.push(libro);
+                data.push('');
+                href = data.join('/')
+                $obj.attr('href', href);
+            } catch(error) {
+              console.error(error);
+            }
+        }
+
         $(function(){
             var disabled = 'disabled';
             if ( $('#id_libro').val().length>0 ){ disabled = ''; }
@@ -113,6 +133,8 @@
             });
 
             $('#id_notas').bootstrapTable('refresh');
+            actualizaHref($('#id_libro_editar'));
+            actualizaHref($('#id_libro_eliminar'));
         });
 
         {% if del_cookie %}
@@ -189,15 +211,17 @@
             var dowload = "{% url 'nota_download_zip' 0 %}".replace('0', row.id);
             var enviar = "{% url 'nota_enviar' 0 %}".replace('0', row.id);
             return `
-                <a href="`+ eliminar +`" class="text-danger" role="button"><span class="glyphicon glyphicon-trash"></span></a>
-                <a href="`+ editar +`" class="text-primary" role="button"><span class="glyphicon glyphicon-pencil"></span></a>
-                <a href="`+ dowload +`" class="text-primary mensaje" data-mensaje="Creando zip..." role="button"><span class="fa fa-file-zip-o"></span></a>
-                <a href="`+ enviar +`" class="text-primary" role="button"><span class="glyphicon glyphicon-send"></span></a>
+                <a href="`+ eliminar +`" class="text-danger" role="button" title="{% trans Eliminar %}"><span class="glyphicon glyphicon-trash"></span></a>
+                <a href="`+ editar +`" class="text-primary" role="button" title="Editar"><span class="glyphicon glyphicon-pencil"></span></a>
+                <a href="`+ dowload +`" class="text-primary mensaje" title="Descargar" data-mensaje="Creando zip..." role="button"><span class="fa fa-file-zip-o"></span></a>
+                <a href="`+ enviar +`" class="text-primary" role="button" title="Enviar"><span class="glyphicon glyphicon-send"></span></a>
             `;
         }
 
         $(document).on('change','#id_libro',function(){
            $('#id_notas').bootstrapTable('refresh');
+            actualizaHref($('#id_libro_editar'));
+            actualizaHref($('#id_libro_eliminar'));
         });
 
         $(document).on('click','.clear_search',function(){

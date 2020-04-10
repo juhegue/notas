@@ -58,4 +58,12 @@
 
 {% block scripts %}
     {{ form.media.js }}
+    <script type="text/javascript">
+        $(function(){
+            setTimeout(function(){
+                $('#id_nombre').focus().select();
+            }, 100);
+        });
+    </script>
+
 {% endblock scripts %}

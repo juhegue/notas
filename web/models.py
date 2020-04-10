@@ -66,9 +66,9 @@ class User(AbstractBaseUser, PermissionsMixin):
         self.propiedades = json.dumps(p)
         self.save()
 
-    def get_propiedad(self, nombre):
+    def get_propiedad(self, nombre, defecto=None):
         p = json.loads(self.propiedades or "{}")
-        return p.get(nombre)
+        return p.get(nombre) or defecto
 
 
 class UserMixin(models.Model):
