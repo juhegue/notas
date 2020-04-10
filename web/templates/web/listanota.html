@@ -16,6 +16,13 @@
         td.col-md-10 {
             cursor: pointer;
         }
+        .select2-container--default .select2-results>.select2-results__options {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        .accion {
+            margin-left: 12px;
+        }
     </style>
 {% endblock styles %}
 
@@ -211,10 +218,10 @@
             var dowload = "{% url 'nota_download_zip' 0 %}".replace('0', row.id);
             var enviar = "{% url 'nota_enviar' 0 %}".replace('0', row.id);
             return `
-                <a href="`+ eliminar +`" class="text-danger" role="button" title="{% trans Eliminar %}"><span class="glyphicon glyphicon-trash"></span></a>
-                <a href="`+ editar +`" class="text-primary" role="button" title="Editar"><span class="glyphicon glyphicon-pencil"></span></a>
-                <a href="`+ dowload +`" class="text-primary mensaje" title="Descargar" data-mensaje="Creando zip..." role="button"><span class="fa fa-file-zip-o"></span></a>
-                <a href="`+ enviar +`" class="text-primary" role="button" title="Enviar"><span class="glyphicon glyphicon-send"></span></a>
+                <a href="`+ eliminar +`" class="text-danger accion" role="button" title="{% trans Eliminar %}"><span class="glyphicon glyphicon-trash"></span></a>
+                <a href="`+ editar +`" class="text-primary accion" role="button" title="Editar"><span class="glyphicon glyphicon-pencil"></span></a>
+                <a href="`+ dowload +`" class="text-primary accion mensaje" title="Descargar" data-mensaje="Creando zip..." role="button"><span class="fa fa-file-zip-o"></span></a>
+                <a href="`+ enviar +`" class="text-primary accion" role="button" title="Enviar"><span class="glyphicon glyphicon-send"></span></a>
             `;
         }
 
