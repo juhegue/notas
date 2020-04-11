@@ -74,12 +74,17 @@
                     <div class='row'>
                         <div class='col-md-9'>
                             <div id="id_editorToolbar"></div>
-                            <div id='id_editor'>{{ nota.texto|default:'<p>Nuevo texto.</p>'|safe }}</div>
+                            <div id='id_editor'>{{ nota.texto|safe }}</div>
                         </div>
                         <div id='id_adjuntos' class='col-md-3'>
                             <div class='text-center'>
-                                <button type='button' style='width:100%' id='id_btnadjuntos' class='btn btn-primary adjuntos' {% if create_view %}disabled{% endif %}>{% trans 'Adjuntos' %}</button>
+                                <button type='button' style='width:100%' id='id_btnadjuntos' class='btn btn-primary adjuntos'
+                                    {% if create_view %}disabled{% endif %}>{% trans 'Adjuntos' %}
+                                </button>
                             </div>
+                            {% if create_view %}
+                                <div class="text-center" style="color:gray">Guarde la nota para poder añadir adjuntos</div>
+                            {% endif %}
                             <div id='id_lista_adjuntos'>{{ adjunto_html|safe }}</div>
                         </div>
                     </div>

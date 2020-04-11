@@ -34,11 +34,11 @@
     <div id="toolbar">
         <form action="" method="post" role="form" id="id_formulario">
             {% csrf_token %}
-            <a href="{% url 'libro_nuevo' %}" title="{% trans 'Nuevo' %}" class="btn btn-sm btn-default btn-plus" role="button"><span class="glyphicon glyphicon-plus-sign"></span></a>
+            <a href="{% url 'libro_nuevo' %}" title="{% trans 'Nuevo libro' %}" class="btn btn-sm btn-default btn-plus" role="button"><span class="glyphicon glyphicon-plus-sign"></span></a>
             {{ form.libro }}
             {% if libro != 0 %}
-                <a id="id_libro_eliminar" href="{% url 'libro_eliminar' libro %}" title="{% trans 'Editar' %}" class="btn btn-sm btn-default btn-plus" role="button"><span class="glyphicon glyphicon-trash"></span></a>
-                <a id="id_libro_editar" href="{% url 'libro_editar' libro %}" title="{% trans 'Eliminar' %}" class="btn btn-sm btn-default btn-plus" role="button"><span class="glyphicon glyphicon-pencil"></span></a>
+                <a id="id_libro_eliminar" href="{% url 'libro_eliminar' libro %}" title="{% trans 'Eliminar libro' %}" class="btn btn-sm btn-default btn-plus" role="button"><span class="glyphicon glyphicon-trash"></span></a>
+                <a id="id_libro_editar" href="{% url 'libro_editar' libro %}" title="{% trans 'Editar libro' %}" class="btn btn-sm btn-default btn-plus" role="button"><span class="glyphicon glyphicon-pencil"></span></a>
             {% endif %}
         </form>
     </div>
@@ -116,24 +116,23 @@
                 href = data.join('/')
                 $obj.attr('href', href);
             } catch(error) {
-              console.error(error);
+
             }
         }
 
         $(function(){
             var disabled = 'disabled';
             if ( $('#id_libro').val().length>0 ){ disabled = ''; }
-
             setTimeout(function(){
-                var btn = `<button style="margin-top:-22px;border:0;" id="id_nota_nueva" type="button" class="btn btn-default btn-sm btn-plus" title="`+'{% trans 'Nuevo' %}'+`"` + disabled +`>
+                var btn = `<a href="{% url 'nota_nuevo' libro %}" style="margin-top:-22px;border:0;" id="id_nota_nueva" type="button" class="btn btn-default btn-sm btn-plus" title="`+'{% trans 'Nueva nota' %}'+`"` + disabled +`>
                            <span class="glyphicon glyphicon-plus-sign"></span>
-                           </button> `;
+                           </a> `;
                 $( '.fht-cell' ).remove();
                 $( btn ).appendTo( '.detail' );
             }, 100);
 
             $('.search').find('input[type=text]').each(function(e) {
-               $(this).attr('placeholder', "Buscar (múltiple separar por comas)");
+               $(this).attr('placeholder', "{% trans 'Buscar (múltiple separar por comas)' %}");
                $(this).css('max-width', '260px');
                $(this).css('width', '260px');
                $(this).parent().prepend('<a style="padding-top:6px;" class="close clear_search" data-dismiss="alert">&nbsp; × &nbsp;</a>');
@@ -142,6 +141,7 @@
             $('#id_notas').bootstrapTable('refresh');
             actualizaHref($('#id_libro_editar'));
             actualizaHref($('#id_libro_eliminar'));
+            actualizaHref($('#id_nota_nueva'));
         });
 
         {% if del_cookie %}
@@ -218,10 +218,10 @@
             var dowload = "{% url 'nota_download_zip' 0 %}".replace('0', row.id);
             var enviar = "{% url 'nota_enviar' 0 %}".replace('0', row.id);
             return `
-                <a href="`+ eliminar +`" class="text-danger accion" role="button" title="{% trans Eliminar %}"><span class="glyphicon glyphicon-trash"></span></a>
-                <a href="`+ editar +`" class="text-primary accion" role="button" title="Editar"><span class="glyphicon glyphicon-pencil"></span></a>
-                <a href="`+ dowload +`" class="text-primary accion mensaje" title="Descargar" data-mensaje="Creando zip..." role="button"><span class="fa fa-file-zip-o"></span></a>
-                <a href="`+ enviar +`" class="text-primary accion" role="button" title="Enviar"><span class="glyphicon glyphicon-send"></span></a>
+                <a href="`+ eliminar +`" class="text-danger accion" role="button" title="{% trans 'Eliminar nota' %}"><span class="glyphicon glyphicon-trash"></span></a>
+                <a href="`+ editar +`" class="text-primary accion" role="button" title="{% trans 'Editar nota' %}"><span class="glyphicon glyphicon-pencil"></span></a>
+                <a href="`+ dowload +`" class="text-primary accion mensaje" title="{% trans 'Descargar nota' %}" data-mensaje="Creando zip..." role="button"><span class="fa fa-file-zip-o"></span></a>
+                <a href="`+ enviar +`" class="text-primary accion" role="button" title="{% trans 'Enviar nota' %}"><span class="glyphicon glyphicon-send"></span></a>
             `;
         }
 
@@ -229,27 +229,11 @@
            $('#id_notas').bootstrapTable('refresh');
             actualizaHref($('#id_libro_editar'));
             actualizaHref($('#id_libro_eliminar'));
+            actualizaHref($('#id_nota_nueva'));
         });
 
         $(document).on('click','.clear_search',function(){
             $('#id_notas').bootstrapTable('resetSearch');
-        });
-
-        $(document).on('click','#id_nota_nueva',function(){
-            var libro = $('#id_libro').val();
-
-            /*  en lugar de ir a nueva nota
-            var href = '{% url "nota_nuevo" %}' + libro + '/';
-            window.location.assign(href);
-
-               se crea y se edita
-            */
-            var url = '/getdatos_ajax/nueva_nota';
-            var param = {libro_id: libro};
-            funcionAjax(url, param, function(data){
-                var href = '/nota/editar/' + data + '/';
-                window.location.assign(href);
-            });
         });
 
         $(document).on('click', '.adjuntos',function(e){

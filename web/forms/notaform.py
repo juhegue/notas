@@ -60,9 +60,9 @@ class NotaEnviarForm(forms.Form):
                              )
 
     texto = forms.CharField(label=_("Mensaje"),
-                              widget=forms.TextInput(attrs={"style": "display:none;"}),
-                              required=False
-                              )
+                            widget=forms.TextInput(attrs={"style": "display:none;"}),
+                            required=False
+                            )
 
     def __init__(self, *args, **kwargs):
         request = kwargs.pop('request', None)

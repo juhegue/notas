@@ -26,7 +26,7 @@ class NotaCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     template_name = 'web/nota/editar.html'
     model = Nota
     form_class = NotaForm
-    success_message = "Nota creada correctamente."
+    success_message = "Éxito al crear nota."
     libro_id = 0
 
     def dispatch(self, request, *args, **kwargs):
@@ -143,10 +143,10 @@ class NotaEnviarView(LoginRequiredMixin, SuccessMessageMixin, FormView):
             adj = NotaZip(self.id_nota).file()
             try:
                 mail.send(
-                    recipients=data.get("para"),
-                    subject=data.get("asunto"),
-                    message=html2text(data.get("mensaje")),
-                    html_message=data.get("mensaje"),
+                    recipients=data.get("para", ""),
+                    subject=data.get("asunto", ""),
+                    message=html2text(data.get("texto", "")),
+                    html_message=data.get("texto", ""),
                     attachments={"nota_%s.zip" % self.id_nota: adj}
                 )
                 messages.success(self.request, "Correo enviado.")
