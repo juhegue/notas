@@ -29,6 +29,7 @@
         <form action="" method="post" enctype="multipart/form-data" role="form" id="id_formulario">
             {% csrf_token %}
             {{ form.texto }}
+            {{ form.uuid_id }}
             <div class="panel panel-primary">
                 <div class="panel-heading">
                     <h3 class="panel-title">
@@ -79,12 +80,9 @@
                         <div id='id_adjuntos' class='col-md-3'>
                             <div class='text-center'>
                                 <button type='button' style='width:100%' id='id_btnadjuntos' class='btn btn-primary adjuntos'
-                                    {% if create_view %}disabled{% endif %}>{% trans 'Adjuntos' %}
+                                    >{% trans 'Adjuntos' %}
                                 </button>
                             </div>
-                            {% if create_view %}
-                                <div class="text-center" style="color:gray">Guarde la nota para poder añadir adjuntos</div>
-                            {% endif %}
                             <div id='id_lista_adjuntos'>{{ adjunto_html|safe }}</div>
                         </div>
                     </div>
@@ -121,7 +119,7 @@
                     dropheight: 100,
                     multiple: true,
                  }).on('files.bs.filedialog', function(ev) {
-                    uploadFiles({{ nota.id }}, ev.files, '{{ csrf_token }}');
+                    uploadFiles('{{ nota.id|default:uuid_id }}', ev.files, '{{ csrf_token }}');
                 }).on('cancel.bs.filedialog', function(ev) {
                 });
             });

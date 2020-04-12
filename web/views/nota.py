@@ -1,5 +1,6 @@
 # coding=utf-8
 
+import uuid
 from html2text import html2text
 from post_office import mail
 
@@ -16,6 +17,8 @@ from django.http.response import HttpResponseForbidden
 from django.shortcuts import redirect
 
 from web.models import Nota
+from web.models import Adjunto
+from web.models import AdjuntoTemporal
 from web.forms.notaform import NotaForm
 from web.forms.notaform import NotaEnviarForm
 
@@ -28,6 +31,7 @@ class NotaCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     form_class = NotaForm
     success_message = "Éxito al crear nota."
     libro_id = 0
+    uuid_id = None
 
     def dispatch(self, request, *args, **kwargs):
         self.libro_id = kwargs.get("libro", 0)
@@ -41,13 +45,16 @@ class NotaCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
 
     def get_initial(self):
         initial = super(NotaCreateView, self).get_initial()
+        self.uuid_id = uuid.uuid4()
         initial["libro"] = self.libro_id
+        initial["uuid_id"] = self.uuid_id
         return initial
 
     def get_context_data(self, **kwargs):
         context = super(NotaCreateView, self).get_context_data(**kwargs)
         context["create_view"] = True
         context["libro"] = self.libro_id
+        context["uuid_id"] = self.uuid_id
         return context
 
     def form_valid(self, form):
@@ -57,10 +64,14 @@ class NotaCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
             f.user = self.request.user
             f.activa = True
             f.save()
+            uuid_id = data.get("uuid_id")
+            for adj in AdjuntoTemporal.objects.filter(uuid_id=uuid_id).all():
+                Adjunto(nota=f, fichero=adj.fichero, nombre=adj.nombre).save()
+
         return super(NotaCreateView, self).form_valid(form)
 
     def get_success_url(self):
-        return reverse('nota_editar', kwargs={'pk': self.object.id})
+        return reverse('listanota')
 
 
 class NotaUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
@@ -79,6 +90,7 @@ class NotaUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
         context = super(NotaUpdateView, self).get_context_data(**kwargs)
         context["libro"] = self.object.libro.id
         context["adjunto_html"] = self.object.adjunto_html()
+        context["uuid_id"] = None
         return context
 
     def form_valid(self, form):

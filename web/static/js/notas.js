@@ -51,7 +51,15 @@ function borraAdjunto(adj_id) {
     var url = '/getdatos_ajax/adjunto_borra';
     var param = {adj_id: adj_id};
     funcionAjax(url, param, function(data){
-        var key = zeroFill(data.nota_id, 6);
+        $elemento = $('#id_lista_adjuntos');
+        $elemento.html(data.data);
+    });
+}
+
+function borraAdjuntoTemporal(adj_id) {
+    var url = '/getdatos_ajax/adjunto_borra_temporal';
+    var param = {adj_id: adj_id};
+    funcionAjax(url, param, function(data){
         $elemento = $('#id_lista_adjuntos');
         $elemento.html(data.data);
     });

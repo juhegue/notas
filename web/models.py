@@ -158,9 +158,18 @@ class Adjunto(ActualizaMixin, UserMixin):
         return self.nombre
 
 
+class AdjuntoTemporal(models.Model):
+    uuid_id = models.UUIDField()
+    fichero = models.FileField(upload_to=adjunto_upload_to)
+    nombre = models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.nombre
+
+
 @receiver(pre_delete)
 def delete_repo(sender, instance, **kwargs):
-    if sender == Adjunto:
+    if sender == Adjunto or sender == AdjuntoTemporal:
         try:
             os.unlink(instance.fichero.file.name)
         except:

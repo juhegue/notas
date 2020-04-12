@@ -9,6 +9,7 @@ from .emailmultiple import EmailMultipleField
 
 
 class NotaForm(forms.ModelForm):
+    uuid_id = forms.CharField(required=False, widget=forms.TextInput(attrs={"style": "display:none;"}))
 
     def __init__(self, *args, **kwargs):
         request = kwargs.pop("request", None)

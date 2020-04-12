@@ -11,8 +11,8 @@ from django.http import HttpResponse
 from django.views.generic.edit import View
 
 from ..models import Adjunto
-from ..models import Nota
-from ..models import Libro
+from ..models import AdjuntoTemporal
+from web.views.adjunto import adjunto_html
 
 logger = logging.getLogger(__name__)
 
@@ -29,11 +29,14 @@ class Datos(object):
             if adj.user.email != self.request.user.email:
                 self.error = "Esta nota pertenece al usuario '%s'" % adj.user.email
                 return
-
         adj.delete()
-        print (nota.adjunto_html())
-        print (nota.id)
-        return {"data": nota.adjunto_html(), "nota_id": nota.id}
+        return {"data": nota.adjunto_html()}
+
+    @staticmethod
+    def adjunto_borra_temporal(adj_id):
+        adj = AdjuntoTemporal.objects.get(id=adj_id)
+        adj.delete()
+        return {"data": adjunto_html(adj.uuid_id)}
 
 
 class AjaxView(View):
@@ -62,8 +65,7 @@ class AjaxView(View):
             exc = traceback.format_exception(exc_type, exc_value, exc_traceback)
             error = os.linesep.join(exc)
 
-            logger.debug(error)
-            print(error)
+            logger.error(error)
 
             #  TODO:: Comentado para que muestre siempre el error
             #  if not settings.DEBUG:
