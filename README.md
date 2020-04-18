@@ -1,5 +1,5 @@
 # notas
-### Editores
+### Editores:
 * Summernote
 * Ckeditor
 * Froala
