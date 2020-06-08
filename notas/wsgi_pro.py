@@ -12,7 +12,7 @@ import sys
 from django.core.wsgi import get_wsgi_application
 
 sys.path.append("/var/www/notas/")
-sys.path.append("/home/juan/.virtualenvs/notas36/lib/python3.6/site-packages/")
+sys.path.append("/home/juan/.virtualenvs/notas/lib/python3.6/site-packages/")
 
 os.environ.setdefault("LANG", "en_US.UTF-8")
 os.environ.setdefault("LC_ALL", "en_US.UTF-8")
