@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 
 from django.utils.translation import ugettext_lazy as _
-from .select2es import *
-from ..models import Libro
+from django import forms
+from dal import autocomplete
 from ..models import Nota
-from .select2es import Select2Es
 from .emailmultiple import EmailMultipleField
 
 
@@ -22,13 +21,6 @@ class NotaForm(forms.ModelForm):
             self.data = data
             self.fields['libro'].widget.attrs['disabled'] = True
 
-        #  NotaUpdateView (esto ya no hace falta porque tambien se envia libro en kwargs)
-        # if hasattr(self.instance, "libro"):
-        #     data = self.data.copy()
-        #     data.update({'libro': self.instance.libro.id})
-        #     self.data = data
-        #     self.fields['libro'].widget.attrs['disabled'] = True
-
     def clean_nombre(self):
         cleaned_data = super(NotaForm, self).clean()
         nombre = cleaned_data.get("nombre")
@@ -42,7 +34,7 @@ class NotaForm(forms.ModelForm):
         exclude = ['user', 'creado', 'modificado']
 
         widgets = {
-            'libro': Select2Es(attrs={'class': 'form-control', 'required': 'true'}),
+            'libro': autocomplete.Select2(attrs={'class': 'form-control', 'required': 'true'}),
             'nombre': forms.TextInput(attrs={'class': 'form-control', 'required': 'true'}),
             'texto': forms.Textarea(attrs={'class': 'form-control', "style": "display:none;"}),
         }

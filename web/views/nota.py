@@ -29,7 +29,7 @@ class NotaCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     template_name = 'web/nota/editar.html'
     model = Nota
     form_class = NotaForm
-    success_message = "Éxito al crear nota."
+    success_message = "Nota creada."
     libro_id = 0
     uuid_id = None
 
@@ -78,7 +78,7 @@ class NotaUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     template_name = 'web/nota/editar.html'
     model = Nota
     form_class = NotaForm
-    success_message = "Éxito al modificar nota."
+    success_message = "Nota modificada."
 
     def get_form_kwargs(self):
         kwargs = super(NotaUpdateView, self).get_form_kwargs()
@@ -109,7 +109,7 @@ class NotaUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
 class NotaDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
     template_name = 'web/nota/eliminar.html'
     model = Nota
-    success_message = "Éxito al eliminar nota."
+    success_message = "Nota eliminada."
 
     def get_success_url(self):
         return reverse('listanota')

@@ -106,15 +106,15 @@ class Nota(ActualizaMixin, UserMixin):
             href_baja = "javascript:borraAdjunto(%s);" % adj.id
             html += """
                 <tr>
-                    <td class="wrappable">%s</td>
-                    <td class="text-center">
-                        <a href="%s" class="text-danger" role="button"><span class="glyphicon glyphicon-trash"></span></a>
+                    <td class="text-center" style="width:10px">
+                        <a href="%s" class="text-danger" role="button"><span class="fa fw fa-trash"></span></a>
                     </td>                
+                    <td class="wrappable">%s</td>
                 </tr>            
-        """ % (link_download, href_baja)
+        """ % (href_baja, link_download)
 
         return "" if not html else """
-            <div class="panel panel-default">
+            <div class="card">
             <table class='table' style='width:100%%'>
               %s
             </table>
@@ -128,7 +128,7 @@ class Nota(ActualizaMixin, UserMixin):
             html += '<tr><td class="wrappable">%s</td></tr>' % link_download
 
         return "" if not html else """
-            <div class="panel panel-default">
+            <div class="card">
             <table class='table' style='width:100%%'>
               %s
             </table>

@@ -28,7 +28,7 @@ def adjunto_html(uuid_id):
             <tr>
                 <td class="wrappable">%s</td>
                 <td class="text-center">
-                    <a href="%s" class="text-danger" role="button"><span class="glyphicon glyphicon-trash"></span></a>
+                    <a href="%s" class="text-danger" role="button"><span class="fa fw fa-trash"></span></a>
                 </td>                
             </tr>            
     """ % (link_download, href_baja)

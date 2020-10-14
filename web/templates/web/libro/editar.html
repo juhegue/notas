@@ -6,12 +6,10 @@
     {% trans 'Nuevo libro' %}
 {% endblock titlehead %}
 
-{% block styles %}
-    {{ form.media.css }}
-{% endblock styles %}
-
 {% block breadcrumb %}
-    <li><a href="{% url 'listanota' %}">Notas</a></li>
+    <li class="breadcrumb-item">
+        <a href="{% url 'listanota' %}">Notas</a>
+    </li>
 {% endblock breadcrumb %}
 
 {% block breadcrumb_active %}
@@ -19,51 +17,47 @@
 {% endblock breadcrumb_active %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-12">
-        <form action="" method="post" enctype="multipart/form-data" role="form" id="id_formulario">
-            {% csrf_token %}
-            <div class="panel panel-primary">
-                <div class="panel-heading">
-                    <h3 class="panel-title">{% trans 'Nuevo Libro' %}</h3>
-                </div>
-                <div class="panel-body">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group">
+    <div class="row">
+        <div class="col-md-12">
+            <form action="" method="post" enctype="multipart/form-data" role="form" id="formulario">
+                {% csrf_token %}
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="panel-title">
+                            {% if create_view %}
+                                {% trans 'Nuevo Libro' %}
+                            {% else %}
+                                {% trans 'Modificar Libro' %}
+                            {% endif %}
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-row">
+                            <div class="form-group col-md-12">
                                 {{ form.nombre.errors }}
                                 <label for={{form.nombre.auto_id}} class="control-label">
-                                {{ form.nombre.label }}
-                                {% if form.nombre.field.required %}<span class="required_fields">*</span>{% endif %}
+                                    {{ form.nombre.label }}
+                                    {% if form.nombre.field.required %}<span class="required_fields">*</span>{% endif %}
                                 </label>
                                 {{ form.nombre }}
                                 {% if form.nombre.help_text %}
-                                <p class="help-block">{{ form.nombre.help_text|safe }}</p>
+                                    <p class="help-block">{{ form.nombre.help_text|safe }}</p>
                                 {% endif %}
                             </div>
                         </div>
                     </div>
+                    <div class="card-footer">
+                        <a class="btn btn-danger" href="{% url 'listanota' %}">
+                            <i class="fa fa-ban"></i>
+                            {% trans 'Cancelar' %}
+                        </a>
+                        <button type="submit" class="btn btn-success">
+                            <i class="fa fw fa-floppy-o"></i>
+                            {% trans 'Guardar' %}
+                        </button>
+                    </div>
                 </div>
-                <div class="panel-footer">
-                    <button type="submit" class="btn btn-primary btn-normal">
-                        <i class="fa fw fa-floppy-o"></i> {% trans 'Guardar' %}
-                    </button>
-                    <a class="btn btn-default btn-normal" href="{% url 'listanota' %}">{% trans 'Cancelar' %}</a>
-                </div>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
-</div>
 {% endblock content %}
-
-{% block scripts %}
-    {{ form.media.js }}
-    <script type="text/javascript">
-        $(function(){
-            setTimeout(function(){
-                $('#id_nombre').focus().select();
-            }, 100);
-        });
-    </script>
-
-{% endblock scripts %}

@@ -5,7 +5,9 @@
 {% block title %}{% trans 'Eliminar Libro' %}: {{ centro.nombre }}{% endblock title %}
 
 {% block breadcrumb %}
-<i class="fa fa-server"></i>  <li><a href="{% url 'listanota' %}">Notas</a></li>
+    <li class="breadcrumb-item">
+        <a href="{% url 'listanota' %}">Notas</a>
+    </li>
 {% endblock breadcrumb %}
 
 {% block breadcrumb_active %}
@@ -13,26 +15,32 @@
 {% endblock breadcrumb_active %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-6 col-md-offset-3">
-        <div class="panel panel-primary">
-            <div class="panel-heading">
-                <h3 class="panel-title">{% trans 'Borrar Libro' %}</h3>
-            </div>
-            <div class="panel-body">
-                <div class="alert alert-warning">
-                    <strong>{% trans 'Atención!' %}</strong> {% trans 'Va a proceder a borrar una Libro' %}.
+    <div class="row">
+        <div class="col-md-12">
+            <form action="" method="post" enctype="multipart/form-data" role="form" id="formulario">
+                {% csrf_token %}
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="panel-title">{% trans 'Borrar Libro' %}</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-warning">
+                            <strong>{% trans 'Atención!' %}</strong> {% trans 'Va a proceder a borrar un Libro' %}.
+                        </div>
+                        <p>{% trans '¿Seguro que desea eliminar el libro' %}?: <b>{{ libro }}</b></p>
+                    </div>
+                    <div class="card-footer">
+                        <a class="btn btn-danger" href="{% url 'listanota' %}">
+                            <i class="fa fa-ban"></i>
+                            {% trans 'Cancelar' %}
+                        </a>
+                        <button type="submit" class="btn btn-success">
+                            <i class="fa fa-check"></i>
+                            {% trans 'Aceptar' %}
+                        </button>
+                    </div>
                 </div>
-                <p>{% trans '¿Seguro que desea eliminar el libro' %}?: <b>{{ libro }}</b></p>
-            </div>
-            <div class="panel-footer">
-                <form action="" method="POST">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-danger btn-normal">{% trans 'Si, eliminar' %}</button>
-                    <a href="{% url 'listanota' %}" class="btn btn-default btn-normal">{% trans 'No, cancelar' %}</a>
-                </form>
-            </div>
+            </form>
         </div>
     </div>
-</div>
 {% endblock content %}

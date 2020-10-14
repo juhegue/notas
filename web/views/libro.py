@@ -16,13 +16,14 @@ class LibroCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     template_name = "web/libro/editar.html"
     model = Libro
     form_class = LibroForm
-    success_message = "Libro creado correctamente."
+    success_message = "Libro creado."
 
     def dispatch(self, request, *args, **kwargs):
         return super(LibroCreateView, self).dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super(LibroCreateView, self).get_context_data(**kwargs)
+        context["create_view"] = True
         return context
 
     def get_form_kwargs(self):
@@ -46,7 +47,7 @@ class LibroUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     template_name = "web/libro/editar.html"
     model = Libro
     form_class = LibroForm
-    success_message = "Éxito al modificar libro."
+    success_message = "Libro modificado."
 
     def get_form_kwargs(self):
         kwargs = super(LibroUpdateView, self).get_form_kwargs()
@@ -71,7 +72,7 @@ class LibroUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
 class LibroDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
     template_name = "web/libro/eliminar.html"
     model = Libro
-    success_message = "Éxito al eliminar libro."
+    success_message = "Libro eliminado."
 
     def delete(self, *args, **kwargs):
         object = self.get_object()

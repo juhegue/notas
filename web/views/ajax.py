@@ -66,10 +66,5 @@ class AjaxView(View):
             error = os.linesep.join(exc)
 
             logger.error(error)
-
-            #  TODO:: Comentado para que muestre siempre el error
-            #  if not settings.DEBUG:
-            #      error = "Error de comunicación con el servidor."
-
             resul = {"err": error, "param": {}}
             return JsonResponse(resul)

@@ -4,79 +4,84 @@
 
 {% block titlehead %}{% trans 'Login' %}{% endblock titlehead %}
 
-{% block styles %}
-    {{ block.super }}
-    <style>
-        .well {
-            margin-top: 100px;
-        }
-
-        .logo {
-            top: 20px;
-            left: 20px;
-            position: fixed;
-        }
-    </style>
-{% endblock styles %}
-
 {% block header %}
 {% endblock header %}
 
 {% block nucleocentral %}
-    <div class="logo">
-        <img src="{% static 'images/logo-juhegue.png' %}" height="20%" width="20%">
+    <div class="float-logo">
+        <img src="{% static 'images/logo-juhegue.png' %}" height="30%" width="30%">
     </div>
 
-    <div class="container">
+    <div class="container-fluid">
+        {% if messages %}
+            <div class="row">
+                <div class="col-md-10 offset-md-1">
+                    <ul class="messages">
+                        {% for message in messages %}
+                            <div class="alert alert-danger alert-dismissable">
+                                <button type="button" class="close" data-dismiss="alert"
+                                        aria-hidden="true">&times;</button>
+                                <i class="fa fa-info-circle"></i> {{ message }}
+                            </div>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        {% endif %}
+
         <div class="row">
-            <div class="col-md-4 col-md-offset-4">
-                <div class="well">
-                    <div class="row">
-                        <div class="col-md-3 col-md-offset-3">
-                            <img src="{% static 'images/logo-notas.png' %}" alt="logo" height="100" width="100">
+            <div class="col-md-6 offset-md-3">
+                <br><br>
+                <div class="row">
+                    <div class="col-12 logo">
+                        <div class="text-center">
+                            <img id="logo-idal-login" src="{% static 'images/logo-notas.png' %}" alt=""  height="150">
                         </div>
                     </div>
+                </div>
 
-                    <div class="row">
-                        {% if form.errors %}
-                            {% for error in form.non_field_errors %}
-                                <div class="alert alert-danger">
-                                     <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                                    <strong>{{ error|escape }}</strong>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row justify-content-md-center inicia-secion">
+                                    <h4>Por favor, registrese</h4>
                                 </div>
-                            {% endfor %}
-                        {% endif %}
+                                <div class="row">
+                                    {% if form.errors %}
+                                        {% for error in form.non_field_errors %}
+                                            <div class="alert alert-danger">
+                                                 <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                                                <strong>{{ error|escape }}</strong>
+                                            </div>
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
+                                <form method="post" action="">
+                                    {% csrf_token %}
+                                    <input type="email" name="username" class="form-control" placeholder="Correo electrónico" required="" id="email">
+                                    <br>
+                                    <input type="password" name="password" class="form-control" placeholder="Contraseña" required="" id="password">
+                                    <br>
+
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" id="remember_me">
+                                        <label class="custom-control-label" for="remember_me">Recordar contraseña</label>
+                                    </div>
+
+                                    <input type="hidden" name="next" value="/">
+
+                                    <br>
+                                    <div class="text-center">
+                                        <button id="id_submit" type="submit" class="btn btn-primary btn-lg boton-login">Iniciar Sesión</button>
+                                    </div>
+                                    <br>
+
+<!--                                    <a class="float-right" style="font-size: small" href="{ % url 'pw_reset_start' % }">{% trans '¿Has olvidado la contraseña?' %}</a>-->
+                                </form>
+                            </div>
+                        </div>
                     </div>
-                    <h3>Por favor, registrese</h3>
-
-                    <form method="post" action="" class="form-signin">
-                        {% csrf_token %}
-                        <div class="form-group has-feedback">
-                            <input type="email" id="email" name="username" class="form-control" placeholder="Usuario" autofocus="" required="" cols="1">
-                            <i class="glyphicon glyphicon-user form-control-feedback"></i>
-                        </div>
-                        <div class="form-group has-feedback">
-                            <input type="password" id="password" name="password" class="form-control" placeholder="Contraseña" required="" cols="1">
-                             <i class="glyphicon glyphicon-lock form-control-feedback"></i>
-                        </div>
-
-                        <div class="checkbox">
-                            <label>
-                                <input type="checkbox" value="remember-me" id="remember_me"> Recordar contraseña
-                            </label>
-                        </div>
-
-                        <input type="hidden" name="next" value="{% url 'index' %}" />
-
-                        <button type="submit" class="btn btn-primary btn-lg btn-block btn-normal">
-                            {% trans 'Ingresar' %}
-                        </button>
-<!--
-                        <br>
-                        <a class="pull-right" style="font-size: small" href="{# % url 'pw_reset_start' % #}">{% trans '¿Has olvidado la contraseña?' %}</a>
-                        <br>
--->
-                    </form>
                 </div>
             </div>
         </div>
@@ -85,6 +90,16 @@
 
 {% block scripts %}
     <script type="text/javascript">
+        $('#remember_me').click(function() {
+            if ($('#remember_me').is(':checked')) {
+                localStorage.usrname = $('#email').val();
+                localStorage.pass = $('#password').val();
+                localStorage.chkbx = $('#remember_me').val();
+            } else {
+                localStorage.clear();
+            }
+        });
+
         $(function() {
             var ms_ie = false;
             var ua = window.navigator.userAgent;
@@ -96,33 +111,15 @@
             }
 
             if ( ms_ie ) {
-                alert("Versión de navegador no compatible.");
+                alert('Versión de navegador no compatible.');
                 //IE specific code goes here
             }
-        });
 
-        $(function() {
             if (localStorage.chkbx && localStorage.chkbx != '') {
                 $('#remember_me').attr('checked', 'checked');
                 $('#email').val(localStorage.usrname);
                 $('#password').val(localStorage.pass);
-            } else {
-                $('#remember_me').removeAttr('checked');
-                $('#email').val('');
-                $('#password').val('');
             }
-
-            $('#remember_me').click(function() {
-                if ($('#remember_me').is(':checked')) {
-                    localStorage.usrname = $('#email').val();
-                    localStorage.pass = $('#password').val();
-                    localStorage.chkbx = $('#remember_me').val();
-                } else {
-                    localStorage.usrname = '';
-                    localStorage.pass = '';
-                    localStorage.chkbx = '';
-                }
-            });
         });
     </script>
 {% endblock scripts %}

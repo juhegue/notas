@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
 import logging
+from django.contrib import messages
 from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import render
 from django.shortcuts import redirect
 
 
@@ -14,8 +14,10 @@ class Index(LoginRequiredMixin, TemplateView):
 
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:
-            #  return render(request, "web/index.html")
             return redirect("listanota", del_cookie=1)
-        return super(Index, self).dispatch(request, *args, **kwargs)
+
+        messages.add_message(request, messages.ERROR, "Usuario no registrado")
+        logger.error("Usuario no registrado")
+        return redirect("login")
 
 

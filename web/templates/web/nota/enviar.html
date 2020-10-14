@@ -7,12 +7,14 @@
 {% block title %}{% endblock title %}
 
 {% block styles %}
-    {{ form.media.css }}
+    {{ block.super }}
     {% include 'web/nota/_editores_css.html' %}
 {% endblock styles %}
 
 {% block breadcrumb %}
-    <li><a href="{% url 'listanota' %}">Notas</a></li>
+    <li class="breadcrumb-item">
+        <a href="{% url 'listanota' %}">Notas</a>
+    </li>
 {% endblock breadcrumb %}
 
 {% block breadcrumb_active %}
@@ -20,70 +22,66 @@
 {% endblock breadcrumb_active %}
 
 {% block content %}
-
-<div class="row hidden-on-load">
-    <div class="col-md-12">
-        <form action="" method="post" enctype="multipart/form-data" role="form" id="id_formulario">
-            {% csrf_token %}
-            {{ form.texto }}
-            <div class="panel panel-primary">
-                <div class="panel-heading">
-                    <h3 class="panel-title">{% trans 'Enviar Nota' %}</h3>
-                </div>
-                <div class="panel-body">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group">
+    <div class="row">
+        <div class="col-md-12">
+            <form action="" method="post" enctype="multipart/form-data" role="form" id="formulario">
+                {% csrf_token %}
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="panel-title">{% trans 'Enviar Nota' %}</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-row">
+                            <div class="form-group col-md-12">
                                 {{ form.para.errors }}
                                 <label for={{form.para.auto_id}} class="control-label">
-                                {{ form.para.label }}
-                                {% if form.para.field.required %}<span class="required_fields">*</span>{% endif %}
+                                    {{ form.para.label }}
+                                    {% if form.para.field.required %}<span class="required_fields">*</span>{% endif %}
                                 </label>
                                 {{ form.para }}
                                 {% if form.para.help_text %}
-                                <p class="help-block">{{ form.para.help_text|safe }}</p>
+                                    <p class="help-block">{{ form.para.help_text|safe }}</p>
                                 {% endif %}
                             </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group">
+                        <div class="form-row">
+                            <div class="form-group col-md-12">
                                 {{ form.asunto.errors }}
                                 <label for={{form.asunto.auto_id}} class="control-label">
-                                {{ form.asunto.label }}
-                                {% if form.asunto.field.required %}<span class="required_fields">*</span>{% endif %}
+                                    {{ form.asunto.label }}
+                                    {% if form.asunto.field.required %}<span class="required_fields">*</span>{% endif %}
                                 </label>
                                 {{ form.asunto }}
                                 {% if form.asunto.help_text %}
-                                <p class="help-block">{{ form.asunto.help_text|safe }}</p>
+                                    <p class="help-block">{{ form.asunto.help_text|safe }}</p>
                                 {% endif %}
                             </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group">
+                        <div class="form-row">
+                            <div class="form-group col-md-12">
                                 <label>{{ form.texto.label }}</label>
                                 <div id="id_editorToolbar"></div>
                                 <div id='id_editor'>{{ nota.texto|safe }}</div>
                             </div>
                         </div>
                     </div>
+                    <div class="card-footer">
+                        <a class="btn btn-danger" href="{% url 'listanota' %}">
+                            <i class="fa fa-ban"></i>
+                            {% trans 'Cancelar' %}
+                        </a>
+                        <button type="submit" class="btn btn-success">
+                            <i class="fa fw fa-send"></i>
+                            {% trans 'Enviar' %}
+                        </button>
+                    </div>
                 </div>
-                <div class="panel-footer">
-                    <button type="submit" class="btn btn-primary btn-normal">
-                        <i class="glyphicon glyphicon-send"></i> {% trans 'Enviar' %}
-                    </button>
-                    <a class="btn btn-default btn-normal" href="{% url 'listanota' %}">{% trans 'Cancelar' %}</a>
-                </div>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
-</div>
 {% endblock content %}
 
 {% block scripts %}
-    {{ form.media.js }}
+    {{ block.super }}
     {% include 'web/nota/_editores_js.html' %}
 {% endblock scripts %}

@@ -7,15 +7,10 @@
 {% block titlehead %}{% trans 'Notas' %}{% endblock titlehead %}
 {% block title %}{% endblock title %}
 
-{% block styles %}
-    {{ form.media.css }}
-    <link href="{% static 'css/bootstrap-table.min.css' %}" rel="stylesheet">
-    <link href="{% static 'css/bootstrap.fd.css' %}" rel="stylesheet">
-    {% include 'web/nota/_editores_css.html' %}
-{% endblock styles %}
-
 {% block breadcrumb %}
-    <li><a href="{% url 'listanota' %}">Notas</a></li>
+    <li class="breadcrumb-item">
+        <a href="{% url 'listanota' %}">Notas</a>
+    </li>
 {% endblock breadcrumb %}
 
 {% block breadcrumb_active %}
@@ -23,85 +18,82 @@
 {% endblock breadcrumb_active %}
 
 {% block content %}
-
-<div class="row hidden-on-load">
-    <div class="col-md-12">
-        <form action="" method="post" enctype="multipart/form-data" role="form" id="id_formulario">
-            {% csrf_token %}
-            {{ form.texto }}
-            {{ form.uuid_id }}
-            <div class="panel panel-primary">
-                <div class="panel-heading">
-                    <h3 class="panel-title">
-                    {% if create_view %}
-                        {% trans 'Nueva Nota' %}
-                    {% else %}
-                        {% trans 'Modificar Nota' %}
-                    {% endif %}
-                    </h3>
-                </div>
-                <div class="panel-body">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group">
+    <div class="row">
+        <div class="col-md-12">
+            <form action="" method="post" enctype="multipart/form-data" role="form" id="formulario">
+                {% csrf_token %}
+                {{ form.texto }}
+                {{ form.uuid_id }}
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="panel-title">
+                            {% if create_view %}
+                                {% trans 'Nueva Nota' %}
+                            {% else %}
+                                {% trans 'Modificar Nota' %}
+                            {% endif %}
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-row">
+                            <div class="form-group col-md-12">
                                 {{ form.libro.errors }}
                                 <label for={{form.libro.auto_id}} class="control-label">
-                                {{ form.libro.label }}
-                                {% if form.libro.field.required %}<span class="required_fields">*</span>{% endif %}
+                                    {{ form.libro.label }}
+                                    {% if form.libro.field.required %}<span class="required_fields">*</span>{% endif %}
                                 </label>
                                 {{ form.libro }}
                                 {% if form.libro.help_text %}
-                                <p class="help-block">{{ form.libro.help_text|safe }}</p>
+                                    <p class="help-block">{{ form.libro.help_text|safe }}</p>
                                 {% endif %}
                             </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group">
+                        <div class="form-row">
+                            <div class="form-group col-md-12">
                                 {{ form.nombre.errors }}
                                 <label for={{form.nombre.auto_id}} class="control-label">
-                                {{ form.nombre.label }}
-                                {% if form.nombre.field.required %}<span class="required_fields">*</span>{% endif %}
+                                    {{ form.nombre.label }}
+                                    {% if form.nombre.field.required %}<span class="required_fields">*</span>{% endif %}
                                 </label>
                                 {{ form.nombre }}
                                 {% if form.nombre.help_text %}
-                                <p class="help-block">{{ form.nombre.help_text|safe }}</p>
+                                    <p class="help-block">{{ form.nombre.help_text|safe }}</p>
                                 {% endif %}
                             </div>
                         </div>
-                    </div>
-
-                    <div class='row'>
-                        <div class='col-md-9'>
-                            <div id="id_editorToolbar"></div>
-                            <div id='id_editor'>{{ nota.texto|safe }}</div>
-                        </div>
-                        <div id='id_adjuntos' class='col-md-3'>
-                            <div class='text-center'>
-                                <button type='button' style='width:100%' id='id_btnadjuntos' class='btn btn-primary adjuntos'
-                                    >{% trans 'Adjuntos' %}
-                                </button>
+                        <div class="form-row">
+                            <div class="form-group col-md-9">
+                                <div id="   id_editorToolbar"></div>
+                                <div id='id_editor'>{{ nota.texto|safe }}</div>
                             </div>
-                            <div id='id_lista_adjuntos'>{{ adjunto_html|safe }}</div>
+                            <div id='id_adjuntos' class='col-md-3'>
+                                <div class='text-center'>
+                                    <button type='button' style='width:100%' id='id_btnadjuntos' class='btn btn-primary adjuntos'
+                                        >{% trans 'Adjuntos' %}
+                                    </button>
+                                </div>
+                                <div id='id_lista_adjuntos'>{{ adjunto_html|safe }}</div>
+                            </div>
                         </div>
                     </div>
+                    <div class="card-footer">
+                        <a class="btn btn-danger" href="{% url 'listanota' %}">
+                            <i class="fa fa-ban"></i>
+                            {% trans 'Cancelar' %}
+                        </a>
+                        <button type="submit" class="btn btn-success">
+                            <i class="fa fw fa-floppy-o"></i>
+                            {% trans 'Guardar' %}
+                        </button>
+                    </div>
                 </div>
-                <div class="panel-footer">
-                    <button type="submit" class="btn btn-primary btn-normal">
-                        <i class="fa fw fa-floppy-o"></i> {% trans 'Guardar' %}
-                    </button>
-                    <a class="btn btn-default btn-normal" href="{% url 'listanota' %}">{% trans 'Cancelar' %}</a>
-                </div>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
-</div>
 {% endblock content %}
 
 {% block scripts %}
-    {{ form.media.js }}
-    <script src="{% static 'js/bootstrap.fd.js' %}"></script>
+    {{ block.super }}
     <script type="text/javascript">
         $(function(){
             $('.adjuntos').on('click',function(e){
@@ -111,7 +103,7 @@
                 $.FileDialog({
                     title: '{% trans 'Subir archivos' %}',
                     ok_button: '{% trans 'Aceptar' %}',
-                    cancel_button: '{% trans 'Cerrar' %}',
+                    cancel_button: '{% trans 'Cancelar' %}',
                     drag_message: '{% trans 'Arrastre los archivos aquí' %}',
                     error_message: '{% trans 'Se ha producido un error al leer el archivo' %}',
                     remove_message: '{% trans 'Eliminar fichero' %}',

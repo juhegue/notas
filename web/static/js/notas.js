@@ -81,6 +81,23 @@ function mensajeLoading(message) {
     setTimeout('temporizador_descarga()', 1000);
 }
 
+function marca1Imput() {    // marca 1º imput
+    $('input, select, textarea').each(function(){
+        var $this = $(this),
+            id = $this.attr('id');
+
+        if (id && (!$this.is('[readonly]') && $this.is(':visible'))) {
+            if($this.is("select")) {
+                $this.select2('open');
+                $this.select2('close');
+            } else {
+                $this.focus().select();
+            }
+            return false;
+        }
+    });
+}
+
 $(function () {
     $('.hidden-on-load').show();
 
@@ -105,7 +122,9 @@ $(function () {
         $('select').select2({
             language: "es"
         });
-    } catch
-    {}
+    } catch {
+    }
+
+    marca1Imput();
 });
 

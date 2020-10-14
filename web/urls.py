@@ -52,7 +52,7 @@ urlpatterns = [
     # Ajax
     re_path(r'^getdatos_ajax/([^/]+)', AjaxView.as_view()),
 
-    re_path(r'^cambia_editor/(?P<url_origen>[^/]+)/(?P<editor>[^/]+)/$', CambiaEditorView.as_view()),
+    re_path(r'^editor/(?P<url_origen>[^/]+)/(?P<editor>[^/]+)/$', CambiaEditorView.as_view(), name='editor'),
 
 ]
 

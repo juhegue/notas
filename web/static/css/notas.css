@@ -1,44 +1,46 @@
 /* botones */
 @font-face {
     font-family: 'sk-modernistbold';
-    src: url('sk-modernist-bold-webfont.woff2') format('woff2'),
-         url('sk-modernist-bold-webfont.woff') format('woff');
+    src: url('fonts/sk-modernist-bold-webfont.woff2') format('woff2'),
+         url('fonts/sk-modernist-bold-webfont.woff') format('woff');
     font-weight: normal;
     font-style: normal;
 
 }
 
-.btn-normal {
+.float-logo {
+    top: 20px;
+    left: 20px;
+    position: fixed;
+}
+
+.footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: #EDEBEB;
+    text-align: center;
+}
+
+.btn {
     font-family: 'sk-modernistbold';
-    font-size: 16px;
-    border-radius: 10px;
 }
 
-.btn-plus {
-    border-radius: 18px;
-    font-size: 12px;
-    border: 0;
-}
-
-.navbar {
-    margin-bottom: 0px;
-}
-
-.breadcrumb {
-    margin-bottom: 0px;
-    margin-top: 0px;
+#id_editor {
+    background-color: white;
 }
 
 .hidden-on-load {
     display:none;
 }
 
-
 /* Campos obligatorios */
 .required_fields {
-    color: red;
+    color: #dc3545;
     font-weight: bold;
 }
+
 
 /* Error validator */
 label.error {
@@ -46,23 +48,17 @@ label.error {
     font-weight: normal;
 }
 
+
 /* Error label */
 ul.errorlist {
     color: #ba2121;
     padding: 0 0 0 15px;
 }
 
+
 /* Error message */
 .alert-error {
     color: #fff;
     background-color: #dc3545;
-}
-
-footer{
-  position: relative;
-  bottom: 0;
-  width: 100%;
-  height: 40px;
-  padding-right: 25px;
 }
 

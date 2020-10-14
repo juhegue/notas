@@ -31,18 +31,21 @@ def settings_value(name):
 def editor_choices(context):
     url = context.request.get_full_path()
     urlhex = codehex(url)
-    menu = ""
+
+    resul = list()
     for n, editor in enumerate(EDITOR_CHOICES):
         if context.request.user.editor == editor[0]:
-            menu += '<li class="disabled"><a href="#/cambia_editor/%s/%s/">' \
-                    '<i class="glyphicon glyphicon-ok"></i> %s</a></li>' % (urlhex, editor[0], editor[1])
+            resul.append({
+                "url": urlhex,
+                "disabled": True,
+                "key": editor[0],
+                "name": editor[1]
+            })
         else:
-            menu += '<li><a href="/cambia_editor/%s/%s/">&nbsp;&nbsp;&nbsp;&nbsp;%s</a></li>' % \
-                    (urlhex, editor[0], editor[1])
-    if menu:
-        menu += '<li role="separator" class="divider">'
-
-    menu += '<li><a href="/logout/"><i class="fa fa-sign-out"></i>Salir</a></li>'
-
-    return mark_safe(menu)
-
+            resul.append({
+                "url": urlhex,
+                "disabled": False,
+                "key": editor[0],
+                "name": editor[1]
+            })
+    return resul

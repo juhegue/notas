@@ -2,13 +2,14 @@
 
 from django.utils.translation import ugettext_lazy as _
 from django.db.models.functions import Lower
-from .select2es import *
+from django import forms
+from dal import autocomplete
 from ..models import Libro
 
 
 class ListaNotaForm(forms.Form):
     libro = forms.ChoiceField(label=_("Libro"),
-                              widget=Select2Es(
+                              widget=autocomplete.Select2(
                                   attrs={"class": "form-control",
                                          "data-placeholder": "Seleccione ...",
                                          }),
