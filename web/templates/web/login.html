@@ -94,9 +94,9 @@
             if ($('#remember_me').is(':checked')) {
                 localStorage.usrname = $('#email').val();
                 localStorage.pass = $('#password').val();
-                localStorage.chkbx = $('#remember_me').val();
+                localStorage.chkbx = true;
             } else {
-                localStorage.clear();
+                localStorage.chkbx = false;
             }
         });
 
@@ -115,7 +115,7 @@
                 //IE specific code goes here
             }
 
-            if (localStorage.chkbx && localStorage.chkbx != '') {
+            if (localStorage.chkbx) {
                 $('#remember_me').attr('checked', 'checked');
                 $('#email').val(localStorage.usrname);
                 $('#password').val(localStorage.pass);

@@ -60,14 +60,15 @@
                 data-response-handler="responseHandler"
                 data-query-params="queryParams"
                 data-sortable="true"
+                data-resizable="true"
                 >
                 <thead>
                     <tr>
                         <th data-visible="false" data-field="id"></th>
-                        <th class="col-md-9" data-field="nombre" data-sortable="true">{% trans 'Título' %}</th>
-                        <th class="col-md-1 text-center" data-field="hay_adjuntos" data-sortable="true">{% trans 'Adjuntos' %}</th>
-                        <th class="col-md-1 text-center" data-field="modificado" data-sortable="true">{% trans 'Modificado' %}</th>
-                        <th class="col-md-1 text-center" data-formatter="dataFormatter">{% trans 'Acciones' %}</th>
+                        <th class="text-left" data-field="nombre" data-sortable="true">{% trans 'Título' %}</th>
+                        <th class="text-center" data-field="hay_adjuntos" data-sortable="true">{% trans 'Adjuntos' %}</th>
+                        <th class="text-center" data-field="modificado" data-sortable="true">{% trans 'Modificado' %}</th>
+                        <th class="text-center" data-formatter="dataFormatter">{% trans 'Acciones' %}</th>
                         <th data-visible="false" data-field="texto"></th>
                         <th data-visible="false" data-field="adjunto_html_sin_borrar"></th>
                     </tr>
@@ -208,10 +209,10 @@
             var dowload = "{% url 'nota_download_zip' 0 %}".replace('0', row.id);
             var enviar = "{% url 'nota_enviar' 0 %}".replace('0', row.id);
             return `
-                <a href="`+ eliminar +`" class="text-danger" role="button" title="{% trans 'Eliminar nota' %}"><span class="fa fw fa-trash"></span></a>
-                <a href="`+ editar +`" class="text-primary" role="button" title="{% trans 'Editar nota' %}"><span class="fa fw fa-pencil"></span></a>
-                <a href="`+ dowload +`" class="text-primary role="button" mensaje" title="{% trans 'Descargar nota' %}" data-mensaje="Creando zip..."><span class="fa fa-file-zip-o"></span></a>
-                <a href="`+ enviar +`" class="text-primary" role="button" title="{% trans 'Enviar nota' %}"><span class="fa fw fa-send"></span></a>
+                <a href="`+ eliminar +`" class="text-danger" role="button" title="{% trans 'Eliminar nota' %}"><span class="fa fw fa-trash"></span></a>&nbsp;&nbsp;&nbsp;
+                <a href="`+ editar +`" class="text-primary" role="button" title="{% trans 'Editar nota' %}"><span class="fa fw fa-pencil"></span></a>&nbsp;&nbsp;&nbsp;
+                <a href="`+ dowload +`" class="text-primary role="button" mensaje" title="{% trans 'Descargar nota' %}" data-mensaje="Creando zip..."><span class="fa fa-file-zip-o"></span></a>&nbsp;&nbsp;&nbsp;
+                <a href="`+ enviar +`" class="text-primary" role="button" title="{% trans 'Enviar nota' %}"><span class="fa fw fa-send"></span></a>&nbsp;&nbsp;&nbsp;
             `;
         }
 
