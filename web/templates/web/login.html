@@ -89,6 +89,7 @@
 {% endblock nucleocentral %}
 
 {% block scripts %}
+    {{ block.super }}
     <script type="text/javascript">
         $('#remember_me').click(function() {
             if ($('#remember_me').is(':checked')) {
@@ -116,7 +117,7 @@
             }
 
             if (localStorage.chkbx) {
-                $('#remember_me').attr('checked', 'checked');
+                $('#remember_me').prop('checked', true);
                 $('#email').val(localStorage.usrname);
                 $('#password').val(localStorage.pass);
             }

@@ -150,14 +150,19 @@ var ResizableColumns = (function () {
   **/
 		value: function assignPercentageWidths() {
 			var _this2 = this,
-			    td_width = (localStorage.td_width) ? JSON.parse(localStorage.td_width): null,
+			    td_width = null,
 			    n = 0;
+
+            try {
+                td_width = (localStorage.td_width) ? JSON.parse(localStorage.td_width): null
+            } catch {
+            }
 
 			this.$tableHeaders.each(function (_, el) {
 				var $el = $(el),
 				    width = $el.outerWidth() / _this2.$table.width() * 100;
 
-                if (td_width && td_width[n])
+                if (td_width && n<td_width.length && td_width[n])
                     width = td_width[n];
                 n++;
 
@@ -205,16 +210,19 @@ var ResizableColumns = (function () {
 				var $el = $(el),
 				    width = _this4.parseWidth(el);
 
-                td_width[n] = width;
-                n++;
-				//console.log($el[0], _this4.parseWidth(el) );
+                td_width[n++] = width;
+				//console.log($el[0], width );
 
 				if (_this4.options.store && !$el.is(_constants.SELECTOR_UNRESIZABLE)) {
 					_this4.options.store.set(_this4.generateColumnId($el), width);
 				}
 			});
 
-			localStorage.td_width = JSON.stringify(td_width);
+            try {
+			    localStorage.td_width = JSON.stringify(td_width);
+            } catch {
+            }
+
 		}
 	}, {
 		key: 'restoreColumnWidths',
