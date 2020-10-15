@@ -3,19 +3,19 @@
 {% load funciones %}
 
 {% if user.editor == 'summernote' %}
-    <link href="{% static 'summernote-0.8.9/dist/summernote.css' %}" rel="stylesheet">
+    <link href="{% static 'editors/summernote-0.8.18-dist/summernote-bs4.min.css' %}" rel="stylesheet">
 {% endif %}
 
 {% if user.editor == 'ckeditor' %}
-    <link href="{% static 'ckeditor5-build-decoupled-document-11.0.1/ckeditor.css' %}" rel="stylesheet">
+
 {% endif %}
 
 {% if user.editor == 'froala' %}
-    <link href="{% static 'froala_editor_2.8.5/css/froala_editor.pkgd.min.css' %}" rel="stylesheet">
-    <link href="{% static 'froala_editor_2.8.5/css/froala_style.min.css' %}" rel="stylesheet">
-    <link href="{% static 'froala_editor_2.8.5/css/themes/gray.css' %}" rel="stylesheet">
+    <link href="{% static 'editors/froala_editor_3.2.2/css/froala_editor.pkgd.min.css' %}" rel="stylesheet">
+    <link href="{% static 'editors/froala_editor_3.2.2/css/froala_style.min.css' %}" rel="stylesheet">
+    <link href="{% static 'editors/froala_editor_3.2.2/css/themes/gray.css' %}" rel="stylesheet">
 {% endif %}
 
 {% if user.editor == 'trumbowyg' %}
-    <link href="{% static 'trumbowyg-master/dist/ui/trumbowyg.min.css' %}" rel="stylesheet">
+    <link href="{% static 'editors/Trumbowyg-master/dist/ui/trumbowyg.min.css' %}" rel="stylesheet">
 {% endif %}

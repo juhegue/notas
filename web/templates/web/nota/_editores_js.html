@@ -3,8 +3,8 @@
 {% load funciones %}
 
 {% if user.editor == 'summernote' %}
-    <script src="{% static 'summernote-0.8.9/dist/summernote.js' %}"></script>
-    <script src="{% static 'summernote-0.8.9/dist/lang/summernote-es-ES.js' %}"></script>
+    <script src="{% static 'editors/summernote-0.8.18-dist/summernote-bs4.min.js' %}"></script>
+    <script src="{% static 'editors/summernote-0.8.18-dist/lang/summernote-es-ES.min.js' %}"></script>
     <script type="text/javascript">
         $(function(){
             $('#id_editor').summernote({
@@ -12,7 +12,7 @@
                 tabsize: 4,
             });
 
-            $('#id_formulario').submit(function(e) {
+            $('#formulario').submit(function(e) {
                 var editorData = $('#id_editor').summernote('code');
                 $('#id_texto').val(editorData);
             });
@@ -21,26 +21,23 @@
 {% endif %}
 
 {% if user.editor == 'ckeditor' %}
-    <script src="{% static 'ckeditor5-build-decoupled-document-11.0.1/ckeditor.js' %}"></script>
-    <script src="{% static 'ckeditor5-build-decoupled-document-11.0.1/translations/es.js' %}"></script>
+    <script src="{% static 'editors/ckeditor5-build-classic-23.0.0/ckeditor5-build-classic/ckeditor.js' %}"></script>
+    <script src="{% static 'editors/ckeditor5-build-classic-23.0.0/ckeditor5-build-classic/translations/es.js' %}"></script>
     <script type="text/javascript">
         $(function(){
             let editor;
-            DecoupledEditor
+            ClassicEditor
                 .create( document.querySelector( '#id_editor' ), {
-                        language: 'es'
+                    language: 'es'
                  })
-                .then( editorNew => {
-                    editor = editorNew;
-                    const toolbarContainer = document.querySelector( '#id_editorToolbar' );
-
-                    toolbarContainer.appendChild( editor.ui.view.toolbar.element );
-                })
+                .then( _editor => {
+                    editor = _editor;
+                } )
                 .catch( error => {
                     console.error( error );
-                });
+                } );
 
-            $('#id_formulario').submit(function(e) {
+            $('#formulario').submit(function(e) {
                 var editorData = editor.getData();
                 $('#id_texto').val(editorData);
             });
@@ -50,28 +47,28 @@
 
 
 {% if user.editor == 'froala' %}
-    <script src="{% static 'froala_editor_2.8.5/js/froala_editor.min.js' %}"></script>
-    <script src="{% static 'froala_editor_2.8.5/js/froala_editor.pkgd.min.js' %}"></script>
-    <script src="{% static 'froala_editor_2.8.5/js/languages/es.js' %}"></script>
+    <script src="{% static 'editors/froala_editor_3.2.2/js/froala_editor.min.js' %}"></script>
+    <script src="{% static 'editors/froala_editor_3.2.2/js/froala_editor.pkgd.min.js' %}"></script>
+    <script src="{% static 'editors/froala_editor_3.2.2/js/languages/es.js' %}"></script>
     <script type="text/javascript">
         $(function(){
-            $('#id_editor').froalaEditor({
+            let editor = new FroalaEditor('div#id_editor' , {
                 language: 'es',
                 theme: 'gray',
                 pastePlain: true,
+                charCounterCount: false
             });
 
-            $('#id_formulario').submit(function(e) {
-                var editorData = $('#id_editor').froalaEditor('html.get', true);
-                $('#id_texto').val(editorData);
+            $('#formulario').submit(function(e) {
+                $('#id_texto').val(editor.html.get());
             });
         });
     </script>
 {% endif %}
 
 {% if user.editor == 'trumbowyg' %}
-    <script src="{% static 'trumbowyg-master/dist/trumbowyg.min.js' %}"></script>
-    <script src="{% static 'trumbowyg-master/dist/langs/es.min.js' %}"></script>
+    <script src="{% static 'editors/Trumbowyg-master/dist/trumbowyg.min.js' %}"></script>
+    <script src="{% static 'editors/Trumbowyg-master/dist/langs/es.min.js' %}"></script>
     <script type="text/javascript">
         $(function(){
             $('#id_editor').trumbowyg({
@@ -81,7 +78,7 @@
                 autogrowOnEnter: true,
             });
 
-            $('#id_formulario').submit(function(e) {
+            $('#formulario').submit(function(e) {
                 var editorData = $('#id_editor').trumbowyg('html');
                 $('#id_texto').val(editorData);
             });

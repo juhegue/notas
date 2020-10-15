@@ -5,7 +5,11 @@
 {% settings_value 'EDITOR' as EDITOR %}
 
 {% block titlehead %}{% trans 'Notas' %}{% endblock titlehead %}
-{% block title %}{% endblock title %}
+
+{% block styles %}
+    {{ block.super }}
+    {% include 'web/nota/_editores_css.html' %}
+{% endblock styles %}
 
 {% block breadcrumb %}
     <li class="breadcrumb-item">
@@ -63,7 +67,6 @@
                         </div>
                         <div class="form-row">
                             <div class="form-group col-md-9">
-                                <div id="   id_editorToolbar"></div>
                                 <div id='id_editor'>{{ nota.texto|safe }}</div>
                             </div>
                             <div id='id_adjuntos' class='col-md-3'>

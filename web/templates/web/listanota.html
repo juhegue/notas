@@ -3,7 +3,6 @@
 {% load static %}
 {% load funciones %}
 {% block titlehead %}{% trans 'Notas' %}{% endblock titlehead %}
-{% block title %}{% endblock title %}
 
 {% block styles %}
     {{ block.super }}
@@ -14,6 +13,9 @@
         }
         .nuevo-libro {
             margin-left: 5px;
+        }
+        .accion {
+            margin-left: 10px;
         }
     </style>
 {% endblock styles %}
@@ -209,10 +211,10 @@
             var dowload = "{% url 'nota_download_zip' 0 %}".replace('0', row.id);
             var enviar = "{% url 'nota_enviar' 0 %}".replace('0', row.id);
             return `
-                <a href="`+ eliminar +`" class="text-danger" role="button" title="{% trans 'Eliminar nota' %}"><span class="fa fw fa-trash"></span></a>&nbsp;&nbsp;&nbsp;
-                <a href="`+ editar +`" class="text-primary" role="button" title="{% trans 'Editar nota' %}"><span class="fa fw fa-pencil"></span></a>&nbsp;&nbsp;&nbsp;
-                <a href="`+ dowload +`" class="text-primary role="button" mensaje" title="{% trans 'Descargar nota' %}" data-mensaje="Creando zip..."><span class="fa fa-file-zip-o"></span></a>&nbsp;&nbsp;&nbsp;
-                <a href="`+ enviar +`" class="text-primary" role="button" title="{% trans 'Enviar nota' %}"><span class="fa fw fa-send"></span></a>&nbsp;&nbsp;&nbsp;
+                <a href="`+ eliminar +`" class="text-danger accion" role="button" title="{% trans 'Eliminar nota' %}"><span class="fa fw fa-trash"></span></a>
+                <a href="`+ editar +`" class="text-primary accion" role="button" title="{% trans 'Editar nota' %}"><span class="fa fw fa-pencil"></span></a>
+                <a href="`+ dowload +`" class="text-primary accion" role="button" title="{% trans 'Descargar nota' %}" data-mensaje="{% trans 'Creando zip...' %}"><span class="fa fa-file-zip-o"></span></a>
+                <a href="`+ enviar +`" class="text-primary accion" role="button" title="{% trans 'Enviar nota' %}"><span class="fa fw fa-send"></span></a>
             `;
         }
 
