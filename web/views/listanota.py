@@ -78,15 +78,22 @@ class NotasView(LoginRequiredMixin, View):
         adj_false = '<img src="{}admin/img/icon-no.svg" alt="False">'.format(settings.STATIC_URL)
         adj_true = '<img src="{}admin/img/icon-yes.svg" alt="False">'.format(settings.STATIC_URL)
         hoy = timezone.now().date()
+
         rows = list()
         for q in query:
             modi = q.modificado.strftime("%H:%M") if hoy == q.modificado.date() else q.modificado.strftime("%d/%m/%Y")
+
+            adjuntos = list()
+            for adj in q.adjuntos():
+                adj["nombre"] = marca_texto(search, adj["nombre"])
+                adjuntos.append(adj)
+
             rows.append({
                 "id": q.id,
                 "nombre": marca_texto(search, q.nombre),
                 "modificado": modi,
                 "texto": marca_texto(search, q.texto),
-                "adjunto_html_sin_borrar": marca_texto(search, q.adjunto_html_sin_borrar()),
+                "adjuntos": adjuntos,
                 "hay_adjuntos": adj_true if q.adjunto_set.all() else adj_false
             })
 

@@ -2,7 +2,6 @@
 {% load static %}
 {% load i18n %}
 {% load funciones %}
-{% settings_value 'EDITOR' as EDITOR %}
 
 {% block titlehead %}{% trans 'Notas' %}{% endblock titlehead %}
 
@@ -26,8 +25,8 @@
         <div class="col-md-12">
             <form action="" method="post" enctype="multipart/form-data" role="form" id="formulario">
                 {% csrf_token %}
-                {{ form.texto }}
                 {{ form.uuid_id }}
+                {{ form.texto }}
                 <div class="card">
                     <div class="card-header">
                         <h3 class="panel-title">
@@ -75,7 +74,20 @@
                                         >{% trans 'Adjuntos' %}
                                     </button>
                                 </div>
-                                <div id='id_lista_adjuntos'>{{ adjunto_html|safe }}</div>
+                                <div id='id_lista_adjuntos'>
+                                    <div class="card"><table class="table" style="width:100%">
+                                        {% for adjunto in adjuntos %}
+                                            <tr>
+                                                <td class="text-center" style="width:10px">
+                                                    <a href="javascript:adjuntoBorra(1, '{{ csrf_token }}', '{{ uuid_id }}', {{ adjunto.id }}, {{ nota.id }});" class="text-danger" role="button"><span class="fa fw fa-trash"></span></a>
+                                                </td>
+                                                <td class="wrappable">
+                                                    <a href="{% url 'adjunto_bajar' 1 adjunto.id %}">{{ adjunto.nombre }}</a>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </table></div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -114,15 +126,10 @@
                     dropheight: 100,
                     multiple: true,
                  }).on('files.bs.filedialog', function(ev) {
-                    uploadFiles('{{ nota.id|default:uuid_id }}', ev.files, '{{ csrf_token }}');
+                    uploadFiles('{{ csrf_token }}', '{{ nota.id }}', '{{ uuid_id }}', ev.files);
                 }).on('cancel.bs.filedialog', function(ev) {
                 });
             });
-
-            setTimeout(function(){
-                $('#id_nombre').focus().select();
-            }, 100);
-
         });
     </script>
     {% include 'web/nota/_editores_js.html' %}

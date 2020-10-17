@@ -60,12 +60,14 @@ class NotaCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     def form_valid(self, form):
         if form.is_valid():
             data = form.cleaned_data
+            uuid_id = data.get("uuid_id")
             f = form.save(commit=False)
             f.user = self.request.user
             f.activa = True
             f.save()
-            uuid_id = data.get("uuid_id")
+
             for adj in AdjuntoTemporal.objects.filter(uuid_id=uuid_id).all():
+                adj.mueve_a_adjuntos()
                 Adjunto(nota=f, fichero=adj.fichero, nombre=adj.nombre).save()
 
         return super(NotaCreateView, self).form_valid(form)
@@ -79,6 +81,10 @@ class NotaUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     model = Nota
     form_class = NotaForm
     success_message = "Nota modificada."
+    uuid_id = None
+
+    def dispatch(self, request, *args, **kwargs):
+        return super(NotaUpdateView, self).dispatch(request, *args, **kwargs)
 
     def get_form_kwargs(self):
         kwargs = super(NotaUpdateView, self).get_form_kwargs()
@@ -86,20 +92,36 @@ class NotaUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
         kwargs["request"] = self.request
         return kwargs
 
+    def get_initial(self):
+        initial = super(NotaUpdateView, self).get_initial()
+        self.uuid_id = uuid.uuid4()
+        initial["uuid_id"] = self.uuid_id
+        return initial
+
     def get_context_data(self, **kwargs):
         context = super(NotaUpdateView, self).get_context_data(**kwargs)
         context["libro"] = self.object.libro.id
-        context["adjunto_html"] = self.object.adjunto_html()
-        context["uuid_id"] = None
+        context["adjuntos"] = self.object.adjuntos()
+        context["uuid_id"] = self.uuid_id
         return context
 
     def form_valid(self, form):
         if form.is_valid():
             data = form.cleaned_data
+            uuid_id = data.get("uuid_id")
             f = form.save(commit=False)
             # f.user = self.request.user
             f.activa = True
             f.save()
+
+            for adj in AdjuntoTemporal.objects.filter(uuid_id=uuid_id, adjunto_borrado_id=0).all():
+                adj.mueve_a_adjuntos()
+                Adjunto(nota=f, fichero=adj.fichero, nombre=adj.nombre).save()
+
+            borrados = AdjuntoTemporal.objects.filter(uuid_id=uuid_id, adjunto_borrado_id__gt=0)\
+                .values_list('adjunto_borrado_id', flat=True)
+            f.adjunto_set.filter(id__in=borrados).delete()
+
         return super(NotaUpdateView, self).form_valid(form)
 
     def get_success_url(self):
@@ -124,7 +146,7 @@ class NotaDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
 
 
 class NotaDownloadZip(LoginRequiredMixin, SuccessMessageMixin, View):
-    def dispatch(self, request, *args, **kwargs):
+    def get(self, request, *args, **kwargs):
         pk = kwargs.get("pk")
         return NotaZip(pk).response()
 

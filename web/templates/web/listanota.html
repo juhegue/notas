@@ -17,6 +17,9 @@
         .accion {
             margin-left: 10px;
         }
+        .th-nombre {
+            cursor: pointer;
+        }
     </style>
 {% endblock styles %}
 
@@ -58,7 +61,7 @@
                 data-detail-formatter="detailFormatter"
                 data-id-field="id"
                 data-side-pagination="server"
-                data-url="/notas/"
+                data-url="{% url 'notas' %}"
                 data-response-handler="responseHandler"
                 data-query-params="queryParams"
                 data-sortable="true"
@@ -67,12 +70,12 @@
                 <thead>
                     <tr>
                         <th data-visible="false" data-field="id"></th>
-                        <th class="text-left" data-field="nombre" data-sortable="true">{% trans 'Título' %}</th>
+                        <th class="text-left th-nombre" data-field="nombre" data-sortable="true">{% trans 'Título' %}</th>
                         <th class="text-center" data-field="hay_adjuntos" data-sortable="true">{% trans 'Adjuntos' %}</th>
                         <th class="text-center" data-field="modificado" data-sortable="true">{% trans 'Modificado' %}</th>
                         <th class="text-center" data-formatter="dataFormatter">{% trans 'Acciones' %}</th>
                         <th data-visible="false" data-field="texto"></th>
-                        <th data-visible="false" data-field="adjunto_html_sin_borrar"></th>
+                        <th data-visible="false" data-field="adjuntos"></th>
                     </tr>
                 </thead>
             </table>
@@ -81,7 +84,7 @@
 {% endblock content%}
 
 {% block scripts %}
-    {{ form.media.js }}
+    {{ block.super }}
     <script type="text/javascript">
         var path = window.location.pathname.split('/');
         var pag = path[1];
@@ -89,13 +92,6 @@
             var pos = localStorage.getItem(pag);
             if (pos) $('html, body').animate({'scrollTop': pos}, 100);
         }
-
-        $(document).on('click', '.btn, a', function(){
-            if (typeof(Storage) !== 'undefined') {
-                var pos =  $(window).scrollTop();
-                localStorage.setItem(pag, pos);
-            }
-        });
 
         function actualizaHref($obj) {
             try {
@@ -111,6 +107,100 @@
             } catch(error) {
 
             }
+        }
+
+        {% if del_cookie %}
+            bootstrapTableDelCookie($('#id_notas'));
+        {% endif %}
+
+        $(document).on('click', '.btn, a', function(){
+            if (typeof(Storage) !== 'undefined') {
+                var pos =  $(window).scrollTop();
+                localStorage.setItem(pag, pos);
+            }
+        });
+
+        $(document).on('change','#id_libro',function(){
+           $('#id_notas').bootstrapTable('refresh');
+            actualizaHref($('#id_libro_editar'));
+            actualizaHref($('#id_libro_eliminar'));
+            actualizaHref($('#id_nota_nueva'));
+        });
+
+        $(document).on('click','.clear_search',function(){
+            $('#id_notas').bootstrapTable('resetSearch');
+        });
+
+        var row_name;
+        $('#id_notas').on('click-cell.bs.table', function (e, value, row, $el) {
+            row_name = value;
+        });
+        $('#id_notas').on('click-row.bs.table', function (e, row, $el) {
+            if (row_name == 'nombre'){
+                $el.find('>td>.detail-icon').trigger('click');
+            }
+        });
+
+        function responseHandler(res) {
+            return res;
+        }
+
+        function queryParams(params) {
+            params['libro'] = $('#id_libro').val();
+            return params;
+        }
+
+        function detailFormatter(index, row) {
+            if (row.adjuntos.length>0) {
+                var url_bajar = "{% url 'adjunto_bajar' 1 0 %}",
+                    html = '<div class="card"><table class="table" style="width:100%">';
+
+                for (var i = 0; i < row.adjuntos.length; i++) {
+                    var adjunto = row.adjuntos[i];
+                    html += '<tr><td class="wrappable"><a href='+url_bajar.replace('0', adjunto.id)+'>'+adjunto.nombre+'</a></td></tr>';
+                }
+                html += '</table></div>';
+
+                return `
+                    <div class="card">
+                        <div class="card-body">
+                            <div class='row'>
+                                <div class='col-md-9'>` + row.texto + `</div>
+                                <div class='col-md-3'>
+                                    <div class='text-center'>
+                                        <button type='button' style='width:100%' class='btn btn-primary'>{% trans 'Adjuntos' %}
+                                        </button>
+                                    </div>
+                                    <div id='id_lista_adjuntos'>` + html + `</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                return `
+                    <div class="card">
+                        <div class="card-body">
+                            <div class='row'>
+                                <div class='col-md-12'>` + row.texto + `</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function dataFormatter(value, row, index) {
+            var eliminar = "{% url 'nota_eliminar' 0 %}".replace('0', row.id);
+            var editar = "{% url 'nota_editar' 0 %}".replace('0', row.id);
+            var dowload = "{% url 'nota_download_zip' 0 %}".replace('0', row.id);
+            var enviar = "{% url 'nota_enviar' 0 %}".replace('0', row.id);
+            return `
+                <a href="`+ eliminar +`" class="text-danger accion" role="button" title="{% trans 'Eliminar nota' %}"><span class="fa fw fa-trash"></span></a>
+                <a href="`+ editar +`" class="text-primary accion" role="button" title="{% trans 'Editar nota' %}"><span class="fa fw fa-pencil"></span></a>
+                <a href="`+ dowload +`" class="text-primary accion" role="button" title="{% trans 'Descargar nota' %}" data-mensaje="{% trans 'Creando zip...' %}"><span class="fa fa-file-zip-o"></span></a>
+                <a href="`+ enviar +`" class="text-primary accion" role="button" title="{% trans 'Enviar nota' %}"><span class="fa fw fa-send"></span></a>
+            `;
         }
 
         $(function(){
@@ -137,103 +227,6 @@
             actualizaHref($('#id_nota_nueva'));
         });
 
-        {% if del_cookie %}
-            bootstrapTableDelCookie($('#id_notas'));
-        {% endif %}
-
-        var row_name;
-        $('#id_notas').on('click-cell.bs.table', function (e, value, row, $el) {
-            row_name = value;
-        });
-        $('#id_notas').on('click-row.bs.table', function (e, row, $el) {
-            if (row_name == 'nombre'){
-                $el.find('>td>.detail-icon').trigger('click');
-            }
-        });
-
-        function responseHandler(res) {
-            return res;
-        }
-
-        function queryParams(params) {
-            params['libro'] = $('#id_libro').val();
-            return params;
-        }
-
-        function detailFormatter(index, row) {
-            if (row.adjunto_html_sin_borrar) {
-                return `
-                    <div class="panel panel-primary">
-                        <div class="panel-body">
-                            <div class='row'>
-                                <div id='id_editor' class='col-md-9'>
-                                    <div class="document-editor__editable-container">
-                                        <div class="document-editor__editable">
-                                            ` + row.texto + `
-                                        </div>
-                                    </div>
-                                </div>
-                                <div id='id_adjuntos' class='col-md-3'>
-                                    <div class='text-center'>
-                                        <button type='button' style='width:100%' id='id_btnadjuntos' class='btn btn-primary adjuntos' {% if create_view %}disabled{% endif %}>{% trans 'Adjuntos' %}
-                                        </button>
-                                    </div>
-                                    <div id='id_lista_adjuntos'>
-                                        ` + row.adjunto_html_sin_borrar + `
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            } else {
-                return `
-                    <div class="panel panel-primary">
-                        <div class="panel-body">
-                            <div class='row'>
-                                <div id='id_editor' class='col-md-12'>
-                                    <div class="document-editor__editable-container">
-                                        <div class="document-editor__editable">
-                                            ` + row.texto + `
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }
-        }
-
-        function dataFormatter(value, row, index) {
-            var eliminar = "{% url 'nota_eliminar' 0 %}".replace('0', row.id);
-            var editar = "{% url 'nota_editar' 0 %}".replace('0', row.id);
-            var dowload = "{% url 'nota_download_zip' 0 %}".replace('0', row.id);
-            var enviar = "{% url 'nota_enviar' 0 %}".replace('0', row.id);
-            return `
-                <a href="`+ eliminar +`" class="text-danger accion" role="button" title="{% trans 'Eliminar nota' %}"><span class="fa fw fa-trash"></span></a>
-                <a href="`+ editar +`" class="text-primary accion" role="button" title="{% trans 'Editar nota' %}"><span class="fa fw fa-pencil"></span></a>
-                <a href="`+ dowload +`" class="text-primary accion" role="button" title="{% trans 'Descargar nota' %}" data-mensaje="{% trans 'Creando zip...' %}"><span class="fa fa-file-zip-o"></span></a>
-                <a href="`+ enviar +`" class="text-primary accion" role="button" title="{% trans 'Enviar nota' %}"><span class="fa fw fa-send"></span></a>
-            `;
-        }
-
-        $(document).on('change','#id_libro',function(){
-           $('#id_notas').bootstrapTable('refresh');
-            actualizaHref($('#id_libro_editar'));
-            actualizaHref($('#id_libro_eliminar'));
-            actualizaHref($('#id_nota_nueva'));
-        });
-
-        $(document).on('click','.clear_search',function(){
-            $('#id_notas').bootstrapTable('resetSearch');
-        });
-
-        $(document).on('click', '.adjuntos',function(e){
-            var key = $(e.target).attr('id');
-            key = key.substr(key.length-6, 6);
-            MuestraAdjuntos(key, false);
-        });
     </script>
 {% endblock scripts %}
 

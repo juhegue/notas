@@ -3,7 +3,7 @@
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth import views as auth_views
-from django.urls import re_path
+from django.urls import path, re_path
 
 from .views.inicio import Index
 from .views.listanota import ListaNotaView, NotasView
@@ -15,10 +15,9 @@ from .views.nota import NotaUpdateView
 from .views.nota import NotaDeleteView
 from .views.nota import NotaEnviarView
 from .views.nota import NotaDownloadZip
-from .views.ajax import AjaxView
 from .views.adjunto import AdjuntoSubir
 from .views.adjunto import AdjuntoBajar
-from .views.adjunto import AdjuntoBajarTemporal
+from .views.adjunto import AdjuntoBorrar
 from .views.cambiaeditor import CambiaEditorView
 
 # https://simpleisbetterthancomplex.com/references/2016/10/10/url-patterns.html
@@ -42,16 +41,14 @@ urlpatterns = [
     re_path(r'^nota/eliminar/(?P<pk>\d+)/$', NotaDeleteView.as_view(), name='nota_eliminar'),
     re_path(r'^nota/download_zip/(?P<pk>\d+)/$', NotaDownloadZip.as_view(), name='nota_download_zip'),
     re_path(r'^nota/enviar/(?P<pk>\d+)/$', NotaEnviarView.as_view(), name='nota_enviar'),
-    re_path(r'^notas/$', NotasView.as_view()),
+    re_path(r'^notas/$', NotasView.as_view(), name='notas'),
 
     # Adjuntos
-    re_path(r'^adjunto_subir/$', AdjuntoSubir.as_view()),
-    re_path(r'^adjunto_bajar/(?P<adj_id>\d+)/$', AdjuntoBajar.as_view()),
-    re_path(r'^adjunto_bajar_temporal/(?P<adj_id>\d+)/$', AdjuntoBajarTemporal.as_view()),
+    path('adjunto_subir/', AdjuntoSubir.as_view(), name='adjunto_subir'),
+    path('adjunto_borrar/', AdjuntoBorrar.as_view(), name='adjunto_borrar'),
+    path('adjunto_bajar/<int:tipo>/<int:adjunto_id>/', AdjuntoBajar.as_view(), name='adjunto_bajar'),
 
-    # Ajax
-    re_path(r'^getdatos_ajax/([^/]+)', AjaxView.as_view()),
-
+    # Editor
     re_path(r'^editor/(?P<url_origen>[^/]+)/(?P<editor>[^/]+)/$', CambiaEditorView.as_view(), name='editor'),
 
 ]

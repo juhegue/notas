@@ -17,26 +17,41 @@ function bootstrapTableDelCookie($table) {
     $.removeCookie(prefijo + '.bs.table.searchText', { path: path });
 }
 
-function uploadFiles(key, files, csrf_token){
-    $('#id_cargando').modal('show');
+function adjuntoHtml(data, uuid_id, nota_id, csrf_token){
+    var html = '<div class="card"><table class="table" style="width:100%">',
+        tipo;
 
-    var formData = new FormData();
-    files.forEach(function(f) {
+    for (var i=0; i<data.length; i++) {
+        (data[i].tmp) ? tipo=0: tipo=1;
+        html += sprintf(`
+            <tr>
+                <td class="text-center" style="width:10px">
+                    <a href="javascript:adjuntoBorra(%s,'%s','%s',%s,%s);" class="text-danger" role="button"><span class="fa fw fa-trash"></span></a>
+                </td>
+                <td class="wrappable">
+                    <a href="/adjunto_bajar/%s/%s/">%s</a>
+                </td>
+            </tr>
+        `, tipo, csrf_token, uuid_id, data[i].id, nota_id
+         , tipo, data[i].id, data[i].nombre);
+    }
+    html += '</table></div>';
+    return html;
+}
 
-        formData.append('files', f);
-    });
-    formData.append('csrfmiddlewaretoken', csrf_token);
-    formData.append('nota_id', key);
-
+function ajax(url, formData, uuid_id, nota_id, csrf_token){
+    //$('#id_cargando').modal('show');
     $.ajax({
-        url: '/adjunto_subir/',
+        url: url,
         type: 'POST',
         data: formData,
+        dataType: 'JSON',
         processData: false,
         contentType: false,
         success: function(data){
-            $elemento = $('#id_lista_adjuntos');
-            $elemento.html(data);
+            var $elemento = $('#id_lista_adjuntos'),
+                html = adjuntoHtml(data, uuid_id, nota_id, csrf_token);
+            $elemento.html(html);
             $('#id_cargando').modal('hide');
         },
         error: function(e){
@@ -46,23 +61,27 @@ function uploadFiles(key, files, csrf_token){
     });
 }
 
+function uploadFiles(csrf_token, nota_id, uuid_id, files){
+    $('#id_cargando').modal('show');
 
-function borraAdjunto(adj_id) {
-    var url = '/getdatos_ajax/adjunto_borra';
-    var param = {adj_id: adj_id};
-    funcionAjax(url, param, function(data){
-        $elemento = $('#id_lista_adjuntos');
-        $elemento.html(data.data);
+    var formData = new FormData();
+    formData.append('nota_id', nota_id);
+    formData.append('uuid_id', uuid_id);
+    files.forEach(function(f) {
+        formData.append('files', f);
     });
+    formData.append('csrfmiddlewaretoken', csrf_token);
+    ajax('/adjunto_subir/', formData, uuid_id, nota_id, csrf_token);
 }
 
-function borraAdjuntoTemporal(adj_id) {
-    var url = '/getdatos_ajax/adjunto_borra_temporal';
-    var param = {adj_id: adj_id};
-    funcionAjax(url, param, function(data){
-        $elemento = $('#id_lista_adjuntos');
-        $elemento.html(data.data);
-    });
+function adjuntoBorra(tipo, csrf_token, uuid_id, adjunto_id, nota_id) {
+    var formData = new FormData();
+    formData.append('tipo', tipo);
+    formData.append('csrfmiddlewaretoken', csrf_token);
+    formData.append('uuid_id', uuid_id);
+    formData.append('adjunto_id', adjunto_id);
+    formData.append('nota_id', nota_id||0);
+    ajax('/adjunto_borrar/', formData, uuid_id, nota_id, csrf_token);
 }
 
 function temporizador_descarga() {
@@ -86,7 +105,7 @@ function marca1Imput() {    // marca 1º imput
         var $this = $(this),
             id = $this.attr('id');
 
-        if (id && (!$this.is('[readonly]') && $this.is(':visible'))) {
+        if (id && !$this.is('[readonly]') && $this.is(':visible') && !$this.is(':disabled')) {
             if($this.is("select")) {
                 $this.select2('open');
                 $this.select2('close');
@@ -125,6 +144,9 @@ $(function () {
     } catch {
     }
 
-    marca1Imput();
+    setTimeout(function(){
+        marca1Imput();
+    }, 100);
+
 });
 
