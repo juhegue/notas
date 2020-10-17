@@ -161,10 +161,13 @@ class AdjuntoTemporal(models.Model):
         return self.nombre
 
     def mueve_a_adjuntos(self):
-        des = os.path.basename(self.fichero.path)
-        des = os.path.join(settings.MEDIA_ROOT, "adjuntos", des)
+        path = os.path.basename(self.fichero.path)
+        des = os.path.join(settings.MEDIA_ROOT, "adjuntos", path)
         os.replace(self.fichero.path, des)
-        self.fichero = des
+        self.fichero = os.path.join("adjuntos", path)
+
+    class Meta:
+        verbose_name_plural = "AdjuntosTemporal"
 
 
 @receiver(pre_delete)

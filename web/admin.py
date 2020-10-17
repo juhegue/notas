@@ -12,6 +12,7 @@ from .models import User
 from .models import Libro
 from .models import Nota
 from .models import Adjunto
+from .models import AdjuntoTemporal
 
 from .util.admincsvexporta import CsvExporta
 
@@ -117,6 +118,11 @@ class AdjuntoAdmin(admin.ModelAdmin):
     actions = [exportar_csv]
 
 
+@admin.register(AdjuntoTemporal)
+class AdjuntoTemporal(admin.ModelAdmin):
+    pass
+
+
 class LibroNotaAdjunto(Libro):
     class Meta:
         proxy = True
@@ -146,4 +152,6 @@ class LibroAdmin(nested_admin.NestedModelAdmin):
     ]
     actions = [exportar_csv]
 
+
 admin.site.register(LibroNotaAdjunto, LibroAdmin)
+
