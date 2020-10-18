@@ -75,8 +75,6 @@ class NotasView(LoginRequiredMixin, View):
         if offset or limit:
             query = query[offset:offset+limit]
 
-        adj_false = '<img src="{}admin/img/icon-no.svg" alt="False">'.format(settings.STATIC_URL)
-        adj_true = '<img src="{}admin/img/icon-yes.svg" alt="True">'.format(settings.STATIC_URL)
         hoy = timezone.now().date()
 
         rows = list()
@@ -94,7 +92,6 @@ class NotasView(LoginRequiredMixin, View):
                 "modificado": modi,
                 "texto": marca_texto(search, q.texto),
                 "adjuntos": adjuntos,
-                "hay_adjuntos": adj_true if q.adjunto_set.all() else adj_false
             })
 
         resul = {"total": count, "rows": rows}
