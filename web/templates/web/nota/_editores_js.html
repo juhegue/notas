@@ -14,6 +14,7 @@
 
             $('#formulario').submit(function(e) {
                 var editorData = $('#id_editor').summernote('code');
+                editorData = HtmlSanitizer.SanitizeHtml(editorData);
                 $('#id_texto').val(editorData);
             });
         });
@@ -39,6 +40,7 @@
 
             $('#formulario').submit(function(e) {
                 var editorData = editor.getData();
+                editorData = HtmlSanitizer.SanitizeHtml(editorData);
                 $('#id_texto').val(editorData);
             });
         });
@@ -60,7 +62,9 @@
             });
 
             $('#formulario').submit(function(e) {
-                $('#id_texto').val(editor.html.get());
+                var editorData = editor.html.get();
+                editorData = HtmlSanitizer.SanitizeHtml(editorData);
+                $('#id_texto').val(editorData);
             });
         });
     </script>
@@ -80,6 +84,7 @@
 
             $('#formulario').submit(function(e) {
                 var editorData = $('#id_editor').trumbowyg('html');
+                editorData = HtmlSanitizer.SanitizeHtml(editorData);
                 $('#id_texto').val(editorData);
             });
         });

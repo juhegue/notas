@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import re
-import codecs
 import binascii
-from lxml.html.clean import Cleaner
+#  from lxml.html.clean import Cleaner
 
 
 def marca_texto(busca, cadena):
@@ -37,7 +36,7 @@ def marca_texto(busca, cadena):
 def clean_html(texto_html):
     return texto_html
 
-    # TODO: Anulado ya que quita los 'style' del html
+    # TODO: Anulado ya que quita los 'style' del html  (se realiza con HtmlSanitizer.js)
     if texto_html:
         cleaner = Cleaner()
         cleaner.javascript = True  # This is True because we want to activate the javascript filter
