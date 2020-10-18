@@ -11,17 +11,20 @@
             max-height: 500px;
             overflow-y: auto;
         }
-        @media only screen and (max-width: 800px) {
-            .select2-container {
-                min-width:185px;
-                width:185px;
-            }
+        .select2-selection__rendered {
+            line-height: 38px !important;
+        }
+        .select2-container .select2-selection--single {
+            height: 40px !important;
+        }
+        .select2-selection__arrow {
+            height: 39px !important;
         }
         .nuevo-libro {
             margin-left: 5px;
         }
         .accion {
-            margin-left: 10px;
+            margin-left: 12px;
         }
         .th-nombre {
             cursor: pointer;
@@ -41,11 +44,11 @@
         <form action="" method="post" role="form" id="id_formulario">
             {% csrf_token %}
             <a href="{% url 'libro_nuevo' %}" title="{% trans 'Nuevo libro' %}" class="btn btn-sm btn-outline-primary nuevo-libro" role="button"><span class="fa fw fa-plus-circle"></span></a>
-            {{ form.libro }}
             {% if libro != 0 %}
                 <a id="id_libro_eliminar" href="{% url 'libro_eliminar' libro %}" title="{% trans 'Eliminar libro' %}" class="btn btn-sm btn-outline-danger" role="button"><span class="fa fw fa-trash"></span></a>
                 <a id="id_libro_editar" href="{% url 'libro_editar' libro %}" title="{% trans 'Editar libro' %}" class="btn btn-sm btn-outline-primary" role="button"><span class="fa fw fa-pencil"></span></a>
             {% endif %}
+            {{ form.libro }}
         </form>
     </div>
     <div class="container-fluid">
@@ -224,10 +227,8 @@
             }, 100);
 
             $('.search').find('input[type=search]').each(function(e) {
-               $(this).attr('placeholder', "{% trans 'Buscar (múltiple separar por comas)' %}");
-               $(this).css('max-width', '360px');
-               $(this).css('width', '360px');
-               $(this).parent().prepend('<a style="padding-top:6px;" class="close clear_search" data-dismiss="alert">&nbsp; × &nbsp;</a>');
+                $(this).attr('title', 'Separar por comas para concatenar búsquedas.');
+                $(this).parent().prepend('<a style="padding-top:6px;margin-right:10px" class="close clear_search" data-dismiss="alert">×</a>');
             });
 
             $('#id_notas').bootstrapTable('refresh');
