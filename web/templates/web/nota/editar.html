@@ -79,7 +79,7 @@
                                         {% for adjunto in adjuntos %}
                                             <tr>
                                                 <td class="text-center" style="width:10px">
-                                                    <a href="javascript:adjuntoBorra(1, '{{ csrf_token }}', '{{ uuid_id }}', {{ adjunto.id }}, {{ nota.id }});" class="text-danger" role="button"><span class="fa fw fa-trash"></span></a>
+                                                    <a href="javascript:adjElimina(1, {{ adjunto.id }}, {{ nota.id }});" class="text-danger" role="button"><span class="fa fw fa-trash"></span></a>
                                                 </td>
                                                 <td class="wrappable">
                                                     <a href="{% url 'adjunto_bajar' 1 adjunto.id %}">{{ adjunto.nombre }}</a>
@@ -110,6 +110,10 @@
 {% block scripts %}
     {{ block.super }}
     <script type="text/javascript">
+        function adjElimina(tipo, adjunto_id, nota_id) {
+            adjuntoBorra('{{ csrf_token }}', nota_id, '{{ uuid_id }}', adjunto_id, tipo);
+        }
+
         $(function(){
             $('.adjuntos').on('click',function(e){
                 var key = $(e.target).attr('id');

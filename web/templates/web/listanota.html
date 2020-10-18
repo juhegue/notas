@@ -11,6 +11,12 @@
             max-height: 500px;
             overflow-y: auto;
         }
+        @media only screen and (max-width: 800px) {
+            .select2-container {
+                min-width:185px;
+                width:185px;
+            }
+        }
         .nuevo-libro {
             margin-left: 5px;
         }
@@ -19,6 +25,9 @@
         }
         .th-nombre {
             cursor: pointer;
+        }
+        .th-minimo {
+            width:165px;
         }
     </style>
 {% endblock styles %}
@@ -65,15 +74,15 @@
                 data-response-handler="responseHandler"
                 data-query-params="queryParams"
                 data-sortable="true"
-                data-resizable="true"
+                data-resizable="false"
                 >
                 <thead>
                     <tr>
                         <th data-visible="false" data-field="id"></th>
                         <th class="text-left th-nombre" data-field="nombre" data-sortable="true">{% trans 'Título' %}</th>
-                        <th class="text-center" data-field="hay_adjuntos" data-sortable="true">{% trans 'Adjuntos' %}</th>
-                        <th class="text-center" data-field="modificado" data-sortable="true">{% trans 'Modificado' %}</th>
-                        <th class="text-center" data-formatter="dataFormatter">{% trans 'Acciones' %}</th>
+                        <th class="text-center th-minimo" data-field="hay_adjuntos" data-sortable="true">{% trans 'Adjuntos' %}</th>
+                        <th class="text-center th-minimo" data-field="modificado" data-sortable="true">{% trans 'Modificado' %}</th>
+                        <th class="text-center th-minimo" data-formatter="dataFormatter">{% trans 'Acciones' %}</th>
                         <th data-visible="false" data-field="texto"></th>
                         <th data-visible="false" data-field="adjuntos"></th>
                     </tr>

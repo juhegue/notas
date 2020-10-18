@@ -76,7 +76,7 @@ class NotasView(LoginRequiredMixin, View):
             query = query[offset:offset+limit]
 
         adj_false = '<img src="{}admin/img/icon-no.svg" alt="False">'.format(settings.STATIC_URL)
-        adj_true = '<img src="{}admin/img/icon-yes.svg" alt="False">'.format(settings.STATIC_URL)
+        adj_true = '<img src="{}admin/img/icon-yes.svg" alt="True">'.format(settings.STATIC_URL)
         hoy = timezone.now().date()
 
         rows = list()
