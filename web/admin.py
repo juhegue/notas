@@ -200,7 +200,7 @@ admin.site.register(LibroNotaAdjunto, LibroAdmin)
 
 
 class AgendaEventoAdmin(admin.ModelAdmin, Color):
-    list_display = ('id', 'usuario', '_color', 'dia_completo', 'aviso_email', 'inicio', 'fin', 'email_enviado', 'titulo')
+    list_display = ('id', 'usuario', '_color', 'dia_completo', 'aviso_email', 'aviso_movil', 'inicio', 'fin', 'email_enviado','movil_enviado', 'titulo')
     ordering = ('usuario', '-inicio')
     search_fields = ('usuario', 'color', 'inicio', 'fin', 'titulo')
     field_date_filter = 'creado'
