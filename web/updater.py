@@ -52,7 +52,7 @@ def procesa_eventos():
         qevento.email_enviado = ahora
         qevento.save()
 
-    for qevento in AgendaEvento.objects.filter(email_enviado__isnull=True,
+    for qevento in AgendaEvento.objects.filter(email_movil__isnull=True,
                                                aviso_movil=True,
                                                dia_completo=True,
                                                inicio__lte=inicio,
@@ -71,7 +71,7 @@ def procesa_eventos():
         qevento.email_enviado = ahora
         qevento.save()
 
-    for qevento in AgendaEvento.objects.filter(email_enviado__isnull=True,
+    for qevento in AgendaEvento.objects.filter(email_movil__isnull=True,
                                                aviso_movil=True,
                                                dia_completo=False,
                                                inicio__lte=inicio,
