@@ -145,6 +145,7 @@ class CalendarioView(LoginRequiredMixin, TemplateView):
                             aevt.titulo = data.get('titulo')
                             aevt.dia_completo = True if data.get('completo', '') == 'on' else False
                             aevt.aviso_email = True if data.get('email') == 'on' else False
+                            aevt.aviso_movil = True if data.get('movil') == 'on' else False
 
                         inicio = datetime.strptime(data.get('inicio'), '%d/%m/%Y %H:%M')
                         if data.get('fin', ''):

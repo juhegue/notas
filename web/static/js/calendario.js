@@ -27,13 +27,14 @@ var handleCalendarDemo = function() {
         });
     }
 
-    function formulario(start, end, title, id, color, completo, email, class_cancel, enviado) {
-        var msg_enviado;
-        enviado ? msg_enviado = `<small class='text-danger'> <i class="fa fa-exclamation-triangle" aria-hidden="true"></i> ${mail_enviado}.</small>` :msg_enviado = '';
+    function formulario(start, end, title, id, color, completo, email, e_enviado, movil, m_enviado, class_cancel, movil_disable) {
+        var msg_e_enviado, msg_m_enviado;
+        e_enviado ? msg_e_enviado = `<small class='text-danger'> <i class="fa fa-exclamation-triangle" aria-hidden="true"></i> ${mail_enviado}.</small>` :msg_e_enviado = '';
+        m_enviado ? msg_m_enviado = `<small class='text-danger'> <i class="fa fa-exclamation-triangle" aria-hidden="true"></i> ${movil_enviado}.</small>` :msg_m_enviado = '';
         var html = `
             <form class='row row-cols-lg-auto align-items-center'>
                 <input type='hidden' name='id' value='${id}'>
-                <div class='col-6'>
+                <div class='col-4'>
                     <div class="custom-control custom-checkbox" style="margin-top:20px">
                         <input type="checkbox" name="completo" class="custom-control-input" id="id_completo" ${completo}>
                         <label class="custom-control-label" for="id_completo">
@@ -42,14 +43,24 @@ var handleCalendarDemo = function() {
                     </div>
                     <br>
                 </div>
-                <div class='col-6'>
+                <div class='col-4'>
                     <div class="custom-control custom-checkbox" style="margin-top:20px">
                         <input type="checkbox" name="email" class="custom-control-input" id="id_email" ${email}>
                         <label class="custom-control-label" for="id_email">
                             ${avisar_email}
                         </label>
                     </div>
-                    ${msg_enviado}
+                    ${msg_e_enviado}
+                    <br>
+                </div>
+                <div class='col-4'>
+                    <div class="custom-control custom-checkbox" style="margin-top:20px">
+                        <input type="checkbox" name="movil" class="custom-control-input" id="id_movil" ${movil} ${movil_disable}>
+                        <label class="custom-control-label" for="id_movil">
+                            ${avisar_movil}
+                        </label>
+                    </div>
+                    ${msg_m_enviado}
                     <br>
                 </div>
                 <div class='col-12'>
@@ -202,11 +213,12 @@ var handleCalendarDemo = function() {
             lonFecha == 10 ? completo = 'checked': ''
 
             formAjax(url_events, param, function(data) {
-                var email,
-                    enviado;
+                var email, movil, e_enviado, m_enviado;
                 (data.aviso_email == 'True') ? email = 'checked' : email = '';
-                (data.email_enviado == 'None') ? enviado = false : enviado = true;
-                formulario(start, end, title, id, color, completo, email, '', enviado);
+                (data.aviso_movil == 'True') ? movil = 'checked' : movil = '';
+                (data.email_enviado == 'None') ? e_enviado = false : e_enviado = true;
+                (data.movil_enviado == 'None') ? m_enviado = false : m_enviado = true;
+                formulario(start, end, title, id, color, completo, email, e_enviado, movil, m_enviado, '', fcm_token);
             });
 
         },
@@ -220,7 +232,7 @@ var handleCalendarDemo = function() {
                     end = '',
                     id = data.id,
                     color = info.event.backgroundColor;
-                formulario(start, end, title, id, color, '', '', 'disabled', false);
+                formulario(start, end, title, id, color, '', '', false, '', false, 'disabled', fcm_token);
             } else {
                 data.start = moment(info.event.start).format('DD/MM/YYYY') + ' ' + data.inicio;
                 actualizaBD(data, 'receive');

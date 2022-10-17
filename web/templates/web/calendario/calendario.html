@@ -73,20 +73,23 @@
 	<script type="text/javascript">
 		var colores = url_events = "{{ request.path }}",
 			csrf_token = "{{ csrf_token }}",
+			fcm_token = ("{{ request.user.fcm_token }}" == "None") ? 'disabled': '',
 			title_eliminar = "{% trans 'Eliminar evento' %}",
 			text_eliminar = "{% trans '¿Esta seguro de eliminar el evento?' %}",
 			text_aceptar = "{% trans 'Aceptar' %}",
 			text_cancelar = "{% trans 'Cancelar' %}",
 			title_nuevo_evento = "{% trans 'Nuevo evento' %}",
 			dia_comleto = "{% trans 'Día completo'  %}",
-			avisar_email = "{% trans 'Avisar con email'  %}",
+			avisar_email = "{% trans 'Avisar email'  %}",
+			avisar_movil = "{% trans 'Avisar móvil'  %}",
 			inicio = "{% trans 'Inicio'  %}",
 			final = "{% trans 'Final (vacio día completo)'  %}",
 			des_evento = "{% trans 'Descripción evento'  %}",
 			sel_color = "{% trans 'Seleccione un color'  %}",
 			color_hexa = `{% trans "Elija o añada un color en hexadecimal."  %}`,
 			requerido = "{% trans 'Valor requerido'  %}",
-			mail_enviado = "{% trans 'Email enviado' %}";
+			mail_enviado = "{% trans 'Enviado' %}",
+			movil_enviado = "{% trans 'Enviado' %}";
 	</script>
 	<script src="{% static 'vendor/@fullcalendar/core/main.global.js' %}"></script>
 	<script src="{% static 'vendor/@fullcalendar/core/locales-all.global.js' %}"></script>
