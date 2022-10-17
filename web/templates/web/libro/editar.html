@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block titlehead %}
+    {% trans 'Libro' %}
+{% endblock titlehead %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-12">
+            <form action="" method="post" enctype="multipart/form-data" role="form" id="formulario">
+                {% csrf_token %}
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="panel-title text-secondary">
+                            {% if create_view %}
+                                {% trans 'Nuevo Libro' %}
+                            {% else %}
+                                {% trans 'Modificar Libro' %}
+                            {% endif %}
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-row">
+                            <div class="form-group col-md-12">
+                                {{ form.nombre.errors }}
+                                <label for={{form.nombre.auto_id}} class="control-label">
+                                    {{ form.nombre.label }}
+                                    {% if form.nombre.field.required %}<span class="required_fields">*</span>{% endif %}
+                                </label>
+                                {{ form.nombre }}
+                                {% if form.nombre.help_text %}
+                                    <p class="help-block">{{ form.nombre.help_text|safe }}</p>
+                                {% endif %}
+                            </div>
+                            <div class="custom-control custom-checkbox ">
+                                {{ form.privado.errors }}
+                                {{ form.privado }}
+                                <label for={{form.privado.auto_id}} class="custom-control-label">
+                                    {{ form.privado.label }}
+                                    {% if form.privado.field.required %}<span class="required_fields">*</span>{% endif %}
+                                </label>
+                                {% if form.privado.help_text %}
+                                    <p><small class="text-secondary">{{ form.privado.help_text|safe }}</small></p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <a class="btn btn-danger" href="{% url 'listanota' %}">
+                            <i class="fa fa-ban"></i>
+                            {% trans 'Cancelar' %}
+                        </a>
+                        <button type="submit" class="btn btn-success">
+                            <i class="fa fw fa-check"></i>
+                            {% trans 'Guardar' %}
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock content %}

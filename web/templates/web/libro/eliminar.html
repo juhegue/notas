@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load static %}
+{% block titlehead %}{% trans 'Eliminar Libro' %}{% endblock titlehead %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-12">
+            <form action="" method="post" enctype="multipart/form-data" role="form" id="formulario">
+                {% csrf_token %}
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="panel-title text-secondary">{% trans 'Borrar Libro' %}</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-warning">
+                            <strong>{% trans 'Atención!' %}</strong> {% trans 'Va a proceder a borrar un Libro' %}.
+                        </div>
+                        <p>{% trans '¿Seguro que desea eliminar el libro' %}?: <b>{{ libro }}</b></p>
+                    </div>
+                    <div class="card-footer">
+                        <a class="btn btn-danger" href="{% url 'listanota' %}">
+                            <i class="fa fa-ban"></i>
+                            {% trans 'Cancelar' %}
+                        </a>
+                        <button type="submit" class="btn btn-success">
+                            <i class="fa fa-check"></i>
+                            {% trans 'Aceptar' %}
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock content %}

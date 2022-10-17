@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block titlehead %}{% trans 'Login' %}{% endblock titlehead %}
+
+{% block header %}
+{% endblock header %}
+
+{% block nucleocentral %}
+
+    <div class="container-fluid">
+        {% if messages %}
+            <div class="row">
+                <div class="col-md-10 offset-md-1">
+                    <ul class="messages">
+                        {% for message in messages %}
+                            <div class="alert alert-danger alert-dismissable">
+                                <button type="button" class="close" data-dismiss="alert"
+                                        aria-hidden="true">&times;</button>
+                                <i class="fa fa-info-circle"></i> {{ message }}
+                            </div>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        {% endif %}
+        <div class="row">
+            <div class="col-md-6 offset-md-3">
+                <br><br>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="text-center">
+                            <a href="{% url 'login' %}">
+                                <img id="logo-idal-login" src="{% static 'images/logo-notas.png' %}" alt="logo-notas"  height="150">
+                            </a>
+                            <hr>
+                            <h3>Sesión finalizada</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock nucleocentral %}

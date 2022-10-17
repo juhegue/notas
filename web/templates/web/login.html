@@ -1,0 +1,174 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block styles %}
+    <style>
+        :root {
+          --input-padding-x: .75rem;
+          --input-padding-y: .75rem;
+        }
+
+        html,
+        body {
+          height: 100%;
+        }
+
+        body {
+          display: -ms-flexbox;
+          display: -webkit-box;
+          display: flex;
+          -ms-flex-align: center;
+          -ms-flex-pack: center;
+          -webkit-box-align: center;
+          align-items: center;
+          -webkit-box-pack: center;
+          justify-content: center;
+          padding-top: 40px;
+          padding-bottom: 40px;
+          background-color: #f5f5f5;
+        }
+
+        .form-signin {
+          width: 100%;
+          max-width: 420px;
+          padding: 15px;
+          margin: 0 auto;
+        }
+
+        .form-label-group {
+          position: relative;
+          margin-bottom: 1rem;
+        }
+
+        .form-label-group > input,
+        .form-label-group > label {
+          padding: var(--input-padding-y) var(--input-padding-x);
+        }
+
+        .form-label-group > label {
+          position: absolute;
+          top: 0;
+          left: 0;
+          display: block;
+          width: 100%;
+          margin-bottom: 0; /* Override default `<label>` margin */
+          line-height: 1.5;
+          color: #495057;
+          border: 1px solid transparent;
+          border-radius: .25rem;
+          transition: all .1s ease-in-out;
+        }
+
+        .form-label-group input::-webkit-input-placeholder {
+          color: transparent;
+        }
+
+        .form-label-group input:-ms-input-placeholder {
+          color: transparent;
+        }
+
+        .form-label-group input::-ms-input-placeholder {
+          color: transparent;
+        }
+
+        .form-label-group input::-moz-placeholder {
+          color: transparent;
+        }
+
+        .form-label-group input::placeholder {
+          color: transparent;
+        }
+
+        .form-label-group input:not(:placeholder-shown) {
+          padding-top: calc(var(--input-padding-y) + var(--input-padding-y) * (2 / 3));
+          padding-bottom: calc(var(--input-padding-y) / 3);
+        }
+
+        .form-label-group input:not(:placeholder-shown) ~ label {
+          padding-top: calc(var(--input-padding-y) / 3);
+          padding-bottom: calc(var(--input-padding-y) / 3);
+          font-size: 12px;
+          color: #777;
+        }
+    </style>
+{% endblock styles %}
+
+{% block titlehead %}{% trans 'Login' %}{% endblock titlehead %}
+
+{% block header %}
+{% endblock header %}
+
+{% block nucleocentral %}
+    <form class="form-signin" method="post" action="">
+        {% csrf_token %}
+        <div class="text-center mb-4">
+            <img class="mb-4" id="logo-login" src="{% static 'images/logo-notas.png' %}" alt=""  height="150">
+            <h1 class="h3 mb-3 font-weight-normal">Almacén de notas</h1>
+            <p>Para todo lo que quieras recordar.</p>
+        </div>
+        {% if form.errors %}
+            {% for error in form.non_field_errors %}
+                <div class="alert alert-danger">
+                     <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                    <strong>{{ error|escape }}</strong>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <div class="form-label-group">
+            <input type="email" name="username" id="email" class="form-control" placeholder="Correo electrónico" required>
+            <label for="email">Correo electrónico</label>
+        </div>
+
+        <div class="form-label-group">
+            <input type="password"  name="password" id="password" class="form-control" placeholder="Contraseña" required>
+            <label for="password">Contraseña</label>
+        </div>
+
+        <div class="checkbox mb-3">
+            <label>
+              <input type="checkbox" value="remember-me" id="remember_me"> Recuerdame
+            </label>
+        </div>
+        <button id="id_submit" class="btn btn-lg btn-primary btn-block" type="submit">Iniciar Sesión</button>
+        <p class="mt-5 mb-3 text-muted text-center">&copy; Creado en 2018</p>
+    </form>
+{% endblock nucleocentral %}
+
+{% block scripts %}
+    {{ block.super }}
+    <script type="text/javascript">
+        $('form').submit(function(e) {
+            if ($('#remember_me').is(':checked')) {
+                localStorage.usrname = $('#email').val();
+                localStorage.pass = $('#password').val();
+                localStorage.chkbx = 'true';
+            } else {
+                localStorage.chkbx = 'false';
+            }
+        });
+
+        $(function() {
+            var ms_ie = false;
+            var ua = window.navigator.userAgent;
+            var old_ie = ua.indexOf('MSIE ');
+            var new_ie = ua.indexOf('Trident/');
+
+            if ((old_ie > -1) || (new_ie > -1)) {
+                ms_ie = true;
+            }
+
+            if ( ms_ie ) {
+                alert('Versión de navegador no compatible.');
+                //IE specific code goes here
+            }
+
+            if (localStorage.chkbx === 'true') {
+                $('#remember_me').prop('checked', true);
+                $('#email').val(localStorage.usrname);
+                $('#password').val(localStorage.pass);
+            }
+        });
+    </script>
+{% endblock scripts %}

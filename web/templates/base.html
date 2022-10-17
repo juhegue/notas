@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="es">
+    {% load i18n %}
+    {% load static %}
+    {% load funciones %}
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="Notas">
+        <meta name="author" content="Juhegue">
+        <link rel="icon" href="{% static 'images/notas.png' %}">
+
+        <title>
+            {% block titlehead %}
+            {% endblock titlehead %}
+        </title>
+
+        {% block styles_base %}
+            <link href="{% static 'vendor/font-awesome-4.7.0/css/font-awesome.min.css' %}" rel="stylesheet">
+            <link href="{% static 'vendor/bootstrap-4.6.2-dist/css/bootstrap.min.css' %}" rel="stylesheet">
+            <link href="{% static 'vendor/bootstrap-table-1.18.0/bootstrap-table.min.css' %}" rel="stylesheet">
+            <link href="{% static 'vendor/bootstrap.fd/bootstrap.fd.css' %}" rel="stylesheet">
+            <link href="{% static 'vendor/select2/dist/css/select2.min.css' %}" rel="stylesheet">
+        	<link href="{% static 'vendor/bootstrap-datetimepicker/bootstrap-datetimepicker.min.css' %}" rel="stylesheet" />
+            <link href="{% static 'css/notas.css' %}" rel="stylesheet">
+        {% endblock styles_base %}
+
+        {% block styles %}
+            {{ form.media.css }}
+        {% endblock styles %}
+    </head>
+
+    <body>
+        {% block header %}
+            <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+                <a class="navbar-brand" href="{% url 'index' %}">
+                    <img src="{% static 'images/notas.png' %}" alt="Notas" width="30px;" height="30px;">
+                </a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item {% if nav_activa == 'notas' %}active{% endif %}">
+                            <a class="nav-link" href="{% url 'listanota' %}">Notas<span class="sr-only">(current)</span></a>
+                        </li>
+                        {% param_settings 'MOSTRAR_EDITORES' as mostrar %}
+                        {% if mostrar %}
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="editorDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Editores
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="editorDropdown">
+                                    {% editor_choices as editores %}
+                                    {% for editor in editores %}
+                                        {% if editor.disabled %}
+                                            <a class="dropdown-item disabled" href="#"><i class="fa fa-check"> {{ editor.name }}</i></a>
+                                        {% else %}
+                                            <a class="dropdown-item" href="{% url 'editor' editor.url editor.key %}">{{ editor.name }}</a>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </li>
+                        {% endif %}
+                        <li class="nav-item {% if nav_activa == 'calendario' %}active{% endif %}">
+                            <a class="nav-link" href="{% url 'calendario' %}">Calendario<span class="sr-only">(current)</span></a>
+                        </li>
+                        {% if user.is_staff %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="/admin/" target="_blank">Admin</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                    <ul class="navbar-nav align-right">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                {{ user.email }}
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" href="{% url 'logout' %}">
+                                    <i class="fa fa-sign-out"></i>Salir
+                                </a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        {% endblock header %}
+
+        {% block nucleocentral %}
+        <main role="main" class="container-fluid" {% if hidden %} hidden {% endif %}>
+            {% if form.errors or form.non_field_errors %}
+                <a id="id_btn_error" class="btn" href="#" data-toggle="tooltip" title="" data-placement="top" data-original-title="Errores" style="padding-bottom: 0px;border-bottom-width: 0px;padding-top: 0px;border-top-width: 0px;">
+                    <span class="fa fa-exclamation" style="color:#ba2121;"></span>
+                </a>
+            {% endif %}
+
+            {% block messages %}
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}">
+                        <a href="#" class="close" data-dismiss="alert">×</a>
+                        {{ message|safe }}
+                    </div>
+                    {% endfor %}
+                {% endif %}
+            {% endblock messages%}
+
+            <div class="modal" id="id_cargando" data-backdrop="static" data-keyboard="false" role="dialog"  style="z-index:99999;">
+              <div class="modal-dialog" role="document">
+                  <div class="modal-header d-flex align-items-center justify-content-center" style="border-bottom: 0px">
+                      <i class="fa fa-gear fa-spin" style="font-size:85px;color:#e5e5e5"></i>
+                  </div>
+                  <div class="modal-body d-flex align-items-center justify-content-center">
+                      <spam id="id_cargando_msg" style="font-size:16px; color:#DDDDDD;">Un momento por favor...</spam>
+                  </div>
+              </div>
+            </div>
+
+            {% block content %}
+            {% endblock content %}
+        </main>
+        {% endblock nucleocentral %}
+
+       {% block footer %}
+            <footer class="footer">
+                <div class="text-right">
+                    <span>Desarrollado por </span>
+                    <a href="https://github.com/juhegue/notas" target="_blank">Juhegue &nbsp;&nbsp;</a>
+                </div>
+            </footer>
+        {% endblock footer %}
+
+        {% block scripts_base %}
+            <script src="{% static 'vendor/jquery-3.5.1.min.js' %}"></script>
+            <script src="{% static 'vendor/jquery.cookie.js' %}"></script>
+            <script src="{% static 'vendor/moment/min/moment.min.js' %}"></script>
+            <script src="{% static 'vendor/moment/locale/es.js' %}"></script>
+            <script src="{% static 'vendor/popper/popper-1.16.0.min.js' %}"></script>
+            <script src="{% static 'vendor/bootstrap-4.6.2-dist/js/bootstrap.min.js' %}"></script>
+            <script src="{% static 'vendor/bootbox/bootbox.min.js' %}"></script>
+            <script src="{% static 'vendor/bootbox/bootbox.locales.min.js' %}"></script>
+            <script src="{% static 'vendor/bootstrap-table-1.18.0/bootstrap-table.min.js' %}"></script>
+            <script src="{% static 'vendor/bootstrap-table-1.18.0/extensions/cookie/bootstrap-table-cookie.min.js' %}"></script>
+            <script src="{% static 'vendor/bootstrap-table-1.18.0/extensions/resizable/bootstrap-table-resizable.min.js' %}"></script>
+            <script src="{% static 'vendor/bootstrap-table-1.18.0/bootstrap-table-locale-all.min.js' %}"></script>
+            <script src="{% static 'vendor/bootstrap.fd/bootstrap.fd.js' %}"></script>
+            <script src="{% static 'vendor/sprintf/sprintf.min.js' %}"></script>
+            <script src="{% static 'vendor/HtmlSanitizer-master/HtmlSanitizer.js' %}"></script>
+            <script src="{% static 'vendor/bootbox/bootbox.all.min.js' %}"></script>
+            <script src="{% static 'vendor/bootbox/bootbox.locales.min.js' %}"></script>
+            <script src="{% static 'vendor/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js' %}"></script>
+            <script src="{% static 'vendor/select2/dist/js/select2.full.min.js' %}"></script>
+            <script src="{% static 'vendor/select2/dist/js/i18n/es.js' %}"></script>
+            <script src="{% static 'js/utiles.js' %}"></script>
+        	<script src="{% static 'js/select2.js' %}"></script>
+        	<script src="{% static 'js/datetimepicker.js' %}"></script>
+            <script src="{% static 'js/notas.js' %}"></script>
+            {{ form.media.js }}
+            <script>
+                {% if nav_activa != 'notas' %}
+                    window.addEventListener('resize', function(e) {
+                        reset_select2_size();
+                    });
+                {% endif %}
+            </script>
+        {% endblock scripts_base %}
+
+        {% block scripts %}
+        {% endblock scripts %}
+  </body>
+</html>

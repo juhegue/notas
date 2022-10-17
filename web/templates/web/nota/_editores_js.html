@@ -1,0 +1,93 @@
+{% load static %}
+{% load i18n %}
+{% load funciones %}
+
+{% if user.editor == 'summernote' %}
+    <script src="{% static 'editors/summernote-0.8.20/dist/summernote-bs4.min.js' %}"></script>
+    <script src="{% static 'editors/summernote-0.8.20/dist/lang/summernote-es-ES.min.js' %}"></script>
+    <script type="text/javascript">
+        $(function(){
+            $('#id_editor').summernote({
+                {% if not create_view %} focus: true, {% endif %}
+                tabsize: 4,
+                lang: 'es-ES',
+            });
+
+            $('#formulario').submit(function(e) {
+                var editorData = $('#id_editor').summernote('code');
+                editorData = HtmlSanitizer.SanitizeHtml(editorData);
+                $('#id_texto').val(editorData);
+            });
+        });
+    </script>
+{% endif %}
+
+{% if user.editor == 'ckeditor' %}
+    <script src="{% static 'editors/ckeditor5-build-classic-23.0.0/ckeditor5-build-classic/ckeditor.js' %}"></script>
+    <script src="{% static 'editors/ckeditor5-build-classic-23.0.0/ckeditor5-build-classic/translations/es.js' %}"></script>
+    <script type="text/javascript">
+        $(function(){
+            let editor;
+            ClassicEditor
+                .create( document.querySelector( '#id_editor' ), {
+                    language: 'es'
+                 })
+                .then( _editor => {
+                    editor = _editor;
+                } )
+                .catch( error => {
+                    console.error( error );
+                } );
+
+            $('#formulario').submit(function(e) {
+                var editorData = editor.getData();
+                editorData = HtmlSanitizer.SanitizeHtml(editorData);
+                $('#id_texto').val(editorData);
+            });
+        });
+    </script>
+{% endif %}
+
+
+{% if user.editor == 'froala' %}
+    <script src="{% static 'editors/froala_editor_3.2.2/js/froala_editor.min.js' %}"></script>
+    <script src="{% static 'editors/froala_editor_3.2.2/js/froala_editor.pkgd.min.js' %}"></script>
+    <script src="{% static 'editors/froala_editor_3.2.2/js/languages/es.js' %}"></script>
+    <script type="text/javascript">
+        $(function(){
+            let editor = new FroalaEditor('div#id_editor' , {
+                language: 'es',
+                theme: 'gray',
+                pastePlain: true,
+                charCounterCount: false
+            });
+
+            $('#formulario').submit(function(e) {
+                var editorData = editor.html.get();
+                editorData = HtmlSanitizer.SanitizeHtml(editorData);
+                $('#id_texto').val(editorData);
+            });
+        });
+    </script>
+{% endif %}
+
+{% if user.editor == 'trumbowyg' %}
+    <script src="{% static 'editors/Trumbowyg-master/dist/trumbowyg.min.js' %}"></script>
+    <script src="{% static 'editors/Trumbowyg-master/dist/langs/es.min.js' %}"></script>
+    <script type="text/javascript">
+        $(function(){
+            $('#id_editor').trumbowyg({
+                lang: 'es',
+                removeformatPasted: true,
+                autogrow: true,
+                autogrowOnEnter: true,
+            });
+
+            $('#formulario').submit(function(e) {
+                var editorData = $('#id_editor').trumbowyg('html');
+                editorData = HtmlSanitizer.SanitizeHtml(editorData);
+                $('#id_texto').val(editorData);
+            });
+        });
+    </script>
+{% endif %}

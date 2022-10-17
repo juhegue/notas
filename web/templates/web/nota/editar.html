@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+{% load funciones %}
+
+{% block titlehead %}{% trans 'Notas' %}{% endblock titlehead %}
+
+{% block styles %}
+    {{ block.super }}
+    {% include 'web/nota/_editores_css.html' %}
+{% endblock styles %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-12">
+            <form action="" method="post" enctype="multipart/form-data" role="form" id="formulario">
+                {% csrf_token %}
+                {{ form.uuid_id }}
+                {{ form.texto }}
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="panel-title text-secondary">
+                            {% if create_view %}
+                                {% trans 'Nueva Nota' %} de {{ libro.nombre }}
+                            {% else %}
+                                {% trans 'Modificar Nota' %} de {{ libro.nombre }}
+                            {% endif %}
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-row">
+                            <div class="form-group col-md-12">
+                                {{ form.nombre.errors }}
+                                <label for={{form.nombre.auto_id}} class="control-label">
+                                    {{ form.nombre.label }}
+                                    {% if form.nombre.field.required %}<span class="required_fields">*</span>{% endif %}
+                                </label>
+                                {{ form.nombre }}
+                                {% if form.nombre.help_text %}
+                                    <p class="help-block">{{ form.nombre.help_text|safe }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="custom-control custom-checkbox">
+                            {{ form.privado.errors }}
+                            {{ form.privado }}
+                            <label for={{form.privado.auto_id}} class="custom-control-label">
+                                {{ form.privado.label }}
+                                {% if form.privado.field.required %}<span class="required_fields">*</span>{% endif %}
+                            </label>
+                            {% if form.privado.help_text %}
+                                <p><small class="text-secondary">{{ form.privado.help_text|safe }}</small></p>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group col-md-10">
+                                <div id='id_editor'>{{ nota.texto|safe }}</div>
+                            </div>
+                            <div id='id_adjuntos' class='col-md-2'>
+                                <div class='text-center'>
+                                    <button type='button' style='width:100%' id='id_btnadjuntos' class='btn btn-primary adjuntos'
+                                        >{% trans 'Adjuntos' %}
+                                    </button>
+                                </div>
+                                <div id='id_lista_adjuntos'>
+                                    <div class="card"><table class="table" style="width:100%">
+                                        {% for adjunto in adjuntos %}
+                                            <tr>
+                                                <td class="text-center" style="width:10px">
+                                                    <a href="javascript:adjElimina(1, {{ adjunto.id }}, {{ nota.id }});" class="text-danger" role="button"><span class="fa fw fa-trash"></span></a>
+                                                </td>
+                                                <td class="wrappable">
+                                                    <a href="{% url 'adjunto_bajar' 1 adjunto.id %}">{{ adjunto.nombre }}</a>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </table></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <a class="btn btn-danger" href="{% url 'listanota' %}">
+                            <i class="fa fa-ban"></i>
+                            {% trans 'Cancelar' %}
+                        </a>
+                        <button type="submit" class="btn btn-success">
+                            <i class="fa fw fa-check"></i>
+                            {% trans 'Guardar' %}
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block scripts %}
+    {{ block.super }}
+    <script type="text/javascript">
+        function adjElimina(tipo, adjunto_id, nota_id) {
+            adjuntoBorra('{{ csrf_token }}', nota_id, '{{ uuid_id }}', adjunto_id, tipo);
+        }
+
+        $(function(){
+            $('.adjuntos').on('click',function(e){
+                var key = $(e.target).attr('id');
+                key = key.substr(key.length-6, 6);
+
+                $.FileDialog({
+                    title: '{% trans 'Subir archivos' %}',
+                    ok_button: '{% trans 'Aceptar' %}',
+                    cancel_button: '{% trans 'Cancelar' %}',
+                    drag_message: '{% trans 'Arrastre los archivos aquí' %}',
+                    error_message: '{% trans 'Se ha producido un error al leer el archivo' %}',
+                    remove_message: '{% trans 'Eliminar fichero' %}',
+                    accept: '*',
+                    dropheight: 100,
+                    multiple: true,
+                 }).on('files.bs.filedialog', function(ev) {
+                    uploadFiles('{{ csrf_token }}', '{{ nota.id }}', '{{ uuid_id }}', ev.files);
+                }).on('cancel.bs.filedialog', function(ev) {
+                });
+            });
+        });
+    </script>
+    {% include 'web/nota/_editores_js.html' %}
+{% endblock scripts %}

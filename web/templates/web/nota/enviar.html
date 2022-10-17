@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+{% load funciones %}
+
+{% block titlehead %}{% trans 'Enviar Nota' %}{% endblock titlehead %}
+
+{% block styles %}
+    {{ block.super }}
+    {% include 'web/nota/_editores_css.html' %}
+{% endblock styles %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-12">
+            <form action="" method="post" enctype="multipart/form-data" role="form" id="formulario">
+                {% csrf_token %}
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="panel-title text-secondary">{% trans 'Enviar Nota' %}</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-row">
+                            <div class="form-group col-md-12">
+                                {{ form.para.errors }}
+                                <label for={{form.para.auto_id}} class="control-label">
+                                    {{ form.para.label }}
+                                    {% if form.para.field.required %}<span class="required_fields">*</span>{% endif %}
+                                </label>
+                                {{ form.para }}
+                                {% if form.para.help_text %}
+                                    <p class="help-block">{{ form.para.help_text|safe }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-12">
+                                {{ form.asunto.errors }}
+                                <label for={{form.asunto.auto_id}} class="control-label">
+                                    {{ form.asunto.label }}
+                                    {% if form.asunto.field.required %}<span class="required_fields">*</span>{% endif %}
+                                </label>
+                                {{ form.asunto }}
+                                {% if form.asunto.help_text %}
+                                    <p class="help-block">{{ form.asunto.help_text|safe }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-12">
+                                <label>{{ form.texto.label }}</label>
+                                <div id='id_editor'>{{ nota.texto|safe }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <a class="btn btn-danger" href="{% url 'listanota' %}">
+                            <i class="fa fa-ban"></i>
+                            {% trans 'Cancelar' %}
+                        </a>
+                        <button type="submit" class="btn btn-success">
+                            <i class="fa fw fa-send"></i>
+                            {% trans 'Enviar' %}
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block scripts %}
+    {{ block.super }}
+    {% include 'web/nota/_editores_js.html' %}
+{% endblock scripts %}
