@@ -12,24 +12,32 @@ MINUTOS_MARGEN_PARCIAL = 30
 
 
 def envia_movil(qevento):
-    inicio = timezone.localtime(qevento.inicio).strftime('%d/%m/%Y %H:%M')
+    inicio = timezone.localtime(qevento.inicio).strftime('%H:%M')
+    finhora = timezone.localtime(qevento.fin).strftime('%H:%M')
     fin = timezone.localtime(qevento.fin).strftime('%d/%m/%Y %H:%M')
 
-    periodo = f'A las {inicio}'
+    periodo = f'Desde {inicio}'
     if qevento.fin:
-        periodo += f'Desde {inicio} Hasta {fin}'
+        if qevento.inicio.date() == qevento.fin.date():
+            periodo += f'\nHasta {finhora}'
+        else:
+            periodo += f'\nHasta {fin}'
 
     n = NotificacionFcm(qevento.usuario)
     n.aviso('Notas notifiación', f'{periodo}\n{qevento.titulo}')
 
 
 def envia_mail(qevento):
-    inicio = timezone.localtime(qevento.inicio).strftime('%d/%m/%Y %H:%M')
+    inicio = timezone.localtime(qevento.inicio).strftime('%H:%M')
+    finhora = timezone.localtime(qevento.fin).strftime('%H:%M')
     fin = timezone.localtime(qevento.fin).strftime('%d/%m/%Y %H:%M')
 
-    periodo = f'A las {inicio}'
+    periodo = f'Desde{inicio}'
     if qevento.fin:
-        periodo += f'Desde {inicio} Hasta {fin}'
+        if qevento.inicio.date() == qevento.fin.date():
+            periodo += f' Hasta {finhora}'
+        else:
+            periodo += f' Hasta {fin}'
 
     mail.send(
         recipients=qevento.usuario.email,

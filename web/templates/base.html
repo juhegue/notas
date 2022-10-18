@@ -124,8 +124,13 @@
         {% endblock nucleocentral %}
 
        {% block footer %}
-            <footer class="footer">
-                <div class="text-right">
+            <footer class="footer d-flex justify-content-between">
+                <div class="text-left">
+                    &nbsp; <a href="{% static 'app-arm64-v8a-release.apk' %}" title="Descarga Apk aviso notificaciones android.">
+                        Apk notificación
+                    </a>
+                </div>
+                <div class="align-right">
                     <span>Desarrollado por </span>
                     <a href="https://github.com/juhegue/notas" target="_blank">Juhegue &nbsp;&nbsp;</a>
                 </div>

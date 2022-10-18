@@ -121,3 +121,7 @@ ul.errorlist {
 .detail-icon {
   margin-left: .40rem;
 }
+
+footer a:hover, footer a:active, footer a:link, footer a:visited{
+    color: var(--light);
+}

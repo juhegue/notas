@@ -5,3 +5,6 @@
 * Froala
 * Trumbowyg
 
+### Calendario
+* fullcalendar
+* Notificaciones push fcm.

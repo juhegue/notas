@@ -4,6 +4,7 @@ from rest_framework import serializers
 from rest_framework import views
 from rest_framework.response import Response
 from rest_framework import status
+from web.util.notificacionfcm import NotificacionFcm
 
 
 class FcmSerializerIn(serializers.Serializer):
@@ -33,9 +34,18 @@ class TokenFcmView(views.APIView):
 
         request.user.fcm_token = fcm_token
         request.user.save()
+        self.notifica(request)
 
         response = {
             "result": "Ok",
             "detail": {"fcm_token": fcm_token}
         }
         return Response(response, status=status.HTTP_200_OK)
+
+    @staticmethod
+    def notifica(request):
+        n = NotificacionFcm(request.user)
+        mensaje = 'Acceso realizado con exito ☺️.'
+        n.aviso('Notas notifiación', mensaje)
+
+
