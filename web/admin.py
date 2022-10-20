@@ -21,6 +21,7 @@ from .models import AgendaEventoPredefinido
 from .util.admincsvexporta import CsvExporta
 from .util.adminmesfilter import MesFilter
 from .util.notificacionfcm import NotificacionFcm
+from .views.resetpassword import envia_correo_restablecer_clave
 
 es_fotmats.DATETIME_FORMAT = 'd-m-y H:i'
 es_fotmats.DATE_FORMAT = 'd-m-y'
@@ -34,6 +35,11 @@ class Color:
         css = {
              'all': ('css/admin.css',)
         }
+
+
+def reenviar_correo_restablecer_clave(modeladmin, request, queryset):
+    for usuario in queryset:
+        envia_correo_restablecer_clave(usuario, request)
 
 
 def notifica_fcm_demo(modeladmin, request, queryset):
@@ -73,6 +79,7 @@ def exportar_csv(modeladmin, request, queryset):
 # Custom Admin User
 @admin.register(User)
 class UserAdminExtended(UserAdmin):
+    actions = [reenviar_correo_restablecer_clave]
     list_display = (
         'email',
         'first_name',

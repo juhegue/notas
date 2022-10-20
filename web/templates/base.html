@@ -125,12 +125,14 @@
 
        {% block footer %}
             <footer class="footer d-flex justify-content-between">
-                <div class="text-left">
-                    &nbsp; <a href="{% static 'app-arm64-v8a-release.apk' %}" title="Descarga Apk aviso notificaciones android.">
-                        Apk notificación
-                    </a>
+                <div>
+                    {% if not login %}
+                        <a href="{% static 'app-arm64-v8a-release.apk' %}" title="Descarga Apk aviso notificaciones android.">
+                            &nbsp; Apk notificación
+                        </a>
+                    {% endif %}
                 </div>
-                <div class="align-right">
+                <div>
                     <span>Desarrollado por </span>
                     <a href="https://github.com/juhegue/notas" target="_blank">Juhegue &nbsp;&nbsp;</a>
                 </div>
