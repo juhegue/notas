@@ -176,6 +176,7 @@ class NotaEnviarView(LoginRequiredMixin, SuccessMessageMixin, FormView):
     def get_context_data(self, **kwargs):
         context = super(NotaEnviarView, self).get_context_data(**kwargs)
         context["nota"] = Nota.objects.get(id=self.id_nota)
+        context["create_view"] = True
         return context
 
     def form_valid(self, form):

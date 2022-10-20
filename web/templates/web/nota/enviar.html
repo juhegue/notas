@@ -29,7 +29,7 @@
                                 </label>
                                 {{ form.para }}
                                 {% if form.para.help_text %}
-                                    <p class="help-block">{{ form.para.help_text|safe }}</p>
+                                <p><small class='text-secondary'>{{ form.para.help_text|safe }}</small></p>
                                 {% endif %}
                             </div>
                         </div>
@@ -42,7 +42,7 @@
                                 </label>
                                 {{ form.asunto }}
                                 {% if form.asunto.help_text %}
-                                    <p class="help-block">{{ form.asunto.help_text|safe }}</p>
+                                <p><small class='text-secondary'>{{ form.asunto.help_text|safe }}</small></p>
                                 {% endif %}
                             </div>
                         </div>

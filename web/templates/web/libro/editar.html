@@ -31,7 +31,7 @@
                                 </label>
                                 {{ form.nombre }}
                                 {% if form.nombre.help_text %}
-                                    <p class="help-block">{{ form.nombre.help_text|safe }}</p>
+                                <p><small class="text-secondary">{{ form.nombre.help_text|safe }}</small></p>
                                 {% endif %}
                             </div>
                             <div class="custom-control custom-checkbox ">
