@@ -22,12 +22,13 @@ from .views.cambiaeditor import CambiaEditorView
 from .views.calendario import CalendarioView
 from .views.eventoPredefinido import EventoPredefinidoCreateView, EventoPredefinidoDeleteView, \
     EventoPredefinidoUpdateView, EventoPredefinidoListView
+from .views.resetpassword import RestablecerClave
 
 # https://simpleisbetterthancomplex.com/references/2016/10/10/url-patterns.html
 
 urlpatterns = [
     # Login / Logout
-    re_path(r'^login/$',  auth_views.LoginView.as_view(template_name='web/login.html'), name="login"),
+    re_path(r'^login/$',  auth_views.LoginView.as_view(template_name='web/login.html', extra_context={"login": True}), name="login"),
     # re_path(r'^logout/$', auth_views.LogoutView.as_view(template_name='web/logout.html'), name="logout"),
 
     # Indice
@@ -61,6 +62,10 @@ urlpatterns = [
     path('calendario/predefinidos/edita/<slug:pk>/', EventoPredefinidoUpdateView.as_view(), name="evento_predefinido_edita"),
     path('calendario/predefinidos/elimina/<slug:pk>/', EventoPredefinidoDeleteView.as_view(), name="evento_predefinido_elimina"),
 
+    # Restablecer la contraseña
+    path('reset_password/', RestablecerClave.as_view(), name='reset_password'),
+    path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(template_name='resetpassword/password_reset_new_password.html'), name='password_reset_confirm'),
+    path('reset_password_complete/', auth_views.PasswordResetCompleteView.as_view(template_name='resetpassword/password_reset_complete.html'), name='password_reset_complete'),
 ]
 
 if settings.DEBUG:
