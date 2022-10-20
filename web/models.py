@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+import datetime
 import json
 import os
 import uuid
@@ -140,10 +140,17 @@ def adjunto_upload_to(instance, filename):
     nombre_fichero = '%s_%s' % (filename, uuid.uuid4().hex)
     instance.nombre = filename
 
-    if isinstance(instance, AdjuntoTemporal):
-        return os.path.join('adjuntos', 'tmp', nombre_fichero)
+    ahora = timezone.now()
+    if ahora.date() >= datetime.date(2020, 10, 20):
+        if isinstance(instance, AdjuntoTemporal):
+            return os.path.join('adjuntos', f'{ahora.year}', f'{ahora.strftime("%m")}', 'tmp', nombre_fichero)
 
-    return os.path.join('adjuntos', nombre_fichero)
+        return os.path.join('adjuntos', f'{ahora.year}', f'{ahora.strftime("%m")}', nombre_fichero)
+    else:
+        if isinstance(instance, AdjuntoTemporal):
+            return os.path.join('adjuntos', 'tmp', nombre_fichero)
+
+        return os.path.join('adjuntos', nombre_fichero)
 
 
 class Adjunto(ActualizaMixin, UserMixin):
@@ -165,13 +172,22 @@ class AdjuntoTemporal(models.Model):
         return self.nombre
 
     def mueve_a_adjuntos(self):
-        path = os.path.basename(self.fichero.path)
-        des = os.path.join(settings.MEDIA_ROOT, "adjuntos", path)
-        os.replace(self.fichero.path, des)
-        self.fichero = os.path.join("adjuntos", path)
+        ahora = timezone.now()
+        if ahora.date() >= datetime.date(2020, 10, 20):
+            path_base = os.path.basename(self.fichero.path)
+            des = os.path.join(settings.MEDIA_ROOT, 'adjuntos', f'{ahora.year}', f'{ahora.strftime("%m")}', path_base)
+            path = self.fichero.path
+            os.replace(path, des)
+            self.fichero = os.path.join('adjuntos', f'{ahora.year}', f'{ahora.strftime("%m")}', path_base)
+        else:
+            path_base = os.path.basename(self.fichero.path)
+            des = os.path.join(settings.MEDIA_ROOT, 'adjuntos', path_base)
+            path = self.fichero.path
+            os.replace(path, des)
+            self.fichero = os.path.join('adjuntos', path_base)
 
     class Meta:
-        verbose_name_plural = "AdjuntosTemporal"
+        verbose_name_plural = 'AdjuntosTemporal'
 
 
 @receiver(pre_delete)
