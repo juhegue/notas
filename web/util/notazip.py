@@ -83,7 +83,6 @@ class NotaZip(object):
             return response
 
     def file(self):
-        nombre = os.path.join(tempfile.gettempdir(), next(tempfile._get_candidate_names()))
-        with open(nombre, "wb") as tmp:
-            self._crea(tmp)
-        return nombre
+        tmp = BytesIO()
+        self._crea(tmp)
+        return tmp
