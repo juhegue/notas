@@ -30,8 +30,9 @@ logger = logging.getLogger(__name__)
 
 
 class NotaZip(object):
-    def __init__(self, nota_id):
+    def __init__(self, nota_id, list_adjuntos=None):
         self.nota = Nota.objects.get(pk=nota_id)
+        self.list_adjuntos = list_adjuntos
         
     def _crea(self, tmp):
         with zipfile.ZipFile(tmp, 'w', zipfile.ZIP_DEFLATED) as archive:
@@ -56,7 +57,9 @@ class NotaZip(object):
             nombre = "nota_%s.md" % self.nota.id
             archive.writestr(nombre, md)
 
-            for a in self.nota.adjunto_set.all():
+            adjuntos = self.list_adjuntos if self.list_adjuntos else self.nota.adjunto_set.all()
+
+            for a in adjuntos:
                 try:
                     archive.write(a.fichero.file.name, a.nombre)
                 except Exception as e:

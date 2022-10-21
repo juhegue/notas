@@ -15,6 +15,7 @@
         <div class="col-md-12">
             <form action="" method="post" enctype="multipart/form-data" role="form" id="formulario">
                 {% csrf_token %}
+                {{ form.uuid_id }}
                 <div class="card">
                     <div class="card-header">
                         <h3 class="panel-title text-secondary">{% trans 'Enviar Nota' %}</h3>
@@ -47,9 +48,30 @@
                             </div>
                         </div>
                         <div class="form-row">
-                            <div class="form-group col-md-12">
+                            <div class="form-group col-md-10">
                                 <label>{{ form.texto.label }}</label>
                                 <div id='id_editor'>{{ nota.texto|safe }}</div>
+                            </div>
+                            <div id='id_adjuntos' class='col-md-2'>
+                                <div class='text-center'>
+                                    <button type='button' style='width:100%' id='id_btnadjuntos' class='btn btn-primary adjuntos'
+                                        >{% trans 'Adjuntos' %}
+                                    </button>
+                                </div>
+                                <div id='id_lista_adjuntos'>
+                                    <div class="card"><table class="table" style="width:100%">
+                                        {% for adjunto in adjuntos %}
+                                            <tr>
+                                                <td class="text-center" style="width:10px">
+                                                    <a href="javascript:adjElimina(1, {{ adjunto.id }}, {{ nota.id }});" class="text-danger" role="button"><span class="fa fw fa-trash"></span></a>
+                                                </td>
+                                                <td class="wrappable">
+                                                    <a href="{% url 'adjunto_bajar' 1 adjunto.id %}">{{ adjunto.nombre }}</a>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </table></div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -71,5 +93,6 @@
 
 {% block scripts %}
     {{ block.super }}
+    {% include 'web/nota/_adjuntos_.html' %}
     {% include 'web/nota/_editores_js.html' %}
 {% endblock scripts %}

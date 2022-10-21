@@ -38,22 +38,22 @@ class NotaCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     def dispatch(self, request, *args, **kwargs):
         libro_id = kwargs.get("libro", 0)
         self.libro = Libro.objects.get(id=libro_id)
-        return super(NotaCreateView, self).dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
     def get_form_kwargs(self):
-        kwargs = super(NotaCreateView, self).get_form_kwargs()
+        kwargs = super().get_form_kwargs()
         kwargs["request"] = self.request
         return kwargs
 
     def get_initial(self):
-        initial = super(NotaCreateView, self).get_initial()
+        initial = super().get_initial()
         self.uuid_id = uuid.uuid4()
         initial["libro"] = self.libro
         initial["uuid_id"] = self.uuid_id
         return initial
 
     def get_context_data(self, **kwargs):
-        context = super(NotaCreateView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context["create_view"] = True
         context["libro"] = self.libro
         context["uuid_id"] = self.uuid_id
@@ -73,7 +73,7 @@ class NotaCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
                 adj.mueve_a_adjuntos()
                 Adjunto(nota=f, fichero=adj.fichero, nombre=adj.nombre).save()
 
-        return super(NotaCreateView, self).form_valid(form)
+        return super().form_valid(form)
 
     def get_success_url(self):
         return reverse('listanota') + '?scrool=0'
@@ -87,21 +87,21 @@ class NotaUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     uuid_id = None
 
     def dispatch(self, request, *args, **kwargs):
-        return super(NotaUpdateView, self).dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
     def get_form_kwargs(self):
-        kwargs = super(NotaUpdateView, self).get_form_kwargs()
+        kwargs = super().get_form_kwargs()
         kwargs["request"] = self.request
         return kwargs
 
     def get_initial(self):
-        initial = super(NotaUpdateView, self).get_initial()
+        initial = super().get_initial()
         self.uuid_id = uuid.uuid4()
         initial["uuid_id"] = self.uuid_id
         return initial
 
     def get_context_data(self, **kwargs):
-        context = super(NotaUpdateView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context["libro"] = self.object.libro
         context["adjuntos"] = self.object.adjuntos()
         context["uuid_id"] = self.uuid_id
@@ -123,7 +123,7 @@ class NotaUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
                 .values_list('adjunto_borrado_id', flat=True)
             f.adjunto_set.filter(id__in=borrados).delete()
 
-        return super(NotaUpdateView, self).form_valid(form)
+        return super().form_valid(form)
 
     def get_success_url(self):
         return reverse('listanota') + '?scrool=0'
@@ -145,7 +145,7 @@ class NotaDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
         object.activo = False
         object.save()
         return HttpResponseRedirect(success_url)
-        # return super(NotaDeleteView, self).delete(*args, **kwargs)
+        # return super().delete(*args, **kwargs)
 
     def get_success_url(self):
         messages.success(self.request, self.success_message)
@@ -162,27 +162,51 @@ class NotaEnviarView(LoginRequiredMixin, SuccessMessageMixin, FormView):
     template_name = 'web/nota/enviar.html'
     form_class = NotaEnviarForm
     id_nota = None
+    uuid_id = None
 
     def dispatch(self, request, *args, **kwargs):
         self.id_nota = kwargs.get("pk")
-        return super(NotaEnviarView, self).dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
     def get_form_kwargs(self):
-        kwargs = super(NotaEnviarView, self).get_form_kwargs()
+        kwargs = super().get_form_kwargs()
         kwargs["request"] = self.request
         kwargs["id_nota"] = self.id_nota
         return kwargs
 
+    def get_initial(self):
+        initial = super().get_initial()
+        self.uuid_id = uuid.uuid4()
+        initial["uuid_id"] = self.uuid_id
+        return initial
+
     def get_context_data(self, **kwargs):
-        context = super(NotaEnviarView, self).get_context_data(**kwargs)
-        context["nota"] = Nota.objects.get(id=self.id_nota)
+        context = super().get_context_data(**kwargs)
+        nota = Nota.objects.get(id=self.id_nota)
+        context["nota"] = nota
+        context["adjuntos"] = nota.adjuntos()
+        context["uuid_id"] = self.uuid_id
         context["create_view"] = True
         return context
 
     def form_valid(self, form):
         if form.is_valid():
             data = form.cleaned_data
-            adj = NotaZip(self.id_nota).file()
+            uuid_id = data.get("uuid_id")
+            nota = Nota.objects.get(id=self.id_nota)
+
+            adjuntos = {n.id: n for n in nota.adjunto_set.all()}
+
+            for borrado_id in AdjuntoTemporal.objects.filter(uuid_id=uuid_id, adjunto_borrado_id__gt=0)\
+                    .values_list('adjunto_borrado_id', flat=True):
+                del adjuntos[borrado_id]
+
+            list_adjuntos = list(adjuntos.values())
+
+            for adj in AdjuntoTemporal.objects.filter(uuid_id=uuid_id, adjunto_borrado_id=0).all():
+                list_adjuntos.append(adj)
+
+            adj = NotaZip(self.id_nota, list_adjuntos).file()
             try:
                 mail.send(
                     recipients=data.get("para", ""),
@@ -197,5 +221,5 @@ class NotaEnviarView(LoginRequiredMixin, SuccessMessageMixin, FormView):
 
             return redirect("listanota")
 
-        return super(NotaEnviarView, self).form_valid(form)
+        return super().form_valid(form)
 

@@ -98,32 +98,6 @@
 
 {% block scripts %}
     {{ block.super }}
-    <script type="text/javascript">
-        function adjElimina(tipo, adjunto_id, nota_id) {
-            adjuntoBorra('{{ csrf_token }}', nota_id, '{{ uuid_id }}', adjunto_id, tipo);
-        }
-
-        $(function(){
-            $('.adjuntos').on('click',function(e){
-                var key = $(e.target).attr('id');
-                key = key.substr(key.length-6, 6);
-
-                $.FileDialog({
-                    title: '{% trans 'Subir archivos' %}',
-                    ok_button: '{% trans 'Aceptar' %}',
-                    cancel_button: '{% trans 'Cancelar' %}',
-                    drag_message: '{% trans 'Arrastre los archivos aquí' %}',
-                    error_message: '{% trans 'Se ha producido un error al leer el archivo' %}',
-                    remove_message: '{% trans 'Eliminar fichero' %}',
-                    accept: '*',
-                    dropheight: 100,
-                    multiple: true,
-                 }).on('files.bs.filedialog', function(ev) {
-                    uploadFiles('{{ csrf_token }}', '{{ nota.id }}', '{{ uuid_id }}', ev.files);
-                }).on('cancel.bs.filedialog', function(ev) {
-                });
-            });
-        });
-    </script>
+    {% include 'web/nota/_adjuntos_.html' %}
     {% include 'web/nota/_editores_js.html' %}
 {% endblock scripts %}

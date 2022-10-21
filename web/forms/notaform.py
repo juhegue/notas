@@ -35,6 +35,8 @@ class NotaForm(forms.ModelForm):
 
 
 class NotaEnviarForm(forms.Form):
+    uuid_id = forms.CharField(required=False, widget=forms.TextInput(attrs={"style": "display:none;"}))
+
     para = EmailMultipleField(label=_("Para"),
                               widget=forms.TextInput(attrs={"class": "form-control"}),
                               required=True,
