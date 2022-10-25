@@ -79,7 +79,6 @@ def exportar_csv(modeladmin, request, queryset):
 # Custom Admin User
 @admin.register(User)
 class UserAdminExtended(UserAdmin):
-    actions = [reenviar_correo_restablecer_clave]
     list_display = (
         'email',
         'first_name',
@@ -113,7 +112,7 @@ class UserAdminExtended(UserAdmin):
     def save_model(self, request, obj, form, change):
         obj.save()
 
-    actions = [notifica_fcm_demo]
+    actions = [notifica_fcm_demo, reenviar_correo_restablecer_clave]
 
 
 @admin.register(Libro)
