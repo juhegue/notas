@@ -80,7 +80,8 @@ def envia_correo_restablecer_clave(usuario, request=None):
                         email_template_name='resetpassword/password_reset_message.txt',
                         html_email_template_name='resetpassword/password_reset_email.html',
                         subject_template_name='resetpassword/password_reset_subject.txt',
-                        extra_email_context=extra_mail_context
+                        extra_email_context=extra_mail_context,
+                        use_https=request.is_secure()
                         )
     else:
         logger.error('envia_correo_restablecer_clave: sin request')
