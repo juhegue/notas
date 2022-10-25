@@ -50,10 +50,10 @@ class NotasView(LoginRequiredMixin, View):
         sort = self.request.GET.get("sort")
         order = self.request.GET.get("order")
         search = self.request.GET.get("search")
-        limit = int(self.request.GET.get("limit"))
-        offset = int(self.request.GET.get("offset"))
+        limit = int(self.request.GET.get("limit") or 0)
+        offset = int(self.request.GET.get("offset") or 0)
 
-        libro = int(self.request.GET.get("libro"))
+        libro = int(self.request.GET.get("libro") or 0)
         # TODO:: si la url contiene ?todos=true se muestra todo
         todos = True if self.request.GET.get("todos") == 'true' else False
 
