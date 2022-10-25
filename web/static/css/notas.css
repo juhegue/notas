@@ -125,12 +125,3 @@ ul.errorlist {
 footer a:hover, footer a:active, footer a:link, footer a:visited{
     color: var(--light);
 }
-
-@media only screen and (max-width: 576px) {
-    .fc-toolbar-title {
-        font-size: 12px !important;
-    }
-    .fc-today-button{
-        display:none;
-    }
-}

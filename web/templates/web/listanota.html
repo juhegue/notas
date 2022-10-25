@@ -10,6 +10,14 @@
         .select2-selection__rendered {
             min-width: 400px;
         }
+        @media only screen and (max-width: 576px) {
+            .select2-selection__rendered {
+                min-width: 336px;
+            }
+            #id_libro_eliminar, #id_libro_editar, .nuevo-libro {
+                margin-bottom: 16px;
+            }
+        }
         .nuevo-libro {
             margin-left: 5px;
         }

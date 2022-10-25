@@ -10,6 +10,16 @@
 	<link href="{% static 'vendor/@fullcalendar/timegrid/main.min.css' %}" rel="stylesheet" />
 	<link href="{% static 'vendor/@fullcalendar/list/main.min.css' %}" rel="stylesheet" />
 	<link href="{% static 'vendor/@fullcalendar/bootstrap/main.min.css' %}" rel="stylesheet" />
+	<style>
+		@media only screen and (max-width: 576px) {
+			.fc-toolbar-title {
+				font-size: 12px !important;
+			}
+			.fc-today-button, .fc-timeGridWeek-button{
+				display:none;
+			}
+		}
+	</style>
 {% endblock styles %}
 
 {% block titlehead %}
