@@ -228,7 +228,7 @@ var handleCalendarDemo = function() {
                 ahora = new Date();
             if (data.id == 0) {
                 var title = '',
-                    start = '', //moment(info.event.start).format('DD/MM/YYYY HH:mm'),
+                    start = moment(info.event.start).format('DD/MM/YYYY HH:mm'),
                     end = '',
                     id = data.id,
                     color = info.event.backgroundColor;
