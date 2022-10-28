@@ -127,7 +127,7 @@
             <footer class="footer d-flex justify-content-between">
                 <div>
                     {% if not login %}
-                        <a href="{% static 'app-arm64-v8a-release.apk' %}" title="Descarga Apk aviso notificaciones android.">
+                        <a href="javascript:void(0)" onclick="showApk();return false;" title="Descarga Apk aviso notificaciones android.">
                             &nbsp; Apk notificación
                         </a>
                     {% endif %}
@@ -171,6 +171,32 @@
                         reset_select2_size();
                     });
                 {% endif %}
+                function showApk() {
+                    bootbox.dialog({
+                        closeButton: false,
+                        onEscape: function() {},
+                        //title: 'Evento',
+                        message: `
+                            <h3>Versiones Android</h3>
+                            <hr></hr>
+                            <ul style="font-size: 150%;">
+                                <li><a href="{% static 'app-armeabi-v7a-release.apk' %}"><i class="fa fa-download"></i> armeabi-v7a</a></li>
+                                <li><a href="{% static 'app-arm64-v8a-release.apk' %}"><i class="fa fa-download"></i> arm64-v8a</a></li>
+                                <li><a href="{% static 'app-x86_64-release.apk' %}"><i class="fa fa-download"></i> x86_64</a></li>
+                                <li><a href="{% static 'app-release.apk' %}"><i class="fa fa-download"></i> Single</a></li>
+                            </ul>
+                            <small clas="ttext-muted">Seleccione la adecuada a su movíl.</small>
+                        `,
+                        buttons: {
+                            cancel: {
+                                label: 'Cancelar',
+                                className: 'btn-secondary',
+                                callback: function (result) {
+                                }
+                            },
+                        }
+                    });
+                }
             </script>
         {% endblock scripts_base %}
 
