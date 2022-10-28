@@ -51,42 +51,32 @@ def procesa_eventos():
     ahora = timezone.now()
 
     inicio = ahora + timedelta(hours=HORAS_MARGEN_COMPLETO)
-    for qevento in AgendaEvento.objects.filter(email_enviado__isnull=True,
-                                               aviso_email=True,
-                                               dia_completo=True,
+    for qevento in AgendaEvento.objects.filter(dia_completo=True,
                                                inicio__lte=inicio,
                                                fin__gte=ahora):
-        envia_mail(qevento)
-        qevento.email_enviado = ahora
-        qevento.save()
+        if qevento.aviso_email and not qevento.email_enviado:
+            envia_mail(qevento)
+            qevento.email_enviado = ahora
+            qevento.save()
 
-    for qevento in AgendaEvento.objects.filter(movil_enviado__isnull=True,
-                                               aviso_movil=True,
-                                               dia_completo=True,
-                                               inicio__lte=inicio,
-                                               fin__gte=ahora):
-        envia_movil(qevento)
-        qevento.movil_enviado = ahora
-        qevento.save()
+        if qevento.aviso_movil and not qevento.movil_enviado:
+            envia_movil(qevento)
+            qevento.movil_enviado = ahora
+            qevento.save()
 
     inicio = ahora + timedelta(minutes=MINUTOS_MARGEN_PARCIAL)
-    for qevento in AgendaEvento.objects.filter(email_enviado__isnull=True,
-                                               aviso_email=True,
-                                               dia_completo=False,
+    for qevento in AgendaEvento.objects.filter(dia_completo=False,
                                                inicio__lte=inicio,
                                                fin__gte=ahora):
-        envia_mail(qevento)
-        qevento.email_enviado = ahora
-        qevento.save()
+        if qevento.aviso_email and not qevento.email_enviado:
+            envia_mail(qevento)
+            qevento.email_enviado = ahora
+            qevento.save()
 
-    for qevento in AgendaEvento.objects.filter(movil_enviado__isnull=True,
-                                               aviso_movil=True,
-                                               dia_completo=False,
-                                               inicio__lte=inicio,
-                                               fin__gte=ahora):
-        envia_movil(qevento)
-        qevento.movil_enviado = ahora
-        qevento.save()
+        if qevento.aviso_movil and not qevento.movil_enviado:
+            envia_movil(qevento)
+            qevento.movil_enviado = ahora
+            qevento.save()
 
 
 def start():     # Añadir el start en apps.py

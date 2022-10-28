@@ -214,8 +214,8 @@ class AgendaEventoColor(ActualizaMixin):
 class AgendaEvento(ActualizaMixin):
     usuario = models.ForeignKey(User, verbose_name=_('User'), on_delete=models.CASCADE)
     color = models.ForeignKey(AgendaEventoColor, verbose_name=_('Color'), on_delete=models.CASCADE)
-    inicio = models.DateTimeField(verbose_name=_('Inicio evento'))
-    fin = models.DateTimeField(verbose_name=_('Fin evento'))
+    inicio = models.DateTimeField(verbose_name=_('Inicio evento'), db_index=True)
+    fin = models.DateTimeField(verbose_name=_('Fin evento'), db_index=True)
     titulo = models.CharField(verbose_name=_('Título'), max_length=250)
     dia_completo = models.BooleanField(verbose_name=_('Todo el día'), default=True)
     aviso_email = models.BooleanField(verbose_name=_('Avisar con email'), default=False)
