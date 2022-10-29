@@ -19,9 +19,9 @@ def envia_movil(qevento):
     periodo = f'Desde {inicio}'
     if qevento.fin:
         if qevento.inicio.date() == qevento.fin.date():
-            periodo += f'\nHasta {finhora}'
+            periodo += f' Hasta {finhora}'
         else:
-            periodo += f'\nHasta {fin}'
+            periodo += f' Hasta {fin}'
 
     n = NotificacionFcm(qevento.usuario)
     n.aviso('Notas notifiación', f'{periodo}\n{qevento.titulo}')
@@ -81,5 +81,5 @@ def procesa_eventos():
 
 def start():     # Añadir el start en apps.py
     scheduler = BackgroundScheduler()
-    scheduler.add_job(procesa_eventos, 'interval', minutes=5)
+    scheduler.add_job(procesa_eventos, 'interval', minutes=1)
     scheduler.start()
