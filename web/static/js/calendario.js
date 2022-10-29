@@ -90,7 +90,7 @@ var handleCalendarDemo = function() {
                     </div>
                 </div>
                 <div class='col-12'>
-                    <textarea name='titulo' id='id_titulo' class='form-control' rows='3' placeholder='${des_evento}' required>${title}</textarea>
+                    <textarea name='titulo' maxlength="250" id='id_titulo' class='form-control' rows='3' placeholder='${des_evento}' required>${title}</textarea>
                 </div>
             </form>
         `;
