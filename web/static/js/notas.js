@@ -55,7 +55,7 @@ function ajaxAdjunto(url, formData, nota_id){
         },
         error: function(e){
             $('#id_cargando').modal('hide');
-            alert('ERROR.');
+            bootbox.alert(e.responseText);
         }
     });
 }
