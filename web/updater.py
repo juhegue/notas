@@ -94,10 +94,12 @@ def start():     # Añadir el start en apps.py
     try:
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.bind(("127.0.0.1", 47200))
-    except socket.error:
-        logger.info("¡scheduler ya iniciado!, NADA QUE HACER")
-    else:
+
         logger.info("scheduler iniciado")
         scheduler = BackgroundScheduler()
         scheduler.add_job(procesa_eventos, 'interval', minutes=5)
         scheduler.start()
+
+    except socket.error:
+        logger.info("¡scheduler ya iniciado!, NADA QUE HACER")
+
