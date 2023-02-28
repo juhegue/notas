@@ -30,7 +30,12 @@ class ListaNotaForm(forms.Form):
         libro = query.filter(id=libro_id).first()
 
         choices = list()
+        # carga el valor inicial
         if libro:
             choices.append((libro.id, libro.nombre.title()))
-        # carga el valor inicial
+        else:
+            for q in query.order_by('nombre'):
+                choices.append((q.id, q.nombre.title()))
+                break
+
         self.fields["libro"].choices = choices
