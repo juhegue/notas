@@ -6,7 +6,7 @@ from django.contrib.auth import views as auth_views
 from django.urls import path, re_path
 
 from .views.inicio import Index
-from .views.listanota import ListaNotaView, NotasView
+from .views.listanota import ListaNotaView, NotasView, LibrosView
 from .views.libro import LibroCreateView
 from .views.libro import LibroUpdateView
 from .views.libro import LibroDeleteView
@@ -39,6 +39,7 @@ urlpatterns = [
     re_path(r'^libro/nuevo/$', LibroCreateView.as_view(), name="libro_nuevo"),
     re_path(r'^libro/editar/(?P<pk>\d+)/$', LibroUpdateView.as_view(), name="libro_editar"),
     re_path(r'^libro/eliminar/(?P<pk>\d+)/$', LibroDeleteView.as_view(), name="libro_eliminar"),
+    re_path(r'^libros/$', LibrosView.as_view(), name='libros'),
 
     re_path(r'^nota/nuevo(?:/(?P<libro>\d+))?/$', NotaCreateView.as_view(), name="nota_nuevo"),
     re_path(r'^nota/editar/(?P<pk>\d+)/$', NotaUpdateView.as_view(), name='nota_editar'),

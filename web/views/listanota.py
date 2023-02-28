@@ -6,9 +6,9 @@ from django.http import JsonResponse
 from django.utils import timezone
 
 from ..forms.listanotaform import ListaNotaForm, get_qlibros
-from ..models import Nota
+from ..models import Nota, Libro
 from ..models import Libro
-from ..util.utiles import marca_texto
+from ..util.utiles import marca_texto, entero
 
 
 class ListaNotaView(LoginRequiredMixin, FormView):
@@ -120,3 +120,38 @@ class NotasView(LoginRequiredMixin, View):
         resul = {"total": count, "rows": rows}
         return JsonResponse(resul, safe=False)
 
+
+class LibrosView(LoginRequiredMixin, View):
+    def dispatch(self, request, *args, **kwargs):
+        term = request.POST.get("term")
+        page = entero(request.POST.get("page"))
+
+        limit = 50
+        offset = (page - 1) * limit
+
+        query = Libro.objects.filter(activo=True, privado=False) | \
+            Libro.objects.filter(activo=True, user=request.user)
+
+        if term:
+            query = query.filter(nombre__icontains=term)
+
+        count = query.count()
+        data = list()
+        for d in query.order_by('nombre').all()[offset:limit]:
+            data.append({
+                "id": d.id,
+                "text": d.nombre,
+                "privado": d.privado
+            })
+
+        final = offset + limit
+        mas = count > final
+
+        resul = {
+            "results": data,
+            "pagination": {
+                "more": mas
+            }
+        }
+
+        return JsonResponse(resul, safe=False)

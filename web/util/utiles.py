@@ -68,3 +68,17 @@ def decodehex(key):
 
 def is_ajax(request):
     return request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest'
+
+
+def entero(valor):
+    """
+    Convierte string a entero
+    :param valor: string
+    :return: int
+    """
+    try:
+        if isinstance(valor, str) and "." in valor:
+            valor = round(float(valor), 0)
+        return int(valor)
+    except Exception as e:
+        return 0
