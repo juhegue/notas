@@ -47,11 +47,9 @@
                 <a id="id_libro_editar" href="{% url 'libro_editar' libro.id %}" title="{% trans 'Editar libro' %}" class="btn btn-sm btn-outline-primary" role="button"><span class="fa fw fa-pencil"></span></a>
             {% endif %}
             {{ form.libro }}
-            <a>
-                {% if libro.privado %}
-                     &nbsp;Privado
-                    <img src='{% static "admin/img/icon-yes.svg" %}' alt="True">
-                {% endif %}
+            <a id="id_privado" hidden="">
+                 &nbsp;Privado
+                <img src='{% static "admin/img/icon-yes.svg" %}' alt="True">
             </a>
         </form>
     </div>
@@ -279,6 +277,11 @@
             {% if not libro %}
                 $('#id_libro').on('change',function(e){
                     location.reload();
+                });
+            {% else %}
+                $('#id_libro').on('change',function(e){
+                    var data = $(this).select2('data')[0];
+                    $('#id_privado').prop('hidden', !data.privado);
                 });
             {% endif %}
         });
