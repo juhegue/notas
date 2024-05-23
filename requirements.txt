@@ -1,7 +1,6 @@
 APScheduler==3.9.1
-arabic-reshaper==2.1.0
+arabic-reshaper==3.0.0
 asgiref==3.5.2
-backports.zoneinfo==0.2.1
 beautifulsoup4==4.11.1
 bleach==5.0.1
 bs4==0.0.1
@@ -15,7 +14,7 @@ django-post-office==3.6.1
 djangorestframework==3.14.0
 future==0.18.2
 html2text==2020.1.16
-html5lib==1.0.1
+html5lib==1.1
 httplib2==0.18.0
 idna==3.4
 jsonfield==3.1.0
