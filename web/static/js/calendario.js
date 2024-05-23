@@ -137,6 +137,13 @@ var handleCalendarDemo = function() {
                     }
                 }
             }
+        }).on('shown.bs.modal', function(e) {
+            $('#id_fin').mousedown(function() {
+                var valida = moment(end, "DD/MM/YYYY HH:mm").isValid();
+                if (!end || !valida) {
+                    $(this).val( $('#id_inicio').val() );
+                }
+            });
         });
 
         iniciaColorAjax($('.color-select2'));
@@ -254,6 +261,10 @@ var handleCalendarDemo = function() {
             }
             actualizaBD(data, 'drop');
         },
+        dateClick: function(info) {
+            var start = moment(info.date).format('DD/MM/YYYY HH:mm');
+            formulario(start, '',    '',   0,    '',      '',     'checked',    false, 'checked', false, '', fcm_token);
+        }
     });
 
     calendar.render();
