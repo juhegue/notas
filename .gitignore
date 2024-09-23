@@ -80,6 +80,7 @@ brossa/
 LEEME
 notas/settings_jh.py
 notas/settings_pro.py
+notas/notas-notifica-firebase-adminsdk-9gsx1-76cf0d1ab9.json
 *.cnf
 *.sh
 *.apk
